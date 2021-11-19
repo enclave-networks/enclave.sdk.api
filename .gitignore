@@ -348,3 +348,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+tests/Enclave.Sdk.Tests/IntegrationTests.cs
+src/Enclave.Sdk/test.txt
