@@ -20,7 +20,7 @@ public class ClientBase
         };
     }
 
-    public StringContent Encode<TModel>(TModel data)
+    protected StringContent Encode<TModel>(TModel data)
     {
         if (data is null)
         {
@@ -33,7 +33,7 @@ public class ClientBase
         return stringContent;
     }
 
-    public async Task<TModel?> DeserializeAsync<TModel>(HttpContent httpContent)
+    protected async Task<TModel?> DeserializeAsync<TModel>(HttpContent httpContent)
     {
         if (httpContent is null)
         {
@@ -44,7 +44,7 @@ public class ClientBase
         return await JsonSerializer.DeserializeAsync<TModel>(contentStream, JsonSerializerOptions);
     }
 
-    public async Task CheckStatusCodes(HttpResponseMessage httpResponse)
+    protected async Task CheckStatusCodes(HttpResponseMessage httpResponse)
     {
         if (httpResponse is null)
         {

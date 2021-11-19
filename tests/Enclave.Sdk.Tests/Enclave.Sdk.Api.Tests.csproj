@@ -4,7 +4,7 @@
 	  <LangVersion>10.0</LangVersion>
 	  <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <UserSecretsId>0c261991-ae7a-4598-9650-7f05d2939f98</UserSecretsId>
   </PropertyGroup>
 
@@ -13,6 +13,7 @@
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="Nunit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
+    <PackageReference Include="WireMock.Net" Version="1.4.27" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,12 +1,14 @@
-﻿using Enclave.Sdk.Api.Data.Organisations;
+﻿using Enclave.Sdk.Api.Clients.Interfaces;
+using Enclave.Sdk.Api.Data.Account;
+using Enclave.Sdk.Api.Data.Organisations;
 
 namespace Enclave.Sdk.Api.Clients;
 
-public class OrganisationClient : ClientBase
+public class OrganisationClient : ClientBase, IOrganisationClient
 {
     public AccountOrganisation CurrentOrganisation { get; private set; }
 
-    public DNSClient DNSClient { get; private set; }
+    public DnsClient DNSClient { get; private set; }
 
     private string _orgRoute;
 
@@ -60,47 +62,41 @@ public class OrganisationClient : ClientBase
         await CheckStatusCodes(result);
     }
 
-    public async Task<object?> GetPendingInvitesAsync()
+    public async Task<OrganisationPendingInvites> GetPendingInvitesAsync()
     {
         var result = await HttpClient.GetAsync($"{_orgRoute}/invites");
         await CheckStatusCodes(result);
 
-        var model = DeserializeAsync<object>(result.Content);
+        var model = await DeserializeAsync<OrganisationPendingInvites>(result.Content);
 
         CheckModel(model);
 
         return model;
     }
 
-    public async Task<object?> InviteUserAsync(string emailAddress)
+    public async Task InviteUserAsync(string emailAddress)
     {
-        var encoded = Encode(new
+        var encoded = Encode(new OrganisationInvite
         {
-            emailAddress,
+            EmailAddress = emailAddress,
         });
 
         var result = await HttpClient.PostAsync($"{_orgRoute}/invites", encoded);
         await CheckStatusCodes(result);
-
-        var model = DeserializeAsync<object>(result.Content);
-
-        CheckModel(model);
-
-        return model;
     }
 
     public async Task CancelInviteAync(string emailAddress)
     {
-        var encoded = Encode(new
+        var encoded = Encode(new OrganisationInvite
         {
-            emailAddress,
+            EmailAddress = emailAddress,
         });
 
         var request = new HttpRequestMessage
         {
             Content = encoded,
             Method = HttpMethod.Delete,
-            RequestUri = new Uri("{_orgRoute}/invites"),
+            RequestUri = new Uri($"{HttpClient.BaseAddress}{_orgRoute}/invites"),
         };
 
         var result = await HttpClient.SendAsync(request);
@@ -109,7 +105,14 @@ public class OrganisationClient : ClientBase
 
     public async Task<OrganisationPricing> GetOrganisationPricing()
     {
-        throw new NotImplementedException();
+        var result = await HttpClient.GetAsync($"{_orgRoute}/pricing");
+        await CheckStatusCodes(result);
+
+        var model = await DeserializeAsync<OrganisationPricing>(result.Content);
+
+        CheckModel(model);
+
+        return model;
     }
 
     protected override string PrepareUrl(string url)

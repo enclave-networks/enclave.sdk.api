@@ -1,6 +1,12 @@
 namespace Enclave.Sdk.Api.Clients;
 
-public class LogsClient
+public class LogsClient : ClientBase
 {
+    private string _orgRoute;
 
+    public LogsClient(HttpClient httpClient, string orgRoute)
+    : base(httpClient)
+    {
+        _orgRoute = orgRoute;
+    }
 }

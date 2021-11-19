@@ -1,5 +1,5 @@
 ﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Organisations;
+using Enclave.Sdk.Api.Data.Account;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -29,7 +29,7 @@ public class EnclaveClient
 
         if (result is null)
         {
-            throw new InvalidOperationException("Could not find any organisation associated to this token");
+            throw new InvalidOperationException("Did not get any response");
         }
 
         result.EnsureSuccessStatusCode();

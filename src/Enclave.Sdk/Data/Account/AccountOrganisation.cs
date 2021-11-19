@@ -5,19 +5,25 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Enclave.Sdk.Api.Data.Organisations;
+namespace Enclave.Sdk.Api.Data.Account;
 
 public class AccountOrganisation
 {
     // TODO: Set as Organisation Data Type
-    [JsonPropertyName("orgId")]
+    /// <summary>
+    /// The organisation ID.
+    /// </summary>
     public string OrgId { get; init; }
 
-    [JsonPropertyName("orgName")]
+    /// <summary>
+    /// The organisation name.
+    /// </summary>
     public string OrgName { get; init; }
 
-    [JsonPropertyName("role")]
-    public string Role { get; init; }
+    /// <summary>
+    /// The user's role within the organisation.
+    /// </summary>
+    public UserOrganisationRole Role { get; init; }
 }
 
 public class AccountOrganisationTopLevel
