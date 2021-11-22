@@ -1,6 +1,8 @@
-﻿namespace Enclave.Sdk.Api.Clients;
+﻿using Enclave.Sdk.Api.Clients.Interfaces;
 
-public class AuthorityClient : ClientBase
+namespace Enclave.Sdk.Api.Clients;
+
+public class AuthorityClient : ClientBase, IAuthorityClient
 {
     private string _orgRoute;
 

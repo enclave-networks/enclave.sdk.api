@@ -1,6 +1,8 @@
+using Enclave.Sdk.Api.Clients.Interfaces;
+
 namespace Enclave.Sdk.Api.Clients;
 
-public class EnrolmentKeysClient : ClientBase
+public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 {
     private string _orgRoute;
 

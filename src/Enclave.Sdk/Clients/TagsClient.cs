@@ -1,10 +1,11 @@
+using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.Tags;
 using System.Text;
 
 namespace Enclave.Sdk.Api.Clients;
 
-public class TagsClient : ClientBase
+public class TagsClient : ClientBase, ITagsClient
 {
     private string _orgRoute;
 
@@ -14,7 +15,7 @@ public class TagsClient : ClientBase
         _orgRoute = orgRoute;
     }
 
-    public async Task<PagninatedResponseModel<TagItem>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null)
+    public async Task<PaginatedResponseModel<TagItem>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null)
     {
         string? queryString = default;
         if (searchTerm is not null)
@@ -41,7 +42,7 @@ public class TagsClient : ClientBase
 
         await CheckStatusCodes(result);
 
-        var model = await DeserializeAsync<PagninatedResponseModel<TagItem>>(result.Content);
+        var model = await DeserializeAsync<PaginatedResponseModel<TagItem>>(result.Content);
 
         CheckModel(model);
 

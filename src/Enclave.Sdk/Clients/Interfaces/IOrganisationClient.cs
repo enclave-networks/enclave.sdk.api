@@ -1,28 +1,41 @@
 ﻿using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Organisations;
 
-namespace Enclave.Sdk.Api.Clients.Interfaces
+namespace Enclave.Sdk.Api.Clients.Interfaces;
+
+public interface IOrganisationClient
 {
-    public interface IOrganisationClient
-    {
-        AccountOrganisation CurrentOrganisation { get; }
+    AccountOrganisation CurrentOrganisation { get; }
 
-        DnsClient DNSClient { get; }
+    IAuthorityClient Authority { get; }
 
-        Task CancelInviteAync(string emailAddress);
+    IDnsClient Dns { get; }
 
-        Task<Organisation?> GetAsync();
+    IEnrolmentKeysClient EnrolmentKeys { get; }
 
-        Task<OrganisationPricing> GetOrganisationPricing();
+    ILogsClient Logs { get; }
 
-        Task<IReadOnlyList<OrganisationUser>?> GetOrganisationUsersAsync();
+    IPoliciesClient Policies { get; }
 
-        Task<OrganisationPendingInvites> GetPendingInvitesAsync();
+    ISystemsClient Systems { get; }
 
-        Task InviteUserAsync(string emailAddress);
+    ITagsClient Tags { get; }
 
-        Task RemoveUserAsync(string accountId);
+    IUnapprovedSystemsClient UnapprovedSystems { get; }
 
-        Task<Organisation> UpdateAsync(Dictionary<string, object> updatedModel);
-    }
+    Task CancelInviteAync(string emailAddress);
+
+    Task<Organisation?> GetAsync();
+
+    Task<OrganisationPricing> GetOrganisationPricing();
+
+    Task<IReadOnlyList<OrganisationUser>?> GetOrganisationUsersAsync();
+
+    Task<OrganisationPendingInvites> GetPendingInvitesAsync();
+
+    Task InviteUserAsync(string emailAddress);
+
+    Task RemoveUserAsync(string accountId);
+
+    Task<Organisation> UpdateAsync(Dictionary<string, object> updatedModel);
 }

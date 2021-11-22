@@ -8,7 +8,21 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 {
     public AccountOrganisation CurrentOrganisation { get; private set; }
 
-    public DnsClient DNSClient { get; private set; }
+    public IAuthorityClient Authority => throw new NotImplementedException();
+
+    public IDnsClient Dns => throw new NotImplementedException();
+
+    public IEnrolmentKeysClient EnrolmentKeys => throw new NotImplementedException();
+
+    public ILogsClient Logs => throw new NotImplementedException();
+
+    public IPoliciesClient Policies => throw new NotImplementedException();
+
+    public ISystemsClient Systems => throw new NotImplementedException();
+
+    public ITagsClient Tags => throw new NotImplementedException();
+
+    public IUnapprovedSystemsClient UnapprovedSystems => throw new NotImplementedException();
 
     private string _orgRoute;
 
@@ -33,7 +47,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
     public async Task<Organisation> UpdateAsync(Dictionary<string, object> updatedModel)
     {
-        var encoded = Encode(updatedModel);
+        using var encoded = Encode(updatedModel);
         var result = await HttpClient.PatchAsync(_orgRoute, encoded);
         await CheckStatusCodes(result);
 
@@ -76,7 +90,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
     public async Task InviteUserAsync(string emailAddress)
     {
-        var encoded = Encode(new OrganisationInvite
+        using var encoded = Encode(new OrganisationInvite
         {
             EmailAddress = emailAddress,
         });
@@ -87,12 +101,12 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
     public async Task CancelInviteAync(string emailAddress)
     {
-        var encoded = Encode(new OrganisationInvite
+        using var encoded = Encode(new OrganisationInvite
         {
             EmailAddress = emailAddress,
         });
 
-        var request = new HttpRequestMessage
+        using var request = new HttpRequestMessage
         {
             Content = encoded,
             Method = HttpMethod.Delete,

@@ -1,6 +1,8 @@
+using Enclave.Sdk.Api.Clients.Interfaces;
+
 namespace Enclave.Sdk.Api.Clients;
 
-public class UnapprovedSystemsClient : ClientBase
+public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
 {
     private string _orgRoute;
 
@@ -9,4 +11,6 @@ public class UnapprovedSystemsClient : ClientBase
     {
         _orgRoute = orgRoute;
     }
+
+
 }

@@ -1,6 +1,8 @@
+using Enclave.Sdk.Api.Clients.Interfaces;
+
 namespace Enclave.Sdk.Api.Clients;
 
-public class SystemsClient : ClientBase
+public class SystemsClient : ClientBase, ISystemsClient
 {
     private string _orgRoute;
 

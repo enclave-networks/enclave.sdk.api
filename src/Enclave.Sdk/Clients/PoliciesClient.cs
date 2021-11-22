@@ -1,6 +1,8 @@
-﻿namespace Enclave.Sdk.Api.Clients;
+﻿using Enclave.Sdk.Api.Clients.Interfaces;
 
-public class PoliciesClient : ClientBase
+namespace Enclave.Sdk.Api.Clients;
+
+public class PoliciesClient : ClientBase, IPoliciesClient
 {
     private string _orgRoute;
 

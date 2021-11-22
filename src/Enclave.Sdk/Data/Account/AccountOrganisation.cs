@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-
-namespace Enclave.Sdk.Api.Data.Account;
+﻿namespace Enclave.Sdk.Api.Data.Account;
 
 public class AccountOrganisation
 {
@@ -13,7 +6,7 @@ public class AccountOrganisation
     /// <summary>
     /// The organisation ID.
     /// </summary>
-    public string OrgId { get; init; }
+    public OrganisationId OrgId { get; init; }
 
     /// <summary>
     /// The organisation name.
@@ -28,6 +21,5 @@ public class AccountOrganisation
 
 public class AccountOrganisationTopLevel
 {
-    [JsonPropertyName("orgs")]
     public List<AccountOrganisation> Orgs { get; init; }
 }

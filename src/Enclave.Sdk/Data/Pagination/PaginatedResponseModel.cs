@@ -10,7 +10,7 @@ namespace Enclave.Sdk.Api.Data.Pagination;
 /// Response model for paginated data.
 /// </summary>
 /// <typeparam name="TItemType">The item type.</typeparam>
-public class PagninatedResponseModel<TItemType>
+public class PaginatedResponseModel<TItemType>
 {
     /// <summary>
     /// Metadata for the paginated data.

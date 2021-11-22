@@ -1,4 +1,5 @@
 using Enclave.Sdk.Api.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mime;
 using System.Text;
@@ -70,13 +71,17 @@ public class ClientBase
         }
     }
 
-    protected void CheckModel<TModel>(TModel model)
+    protected void CheckModel<TModel>([NotNull] TModel? model)
     {
         if (model is null)
         {
-            throw new InvalidOperationException("Return from API is null please ensure you've entered the correct data or raise an issue");
+            Throw();
         }
     }
+
+    [DoesNotReturn]
+    private void Throw() =>
+        throw new InvalidOperationException("Return from API is null please ensure you've entered the correct data or raise an issue");
 
     protected virtual string PrepareUrl(string url)
     {

@@ -7,51 +7,62 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
-namespace Enclave.Sdk.Api.Tests.Clients
+namespace Enclave.Sdk.Api.Tests.Clients;
+
+public class OrganisationClientTests
 {
-    public class OrganisationClientTests
+    private OrganisationClient _organisationClient;
+    private WireMockServer _server;
+    private string _orgRoute;
+    private JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
     {
-        private OrganisationClient _organisationClient;
-        private WireMockServer _server;
-        private string _orgRoute;
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
 
-        [SetUp]
-        public void Setup()
+    [SetUp]
+    public void Setup()
+    {
+        _server = WireMockServer.Start();
+
+        var httpClient = new HttpClient
         {
-            _server = WireMockServer.Start();
+            BaseAddress = new Uri(_server.Urls[0]),
+        };
 
-            var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri(_server.Urls[0])
-            };
-
-            var currentOrganisation = new AccountOrganisation
-            {
-                OrgId = "testId",
-                OrgName = "TestName",
-                Role = UserOrganisationRole.Admin,
-            };
-
-            _orgRoute = $"/org/{currentOrganisation.OrgId}";
-
-            _organisationClient = new OrganisationClient(httpClient, currentOrganisation);
-        }
-
-        public async Task should_return_a_detailed_organisation_model_when_calling_GetAsync()
+        var currentOrganisation = new AccountOrganisation
         {
-            // Arrange
-            var org = new Organisation();
+            OrgId = OrganisationId.New(),
+            OrgName = "TestName",
+            Role = UserOrganisationRole.Admin,
+        };
 
-            _server
-              .Given(Request.Create().WithPath(_orgRoute).UsingGet())
-              .RespondWith(
-                Response.Create()
-                  .WithStatusCode(200)
-                  .WithBody(JsonSerializer.Serialize(org)));
+        _orgRoute = $"/org/{currentOrganisation.OrgId}";
 
-            // Act
+        _organisationClient = new OrganisationClient(httpClient, currentOrganisation);
+    }
 
-            // Assert
-        }
+    [Test]
+    public async Task Should_return_a_detailed_organisation_model_when_calling_GetAsync()
+    {
+        // Arrange
+        var org = new Organisation
+        {
+            Id = "testId",
+        };
+
+        _server
+          .Given(Request.Create().WithPath(_orgRoute).UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
+
+        // Act
+        var result = await _organisationClient.GetAsync();
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Id, Is.EqualTo(org.Id));
     }
 }

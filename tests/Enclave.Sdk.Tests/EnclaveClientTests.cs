@@ -1,17 +1,22 @@
-﻿using Enclave.Sdk.Api.Data.Account;
+﻿using System.Text.Json;
+using Enclave.Sdk.Api.Data.Account;
+using FluentAssertions;
 using NUnit.Framework;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
-namespace Enclave.Sdk.Api.Tests;
+namespace Enclave.Sdk.Api.Tests.Clients;
 
 public class EnclaveClientTests
 {
     private EnclaveClient _client;
     private WireMockServer _server;
+
+    private JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
 
     [SetUp]
     public void Setup()
@@ -31,7 +36,7 @@ public class EnclaveClientTests
             {
                 new AccountOrganisation
                 {
-                    OrgId = "testId",
+                    OrgId = OrganisationId.New(),
                     OrgName = "TestName",
                     Role = UserOrganisationRole.Admin,
                 },
@@ -43,20 +48,13 @@ public class EnclaveClientTests
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(accountOrg)));
+              .WithBody(JsonSerializer.Serialize(accountOrg, _serializerOptions)));
 
         // Act
         var result = await _client.GetOrganisationsAsync();
 
         // Assert
-        Assert.That(result.FirstOrDefault().OrgId,
-            Is.EqualTo(accountOrg.Orgs.FirstOrDefault().OrgId));
-    }
-
-    [Test]
-    public async Task should_throw_aggregate_exception_if_server_is_unreachable()
-    {
-        // Assert
+        result.FirstOrDefault().OrgId.Should().Be(accountOrg.Orgs.FirstOrDefault().OrgId);
     }
 
     [Test]
@@ -68,9 +66,9 @@ public class EnclaveClientTests
            .RespondWith(
              Response.Create()
                .WithStatusCode(200)
-               .WithBody(JsonSerializer.Serialize("{}")));
+               .WithBody("null"));
 
         // Assert
-        Assert.Throws<AggregateException>(() => _client.GetOrganisationsAsync().Wait());
+        await _client.Invoking(c => c.GetOrganisationsAsync()).Should().ThrowAsync<InvalidOperationException>();
     }
 }

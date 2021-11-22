@@ -1,8 +1,8 @@
-using Enclave.Sdk.Api.Data.Organisations;
+using Enclave.Sdk.Api.Clients.Interfaces;
 
 namespace Enclave.Sdk.Api.Clients;
 
-public class DnsClient : ClientBase
+public class DnsClient : ClientBase, IDnsClient
 {
     private string _orgRoute;
 

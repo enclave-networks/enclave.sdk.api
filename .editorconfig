@@ -163,3 +163,4 @@ dotnet_diagnostic.SA0001.severity=silent
 
 # CA2234: Pass system uri objects instead of strings
 dotnet_diagnostic.CA2234.severity = silent
+csharp_style_namespace_declarations=file_scoped:warning
