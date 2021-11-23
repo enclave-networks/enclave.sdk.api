@@ -1,22 +1,17 @@
-﻿using Enclave.Sdk.Api.Data.Organisations.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using Enclave.Sdk.Api.Data.Account;
+using Enclave.Sdk.Api.Data.Organisations.Enum;
 
 namespace Enclave.Sdk.Api.Data.Organisations;
 
 /// <summary>
 /// Organisation properties model.
 /// </summary>
-public class Organisation : IDataModel
+public class Organisation
 {
     /// <summary>
     /// The organisation ID.
     /// </summary>
-    public string Id { get; init; }
+    public OrganisationId? Id { get; init; }
 
     /// <summary>
     /// The UTC timestamp at which the organisation was created.
@@ -26,7 +21,7 @@ public class Organisation : IDataModel
     /// <summary>
     /// The name of the organisation.
     /// </summary>
-    public string Name { get; init; }
+    public string? Name { get; init; }
 
     /// <summary>
     /// The current plan the organisation is on.

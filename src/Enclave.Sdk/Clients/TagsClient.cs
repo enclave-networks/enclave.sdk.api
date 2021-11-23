@@ -5,16 +5,23 @@ using System.Text;
 
 namespace Enclave.Sdk.Api.Clients;
 
+/// <inheritdoc cref="ITagsClient"/>
 public class TagsClient : ClientBase, ITagsClient
 {
     private string _orgRoute;
 
+    /// <summary>
+    /// Consutructor which will be called by organisationClient when it's created.
+    /// </summary>
+    /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
+    /// <param name="orgRoute">the orgRoute which specifies the orgId.</param>
     public TagsClient(HttpClient httpClient, string orgRoute)
     : base(httpClient)
     {
         _orgRoute = orgRoute;
     }
 
+    /// <inheritdoc/>
     public async Task<PaginatedResponseModel<TagItem>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null)
     {
         string? queryString = default;
@@ -42,7 +49,7 @@ public class TagsClient : ClientBase, ITagsClient
 
         await CheckStatusCodes(result);
 
-        var model = await DeserializeAsync<PaginatedResponseModel<TagItem>>(result.Content);
+        var model = await DeserialiseAsync<PaginatedResponseModel<TagItem>>(result.Content);
 
         CheckModel(model);
 

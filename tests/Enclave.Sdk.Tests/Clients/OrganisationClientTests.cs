@@ -47,7 +47,7 @@ public class OrganisationClientTests
         // Arrange
         var org = new Organisation
         {
-            Id = "testId",
+            Id = OrganisationId.New(),
         };
 
         _server
