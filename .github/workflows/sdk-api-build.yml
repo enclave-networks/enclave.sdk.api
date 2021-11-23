@@ -44,10 +44,6 @@ jobs:
     - name: Push Github Source Packages
       if: github.event_name == 'push'
       run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg  --api-key ${{github.token}} -s https://nuget.pkg.github.com/enclave-networks/index.json --skip-duplicate --no-symbols true
-            
-    - name: Push Github Test Tools Package
-      if: github.event_name == 'push'
-      run: dotnet nuget push test/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg  --api-key ${{github.token}} -s https://nuget.pkg.github.com/enclave-networks/index.json --skip-duplicate --no-symbols true
 
     - name: Create Release    
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
