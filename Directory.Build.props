@@ -2,6 +2,7 @@
 <Project>
     <PropertyGroup>
         <LangVersion>9.0</LangVersion>
+        <RepositoryUrl>https://github.com/enclave-networks/sdk</RepositoryUrl>
         <Nullable>enable</Nullable>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     </PropertyGroup>
