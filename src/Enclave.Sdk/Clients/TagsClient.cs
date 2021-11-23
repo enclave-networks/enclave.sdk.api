@@ -1,7 +1,6 @@
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.Tags;
-using System.Text;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -24,26 +23,7 @@ public class TagsClient : ClientBase, ITagsClient
     /// <inheritdoc/>
     public async Task<PaginatedResponseModel<TagItem>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null)
     {
-        string? queryString = default;
-        if (searchTerm is not null)
-        {
-            queryString += $"search={searchTerm}";
-        }
-
-        if (sortOrder is not null)
-        {
-            queryString += $"sort={sortOrder}";
-        }
-
-        if (pageNumber is not null)
-        {
-            queryString += $"page={pageNumber}";
-        }
-
-        if (perPage is not null)
-        {
-            queryString += $"per_page={perPage}";
-        }
+        var queryString = BuildQueryString(searchTerm, sortOrder, pageNumber, perPage);
 
         var result = await HttpClient.GetAsync($"{_orgRoute}/tags?{queryString}");
 
@@ -54,5 +34,38 @@ public class TagsClient : ClientBase, ITagsClient
         CheckModel(model);
 
         return model;
+    }
+
+    private string? BuildQueryString(string? searchTerm, TagQuerySortOrder? sortOrder, int? pageNumber, int? perPage)
+    {
+        var queryStringSet = false;
+        string? queryString = default;
+        if (searchTerm is not null)
+        {
+            queryString += $"search={searchTerm}";
+            queryStringSet = true;
+        }
+
+        if (sortOrder is not null)
+        {
+            var delimiter = queryStringSet ? "&" : string.Empty;
+            queryString += $"{delimiter}sort={sortOrder}";
+            queryStringSet = true;
+        }
+
+        if (pageNumber is not null)
+        {
+            var delimiter = queryStringSet ? "&" : string.Empty;
+            queryString += $"{delimiter}page={pageNumber}";
+            queryStringSet = true;
+        }
+
+        if (perPage is not null)
+        {
+            var delimiter = queryStringSet ? "&" : string.Empty;
+            queryString += $"{delimiter}per_page={perPage}";
+        }
+
+        return queryString;
     }
 }
