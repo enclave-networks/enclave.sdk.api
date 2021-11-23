@@ -1,8 +1,10 @@
 ﻿namespace Enclave.Sdk.Api.Data.Account;
 
+/// <summary>
+/// Contains the role an account has within an organisation.
+/// </summary>
 public class AccountOrganisation
 {
-    // TODO: Set as Organisation Data Type
     /// <summary>
     /// The organisation ID.
     /// </summary>
@@ -11,7 +13,7 @@ public class AccountOrganisation
     /// <summary>
     /// The organisation name.
     /// </summary>
-    public string OrgName { get; init; }
+    public string? OrgName { get; init; }
 
     /// <summary>
     /// The user's role within the organisation.
@@ -19,7 +21,13 @@ public class AccountOrganisation
     public UserOrganisationRole Role { get; init; }
 }
 
+/// <summary>
+/// Account orgs response model.
+/// </summary>
 public class AccountOrganisationTopLevel
 {
-    public List<AccountOrganisation> Orgs { get; init; }
+    /// <summary>
+    /// The set of organisations.
+    /// </summary>
+    public List<AccountOrganisation>? Orgs { get; init; }
 }

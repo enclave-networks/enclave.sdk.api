@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Enclave.Sdk.Api.Data.Account;
+
 public enum UserOrganisationRole
 {
     Owner,
