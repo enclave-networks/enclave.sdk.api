@@ -17,6 +17,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BD898880-875C-43EA-B22C-A7C801CFA607}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		GitVersion.yml = GitVersion.yml
+		.github\workflows\sdk-api-build.yml = .github\workflows\sdk-api-build.yml
 	EndProjectSection
 EndProject
 Global
