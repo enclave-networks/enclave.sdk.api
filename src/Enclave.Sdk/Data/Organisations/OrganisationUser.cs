@@ -1,9 +1,4 @@
 ﻿using Enclave.Sdk.Api.Data.Account;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Enclave.Sdk.Api.Data.Organisations;
 
@@ -20,17 +15,17 @@ public class OrganisationUser
     /// <summary>
     /// The user email address.
     /// </summary>
-    public string EmailAddress { get; init; }
+    public string? EmailAddress { get; init; }
 
     /// <summary>
     /// The user first name.
     /// </summary>
-    public string FirstName { get; init; }
+    public string? FirstName { get; init; }
 
     /// <summary>
     /// The user last name.
     /// </summary>
-    public string LastName { get; init; }
+    public string? LastName { get; init; }
 
     /// <summary>
     /// The UTC timestamp for when the user joined the organisation.

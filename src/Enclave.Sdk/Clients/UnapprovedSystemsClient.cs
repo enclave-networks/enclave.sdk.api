@@ -11,6 +11,4 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     {
         _orgRoute = orgRoute;
     }
-
-
 }

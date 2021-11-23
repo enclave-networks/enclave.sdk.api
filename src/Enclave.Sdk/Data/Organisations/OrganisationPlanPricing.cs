@@ -9,7 +9,7 @@ public class OrganisationPlanPricing
     /// <summary>
     /// The appropriate currency symbol.
     /// </summary>
-    public string CurrencySymbol { get; init; }
+    public string? CurrencySymbol { get; init; }
 
     /// <summary>
     /// Whether or not this plan is enabled.
@@ -19,5 +19,5 @@ public class OrganisationPlanPricing
     /// <summary>
     /// The quantities of systems available in this plan.
     /// </summary>
-    public IReadOnlyList<PlanPricingQuanitity> Quantities { get; init; }
+    public IReadOnlyList<PlanPricingQuanitity>? Quantities { get; init; }
 }

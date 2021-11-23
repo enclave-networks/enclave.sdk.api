@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Enclave.Sdk.Api.Data.Pagination;
+﻿namespace Enclave.Sdk.Api.Data.Pagination;
 
 /// <summary>
 /// Defines the available pagination links.
