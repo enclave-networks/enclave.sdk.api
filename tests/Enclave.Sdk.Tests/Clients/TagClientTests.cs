@@ -3,6 +3,7 @@ using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.Tags;
+using FluentAssertions;
 using NUnit.Framework;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -63,8 +64,8 @@ public class TagClientTests
         var result = await _tagClient.GetAsync();
 
         // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Items, Is.Not.Null);
+        result.Should().NotBeNull();
+        result.Items.Should().NotBeNull();
     }
 
     [Test]
@@ -93,6 +94,6 @@ public class TagClientTests
         var result = await _tagClient.GetAsync(searchTerm: "test");
 
         // Assert
-        Assert.That(result, Is.Not.Null);
+        result.Should().NotBeNull();
     }
 }

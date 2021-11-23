@@ -11,7 +11,7 @@ public class Organisation
     /// <summary>
     /// The organisation ID.
     /// </summary>
-    public OrganisationId? Id { get; init; }
+    public OrganisationId Id { get; init; }
 
     /// <summary>
     /// The UTC timestamp at which the organisation was created.

@@ -15,7 +15,7 @@ public class OrganisationUser
     /// <summary>
     /// The account ID.
     /// </summary>
-    public string Id { get; init; }
+    public AccountId Id { get; init; }
 
     /// <summary>
     /// The user email address.

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Enclave.Sdk.Api.Data;
@@ -20,4 +21,10 @@ public class EnclaveSettings
     /// The Api base url.
     /// </summary>
     public string? BaseUrl { get; set; }
+
+    /// <summary>
+    /// Custom httpClient for use with all Client classes.
+    /// </summary>
+    [JsonIgnore]
+    public HttpClient? HttpClient { get; set; }
 }

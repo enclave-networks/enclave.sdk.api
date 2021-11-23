@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using FluentAssertions;
 using NUnit.Framework;
@@ -6,14 +7,14 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
-namespace Enclave.Sdk.Api.Tests.Clients;
+namespace Enclave.Sdk.Api.Tests;
 
 public class EnclaveClientTests
 {
     private EnclaveClient _client;
     private WireMockServer _server;
 
-    private JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+    private readonly JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
@@ -21,13 +22,19 @@ public class EnclaveClientTests
     [SetUp]
     public void Setup()
     {
-        var httpClient = new HttpClient();
         _server = WireMockServer.Start();
-        _client = new EnclaveClient(httpClient, _server.Urls[0], string.Empty);
+
+        var enclaveSettings = new EnclaveSettings
+        {
+            BaseUrl = _server.Urls[0],
+            HttpClient = new HttpClient(),
+        };
+
+        _client = new EnclaveClient(enclaveSettings);
     }
 
     [Test]
-    public async Task should_return_list_of_orgs_when_calling_GetOrganisationsAsync()
+    public async Task Should_return_list_of_orgs_when_calling_GetOrganisationsAsync()
     {
         // Arrange
         var accountOrg = new AccountOrganisationTopLevel
@@ -58,7 +65,7 @@ public class EnclaveClientTests
     }
 
     [Test]
-    public async Task should_throw_invalid_operation_exception_if_response_does_not_contain_an_organisation_model()
+    public async Task Should_throw_invalid_operation_exception_if_response_does_not_contain_an_organisation_model()
     {
         // Arrange
         _server

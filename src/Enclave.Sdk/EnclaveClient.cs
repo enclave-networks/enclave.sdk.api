@@ -13,28 +13,26 @@ namespace Enclave.Sdk.Api;
 /// </summary>
 public class EnclaveClient
 {
+    private const string FallbackUrl = "https://api.enclave.io/";
+
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     /// <summary>
     /// Setup all requirments for making api calls.
     /// </summary>
-    /// <param name="httpClient">an optional instance of httpClient.</param>
-    /// <param name="baseUrl">optional instance of baseUrl if it's not provided it defaults to the enclave settings file.</param>
-    /// <param name="token">optional instance of token if it's not provided it defaults to the enclave settings file.</param>
-    public EnclaveClient(HttpClient? httpClient = default, string? baseUrl = default, string? token = default)
+    /// <param name="settings">optional set of settings should you need to configure the client further such as your own httpClient.</param>
+    public EnclaveClient(EnclaveSettings? settings = default)
     {
-        if (token is null || baseUrl is null)
+        if (settings is null)
         {
-            var settings = GetSettingsFile();
-            token ??= settings?.BearerToken;
-            baseUrl ??= settings?.BaseUrl;
+            settings = GetSettingsFile();
         }
 
-        _httpClient = httpClient ?? new HttpClient();
-        _httpClient.BaseAddress = new Uri(baseUrl);
+        _httpClient = settings?.HttpClient ?? new HttpClient();
+        _httpClient.BaseAddress = new Uri(settings?.BaseUrl ?? FallbackUrl);
 
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings?.BearerToken);
         var clientHeader = new ProductInfoHeaderValue("SDK", Assembly.GetExecutingAssembly().GetName().Version?.ToString());
         _httpClient.DefaultRequestHeaders.UserAgent.Add(clientHeader);
 
@@ -88,7 +86,7 @@ public class EnclaveClient
 
         try
         {
-            using var streamReader = new StreamReader($"{location}\\sdkSettings.json");
+            using var streamReader = new StreamReader($"{location}\\credentials.json");
             var json = streamReader.ReadToEnd();
             var settings = JsonSerializer.Deserialize<EnclaveSettings>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
