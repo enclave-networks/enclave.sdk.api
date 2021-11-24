@@ -5,8 +5,5 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "We are using variables for tests they do not need to be disposed at end of scope", Scope = "namespace", Target = "Enclave.Sdk.Api.Tests")]
-[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "unit test methods use underscores for readability", Scope = "namespace", Target = "Enclave.Sdk.Api.Tests")]
-
-[assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "We are using variables for tests they do not need to be disposed at end of scope", Scope = "namespace", Target = "Enclave.Sdk.Api.Tests.Clients")]
-[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "unit test methods use underscores for readability", Scope = "namespace", Target = "Enclave.Sdk.Api.Tests.Clients")]
+[assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "We are using variables for tests they do not need to be disposed at end of scope", Scope = "module")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "unit test methods use underscores for readability", Scope = "module")]

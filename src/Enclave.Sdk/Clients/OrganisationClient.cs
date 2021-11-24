@@ -7,8 +7,23 @@ namespace Enclave.Sdk.Api.Clients;
 /// <inheritdoc cref="IOrganisationClient" />
 public class OrganisationClient : ClientBase, IOrganisationClient
 {
+    private string _orgRoute;
+
+    /// <summary>
+    /// This constructor is called by <see cref="EnclaveClient"/> when setting up the <see cref="OrganisationClient"/>.
+    /// It also calls the <see cref="ClientBase"/> constructor.
+    /// </summary>
+    /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
+    /// <param name="currentOrganisation">The current organisaiton used for routing the API calls.</param>
+    public OrganisationClient(HttpClient httpClient, AccountOrganisation currentOrganisation)
+        : base(httpClient)
+    {
+        Organisation = currentOrganisation;
+        _orgRoute = $"org/{Organisation.OrgId}";
+    }
+
     /// <inheritdoc/>
-    public AccountOrganisation CurrentOrganisation { get; private set; }
+    public AccountOrganisation Organisation { get; }
 
     /// <inheritdoc/>
     public IAuthorityClient Authority => throw new NotImplementedException();
@@ -34,21 +49,6 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public IUnapprovedSystemsClient UnapprovedSystems => throw new NotImplementedException();
 
-    private string _orgRoute;
-
-    /// <summary>
-    /// This constructor is called by EnclaveClient when setting up the OrganisationClient.
-    /// It also calls the ClientBase constructor.
-    /// </summary>
-    /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
-    /// <param name="currentOrganisation">The current organisaiton used for routing the API calls.</param>
-    public OrganisationClient(HttpClient httpClient, AccountOrganisation currentOrganisation)
-        : base(httpClient)
-    {
-        CurrentOrganisation = currentOrganisation;
-        _orgRoute = $"org/{CurrentOrganisation.OrgId}";
-    }
-
     /// <inheritdoc/>
     public async Task<Organisation?> GetAsync()
     {
@@ -57,7 +57,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
         var model = await DeserialiseAsync<Organisation>(result.Content);
 
-        CheckModel(model);
+        EnsureNotNull(model);
 
         return model;
     }
@@ -65,13 +65,13 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task<Organisation> UpdateAsync(Dictionary<string, object> updatedModel)
     {
-        using var encoded = Encode(updatedModel);
+        using var encoded = CreateJsonContent(updatedModel);
         var result = await HttpClient.PatchAsync(_orgRoute, encoded);
         await CheckStatusCodes(result);
 
         var model = await DeserialiseAsync<Organisation>(result.Content);
 
-        CheckModel(model);
+        EnsureNotNull(model);
 
         return model;
     }
@@ -84,7 +84,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
         var model = await DeserialiseAsync<OrganisationUsersTopLevel>(result.Content);
 
-        CheckModel(model);
+        EnsureNotNull(model);
 
         return model.Users;
     }
@@ -104,7 +104,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
         var model = await DeserialiseAsync<OrganisationPendingInvites>(result.Content);
 
-        CheckModel(model);
+        EnsureNotNull(model);
 
         return model.Invites;
     }
@@ -112,7 +112,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task InviteUserAsync(string emailAddress)
     {
-        using var encoded = Encode(new OrganisationInvite
+        using var encoded = CreateJsonContent(new OrganisationInvite
         {
             EmailAddress = emailAddress,
         });
@@ -124,7 +124,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task CancelInviteAync(string emailAddress)
     {
-        using var encoded = Encode(new OrganisationInvite
+        using var encoded = CreateJsonContent(new OrganisationInvite
         {
             EmailAddress = emailAddress,
         });
@@ -148,7 +148,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
         var model = await DeserialiseAsync<OrganisationPricing>(result.Content);
 
-        CheckModel(model);
+        EnsureNotNull(model);
 
         return model;
     }

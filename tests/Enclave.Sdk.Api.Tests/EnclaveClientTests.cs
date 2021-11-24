@@ -24,7 +24,7 @@ public class EnclaveClientTests
     {
         _server = WireMockServer.Start();
 
-        var enclaveSettings = new EnclaveSettings
+        var enclaveSettings = new EnclaveClientOptions
         {
             BaseUrl = _server.Urls[0],
             HttpClient = new HttpClient(),

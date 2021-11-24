@@ -15,10 +15,10 @@ public class Builder<TModel>
     /// </summary>
     /// <typeparam name="TValue">The type of the value you're updating.</typeparam>
     /// <param name="propExpr">Expression tree witht he property you want to update.</param>
-    /// <param name="newValue">the new value.</param>
+    /// <param name="newValue">The new value.</param>
     /// <returns>Builder for fluent building.</returns>
-    /// <exception cref="ArgumentNullException">throws if either propExpr or newValue are null.</exception>
-    /// <exception cref="ArgumentException">if the selected propExpr body is null.</exception>
+    /// <exception cref="ArgumentNullException">Throws if either propExpr or newValue are null.</exception>
+    /// <exception cref="ArgumentException">If the selected propExpr body is null.</exception>
     public Builder<TModel> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue newValue)
     {
         if (newValue is null)

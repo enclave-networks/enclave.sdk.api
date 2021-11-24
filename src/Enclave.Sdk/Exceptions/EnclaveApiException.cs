@@ -6,7 +6,7 @@ namespace Enclave.Sdk.Api.Exceptions;
 /// <summary>
 /// Exception used for Api specific errors.
 /// </summary>
-public class ApiException : Exception
+public class EnclaveApiException : Exception
 {
     /// <summary>
     /// Http Status Code.
@@ -30,8 +30,8 @@ public class ApiException : Exception
     /// <param name="statusCode">http status code.</param>
     /// <param name="response">http response as string.</param>
     /// <param name="headers">HttpResponseHeaders.</param>
-    public ApiException(string message, HttpStatusCode statusCode, string response, HttpResponseHeaders headers)
-        : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + (response == null ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)))
+    public EnclaveApiException(string message, HttpStatusCode statusCode, string response, HttpResponseHeaders headers)
+        : base(message)
     {
         StatusCode = statusCode;
         Response = response ?? string.Empty;
@@ -44,6 +44,7 @@ public class ApiException : Exception
     /// <returns>Exception as a string</returns>
     public override string ToString()
     {
-        return string.Format("HTTP Response: \n\n{0}\n\n{1}", Response, base.ToString());
+        var responseDetails = Response == null ? "(null)" : Response.Substring(0, Response.Length >= 512 ? 512 : Response.Length);
+        return $"HTTP Exception: {Message}\n\nStatus: {StatusCode} \nResponse: \n{responseDetails}";
     }
 }

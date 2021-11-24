@@ -10,7 +10,7 @@ public class TagsClient : ClientBase, ITagsClient
     private string _orgRoute;
 
     /// <summary>
-    /// Consutructor which will be called by organisationClient when it's created.
+    /// Consutructor which will be called by <see cref="OrganisationClient"/> when it's created.
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
     /// <param name="orgRoute">the orgRoute which specifies the orgId.</param>
@@ -31,7 +31,7 @@ public class TagsClient : ClientBase, ITagsClient
 
         var model = await DeserialiseAsync<PaginatedResponseModel<TagItem>>(result.Content);
 
-        CheckModel(model);
+        EnsureNotNull(model);
 
         return model;
     }

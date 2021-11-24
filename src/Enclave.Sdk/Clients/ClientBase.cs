@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
@@ -10,23 +11,23 @@ namespace Enclave.Sdk.Api.Clients;
 /// <summary>
 /// Base class used for commonly accessed methods and properties for all clients.
 /// </summary>
-public class ClientBase
+public abstract class ClientBase
 {
     /// <summary>
     /// HttpClient used for all clients API calls.
     /// </summary>
-    protected HttpClient HttpClient { get; private set; }
+    protected HttpClient HttpClient { get; }
 
     /// <summary>
     /// Options required for desrializing an serializing JSON to the API.
     /// </summary>
-    protected JsonSerializerOptions JsonSerializerOptions { get; private set; }
+    protected JsonSerializerOptions JsonSerializerOptions { get; }
 
     /// <summary>
     /// Constructor to setup all required fields this is called by all child classes.
     /// </summary>
     /// <param name="httpClient">HttpClient with baseUrl of the API used for all calls.</param>
-    public ClientBase(HttpClient httpClient)
+    protected ClientBase(HttpClient httpClient)
     {
         HttpClient = httpClient;
         JsonSerializerOptions = new JsonSerializerOptions
@@ -42,7 +43,7 @@ public class ClientBase
     /// <param name="data">the object to encode.</param>
     /// <returns>String content of object.</returns>
     /// <exception cref="ArgumentNullException">throws if data provided is null.</exception>
-    protected StringContent Encode<TModel>(TModel data)
+    protected StringContent CreateJsonContent<TModel>(TModel data)
     {
         if (data is null)
         {
@@ -56,10 +57,10 @@ public class ClientBase
     }
 
     /// <summary>
-    /// Desreialise the httpContent.
+    /// Desreialize the httpContent.
     /// </summary>
     /// <typeparam name="TModel">the object type to deserialise to.</typeparam>
-    /// <param name="httpContent">httpContent from the api call.</param>
+    /// <param name="httpContent">httpContent from the API call.</param>
     /// <returns>the object of type specified.</returns>
     protected async Task<TModel?> DeserialiseAsync<TModel>(HttpContent httpContent)
     {
@@ -68,8 +69,7 @@ public class ClientBase
             return default;
         }
 
-        var contentStream = await httpContent.ReadAsStreamAsync();
-        return await JsonSerializer.DeserializeAsync<TModel>(contentStream, JsonSerializerOptions);
+        return await httpContent.ReadFromJsonAsync<TModel>(JsonSerializerOptions);
     }
 
     /// <summary>
@@ -77,8 +77,8 @@ public class ClientBase
     /// </summary>
     /// <param name="httpResponse">response from an http call.</param>
     /// <exception cref="ArgumentNullException">Throws if httpResponse is null.</exception>
-    /// <exception cref="ApiException">throws if error codes are detected.</exception>
-    protected async Task CheckStatusCodes(HttpResponseMessage httpResponse)
+    /// <exception cref="EnclaveApiException">throws if error codes are detected.</exception>
+    protected static async Task CheckStatusCodes(HttpResponseMessage httpResponse)
     {
         if (httpResponse is null)
         {
@@ -88,19 +88,19 @@ public class ClientBase
         var responseText = await httpResponse.Content.ReadAsStringAsync();
         if (httpResponse.StatusCode == HttpStatusCode.BadRequest)
         {
-            throw new ApiException("Bad request; ensure you have provided the correct data to the Api", httpResponse.StatusCode, responseText, httpResponse.Headers);
+            throw new EnclaveApiException("Bad request; ensure you have provided the correct data to the Api", httpResponse.StatusCode, responseText, httpResponse.Headers);
         }
         else if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
         {
-            throw new ApiException("Unauthorized request; ensure you have provided a valid Access Token with \'Authorization: Bearer {token}\'.", httpResponse.StatusCode, responseText, httpResponse.Headers);
+            throw new EnclaveApiException("Unauthorized request; ensure you have provided a valid Access Token with \'Authorization: Bearer {token}\'.", httpResponse.StatusCode, responseText, httpResponse.Headers);
         }
         else if (httpResponse.StatusCode == HttpStatusCode.Forbidden)
         {
-            throw new ApiException("The provided token does not grant rights to this request.", httpResponse.StatusCode, responseText, httpResponse.Headers);
+            throw new EnclaveApiException("The provided token does not grant rights to this request.", httpResponse.StatusCode, responseText, httpResponse.Headers);
         }
         else if (!httpResponse.IsSuccessStatusCode)
         {
-            throw new ApiException($"The HTTP status code of the response was not expected ({httpResponse.StatusCode}).", httpResponse.StatusCode, responseText, httpResponse.Headers);
+            throw new EnclaveApiException($"The HTTP status code of the response was not expected ({httpResponse.StatusCode}).", httpResponse.StatusCode, responseText, httpResponse.Headers);
         }
     }
 
@@ -109,7 +109,7 @@ public class ClientBase
     /// </summary>
     /// <typeparam name="TModel">Type being checked.</typeparam>
     /// <param name="model">object being checked.</param>
-    protected void CheckModel<TModel>([NotNull] TModel? model)
+    protected static void EnsureNotNull<TModel>([NotNull] TModel? model)
     {
         if (model is null)
         {
@@ -122,6 +122,6 @@ public class ClientBase
     /// </summary>
     /// <exception cref="InvalidOperationException">Throws every time this is called.</exception>
     [DoesNotReturn]
-    private void Throw() =>
+    private static void Throw() =>
         throw new InvalidOperationException("Return from API is null please ensure you've entered the correct data or raise an issue");
 }

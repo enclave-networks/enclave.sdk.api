@@ -12,52 +12,52 @@ public interface IOrganisationClient
     /// <summary>
     /// The organisation selected and the one used to create this client.
     /// </summary>
-    AccountOrganisation CurrentOrganisation { get; }
+    AccountOrganisation Organisation { get; }
 
     /// <summary>
-    /// An instance of AuthorityClient associated with the current organisaiton.
+    /// An instance of <see cref="AuthorityClient"/> associated with the current organisaiton.
     /// </summary>
     IAuthorityClient Authority { get; }
 
     /// <summary>
-    /// An instance of DnsClient associated with the current organisaiton.
+    /// An instance of <see cref="DnsClient"/> associated with the current organisaiton.
     /// </summary>
     IDnsClient Dns { get; }
 
     /// <summary>
-    /// An instance of EnrolmentKeysClient associated with the current organisaiton.
+    /// An instance of <see cref="EnrolmentKeysClient"/> associated with the current organisaiton.
     /// </summary>
     IEnrolmentKeysClient EnrolmentKeys { get; }
 
     /// <summary>
-    /// An instance of LogsClient associated with the current organisaiton.
+    /// An instance of <see cref="LogsClient"/> associated with the current organisaiton.
     /// </summary>
     ILogsClient Logs { get; }
 
     /// <summary>
-    /// An instance of PoliciesClient associated with the current organisaiton.
+    /// An instance of <see cref="PoliciesClient"/> associated with the current organisaiton.
     /// </summary>
     IPoliciesClient Policies { get; }
 
     /// <summary>
-    /// An instance of SystemsClient associated with the current organisaiton.
+    /// An instance of <see cref="SystemsClient"/> associated with the current organisaiton.
     /// </summary>
     ISystemsClient Systems { get; }
 
     /// <summary>
-    /// An instance of TagsClient associated with the current organisaiton.
+    /// An instance of <see cref="TagsClient"/> associated with the current organisaiton.
     /// </summary>
     ITagsClient Tags { get; }
 
     /// <summary>
-    /// An instance of UnapprovedSystemsClient associated with the current organisaiton.
+    /// An instance of <see cref="UnapprovedSystemsClient"/> associated with the current organisaiton.
     /// </summary>
     IUnapprovedSystemsClient UnapprovedSystems { get; }
 
     /// <summary>
     /// Get more detail on your current organisaiton.
     /// </summary>
-    /// <returns>A more detailed version of CurrentOrganisaiton.</returns>
+    /// <returns>A detailed organisation model.</returns>
     Task<Organisation?> GetAsync();
 
     /// <summary>
