@@ -17,34 +17,57 @@ public class EnclaveClient
     private const string FallbackUrl = "https://api.enclave.io/";
 
     private readonly HttpClient _httpClient;
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
+
+    /// <summary>
+    /// Create an <see cref="EnclaveClient"/> using settings found in the .enclave/credentials.json file in your user directory.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">Throws if options in file are null.</exception>
+    public EnclaveClient()
+    {
+        var options = GetSettingsFile();
+
+        if (options is null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        _httpClient = new HttpClient();
+
+        SetupHttpClient(options);
+    }
+
+    /// <summary>
+    /// Simple <see cref="EnclaveClient"/> Setup using just a PersonalAccessToken.
+    /// </summary>
+    /// <param name="personalAccessToken">The token created on the Enclave Portal.</param>
+    public EnclaveClient(string personalAccessToken)
+    {
+        var options = new EnclaveClientOptions { PersonalAccessToken = personalAccessToken };
+
+        _httpClient = new HttpClient();
+
+        SetupHttpClient(options);
+    }
 
     /// <summary>
     /// Setup all requirements for making API calls.
     /// </summary>
-    /// <param name="settings">optional set of settings should you need to configure the client further such as your own <see cref="HttpClient" />.</param>
-    public EnclaveClient(EnclaveClientOptions? settings = default)
+    /// <param name="options">Options for setting up the <see cref="EnclaveClient"/>.</param>
+    /// <exception cref="ArgumentNullException">Throws if options are null.</exception>
+    public EnclaveClient(EnclaveClientOptions options)
     {
-        if (settings is null)
+        _httpClient = options?.HttpClient ?? new HttpClient();
+
+        if (options is null)
         {
-            settings = GetSettingsFile();
+            throw new ArgumentNullException(nameof(options));
         }
 
-        _httpClient = settings?.HttpClient ?? new HttpClient();
-        _httpClient.BaseAddress = new Uri(settings?.BaseUrl ?? FallbackUrl);
-
-        if (!string.IsNullOrWhiteSpace(settings?.PersonalAccessToken))
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings?.PersonalAccessToken);
-        }
-
-        var clientHeader = new ProductInfoHeaderValue("Enclave.Sdk.Api", Assembly.GetExecutingAssembly().GetName().Version?.ToString());
-        _httpClient.DefaultRequestHeaders.UserAgent.Add(clientHeader);
-
-        _jsonSerializerOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
+        SetupHttpClient(options);
     }
 
     /// <summary>
@@ -96,5 +119,18 @@ public class EnclaveClient
             throw new ArgumentException("Can't find user settings file please refer to documentaiton for more information " +
                 "or provide a bearer token in the constructor");
         }
+    }
+
+    private void SetupHttpClient(EnclaveClientOptions options)
+    {
+        _httpClient.BaseAddress = new Uri(options.BaseUrl ?? FallbackUrl);
+
+        if (!string.IsNullOrWhiteSpace(options.PersonalAccessToken))
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.PersonalAccessToken);
+        }
+
+        var clientHeader = new ProductInfoHeaderValue("Enclave.Sdk.Api", Assembly.GetExecutingAssembly().GetName().Version?.ToString());
+        _httpClient.DefaultRequestHeaders.UserAgent.Add(clientHeader);
     }
 }
