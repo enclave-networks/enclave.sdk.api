@@ -101,7 +101,7 @@ public class EnclaveClient
     {
         var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-        var location = Path.Combine(userProfile, ".encalve", "credentials.json");
+        var location = Path.Combine(userProfile, ".enclave", "credentials.json");
 
         try
         {
