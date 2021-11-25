@@ -68,7 +68,8 @@ public class OrganisationClient : ClientBase, IOrganisationClient
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
-        } 
+        }
+
         using var encoded = CreateJsonContent(builder.Send());
         var result = await HttpClient.PatchAsync(_orgRoute, encoded);
 
