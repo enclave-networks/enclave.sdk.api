@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Text.Json;
 using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Clients.Interfaces;
-using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Handlers;
 
