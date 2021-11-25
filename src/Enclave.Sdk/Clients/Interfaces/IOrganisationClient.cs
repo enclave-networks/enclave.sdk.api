@@ -63,12 +63,6 @@ public interface IOrganisationClient
     Task<Organisation?> GetAsync();
 
     /// <summary>
-    /// Gets pricing options for the current organisaiton.
-    /// </summary>
-    /// <returns>A representation of the pricing options.</returns>
-    Task<OrganisationPricing> GetOrganisationPricing();
-
-    /// <summary>
     /// Gets the users that have access to the current organisaiton.
     /// </summary>
     /// <returns>List of users associated with the current organisation.</returns>

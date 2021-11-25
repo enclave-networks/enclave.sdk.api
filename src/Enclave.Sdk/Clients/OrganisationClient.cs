@@ -1,9 +1,9 @@
-﻿using Enclave.Sdk.Api.Clients.Interfaces;
+﻿using System.Net.Http.Json;
+using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Organisations;
 using Enclave.Sdk.Api.Data.PatchModel;
-using System.Net.Http.Json;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -132,15 +132,5 @@ public class OrganisationClient : ClientBase, IOrganisationClient
         };
 
         await HttpClient.SendAsync(request);
-    }
-
-    /// <inheritdoc/>
-    public async Task<OrganisationPricing> GetOrganisationPricing()
-    {
-        var model = await HttpClient.GetFromJsonAsync<OrganisationPricing>($"{_orgRoute}/pricing");
-
-        EnsureNotNull(model);
-
-        return model;
     }
 }
