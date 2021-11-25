@@ -8,7 +8,7 @@ public class TagItem
     /// <summary>
     /// The tag name.
     /// </summary>
-    public string Tag { get; init; }
+    public string Tag { get; init; } = default!;
 
     /// <summary>
     /// The last time this tag was last referenced.

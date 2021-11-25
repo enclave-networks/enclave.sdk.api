@@ -21,7 +21,7 @@ public class Organisation
     /// <summary>
     /// The name of the organisation.
     /// </summary>
-    public string? Name { get; init; }
+    public string Name { get; init; } = default!;
 
     /// <summary>
     /// The current plan the organisation is on.

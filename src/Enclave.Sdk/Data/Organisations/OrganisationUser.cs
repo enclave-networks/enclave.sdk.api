@@ -40,5 +40,5 @@ public class OrganisationUser
 
 public class OrganisationUsersTopLevel
 {
-    public IReadOnlyList<OrganisationUser> Users { get; init; }
+    public IReadOnlyList<OrganisationUser>? Users { get; init; }
 }

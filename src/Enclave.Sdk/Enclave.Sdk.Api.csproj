@@ -6,13 +6,19 @@
         <OutputType>Library</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Company>Enclave Networks Limited</Company>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Description>
+            Provides a NuGet package that makes it easier to consume the Enclave Management APIs.
+        </Description>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="TypedIds" Version="1.1.2" />
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>

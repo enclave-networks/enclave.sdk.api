@@ -1,6 +1,5 @@
 ﻿namespace Enclave.Sdk.Api.Data.Organisations;
 
-
 /// <summary>
 /// A model defining the pricing for a given plan.
 /// </summary>
@@ -9,7 +8,7 @@ public class OrganisationPlanPricing
     /// <summary>
     /// The appropriate currency symbol.
     /// </summary>
-    public string? CurrencySymbol { get; init; }
+    public string CurrencySymbol { get; init; } = default!;
 
     /// <summary>
     /// Whether or not this plan is enabled.

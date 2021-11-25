@@ -10,12 +10,12 @@ public class OrganisationBillingEvent
     /// <summary>
     /// The code indicating the billing event.
     /// </summary>
-    public string Code { get; init; }
+    public string Code { get; init; } = default!;
 
     /// <summary>
     /// A human-readable message describing the event.
     /// </summary>
-    public string Message { get; init; }
+    public string Message { get; init; } = default!;
 
     /// <summary>
     /// The event 'level'.

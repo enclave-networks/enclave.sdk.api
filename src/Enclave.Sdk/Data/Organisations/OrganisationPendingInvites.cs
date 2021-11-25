@@ -8,5 +8,5 @@ public class OrganisationPendingInvites
     /// <summary>
     /// The set of outstanding invites that have been sent for this organisation.
     /// </summary>
-    public IReadOnlyList<OrganisationInvite> Invites { get; init; }
+    public IReadOnlyList<OrganisationInvite>? Invites { get; init; }
 }

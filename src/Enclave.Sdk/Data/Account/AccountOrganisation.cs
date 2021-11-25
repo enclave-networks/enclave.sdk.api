@@ -13,7 +13,7 @@ public class AccountOrganisation
     /// <summary>
     /// The organisation name.
     /// </summary>
-    public string? OrgName { get; init; }
+    public string OrgName { get; init; } = default!;
 
     /// <summary>
     /// The user's role within the organisation.
@@ -29,5 +29,5 @@ public class AccountOrganisationTopLevel
     /// <summary>
     /// The set of organisations.
     /// </summary>
-    public List<AccountOrganisation>? Orgs { get; init; }
+    public List<AccountOrganisation> Orgs { get; init; } = default!;
 }
