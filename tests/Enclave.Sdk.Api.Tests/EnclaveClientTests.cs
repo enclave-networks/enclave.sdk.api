@@ -27,7 +27,6 @@ public class EnclaveClientTests
         var enclaveSettings = new EnclaveClientOptions
         {
             BaseUrl = _server.Urls[0],
-            HttpClient = new HttpClient(),
         };
 
         _client = new EnclaveClient(enclaveSettings);

@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Enclave.Sdk.Api.Data.PatchModel;
+using System.Linq.Expressions;
 
 namespace Enclave.Sdk.Api.Data;
 
@@ -6,7 +7,8 @@ namespace Enclave.Sdk.Api.Data;
 /// Class used to construct patch models.
 /// </summary>
 /// <typeparam name="TModel">The Type we're updating.</typeparam>
-public class Builder<TModel>
+public class PatchBuilder<TModel>
+    where TModel : IPatchModel
 {
     private Dictionary<string, object> _patchDictionary = new Dictionary<string, object>();
 
@@ -19,7 +21,7 @@ public class Builder<TModel>
     /// <returns>Builder for fluent building.</returns>
     /// <exception cref="ArgumentNullException">Throws if either propExpr or newValue are null.</exception>
     /// <exception cref="ArgumentException">If the selected propExpr body is null.</exception>
-    public Builder<TModel> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue newValue)
+    public PatchBuilder<TModel> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue newValue)
     {
         if (newValue is null)
         {
@@ -50,7 +52,7 @@ public class Builder<TModel>
     /// Build the Dictionary and return it. then reset the dictionary so the builder can be reused.
     /// </summary>
     /// <returns>Dictionary built using the Set model in this class.</returns>
-    public Dictionary<string, object> Send()
+    internal Dictionary<string, object> Send()
     {
         try
         {

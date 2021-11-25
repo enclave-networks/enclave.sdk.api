@@ -19,21 +19,12 @@ public abstract class ClientBase
     protected HttpClient HttpClient { get; }
 
     /// <summary>
-    /// Options required for desrializing an serializing JSON to the API.
-    /// </summary>
-    protected JsonSerializerOptions JsonSerializerOptions { get; }
-
-    /// <summary>
     /// Constructor to setup all required fields this is called by all child classes.
     /// </summary>
     /// <param name="httpClient">HttpClient with baseUrl of the API used for all calls.</param>
     protected ClientBase(HttpClient httpClient)
     {
         HttpClient = httpClient;
-        JsonSerializerOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
     }
 
     /// <summary>
@@ -50,7 +41,7 @@ public abstract class ClientBase
             throw new ArgumentNullException(nameof(data), "Data should not be null");
         }
 
-        var json = JsonSerializer.Serialize(data, JsonSerializerOptions);
+        var json = JsonSerializer.Serialize(data, Constants.JsonSerializerOptions);
         var stringContent = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
 
         return stringContent;
@@ -69,39 +60,7 @@ public abstract class ClientBase
             return default;
         }
 
-        return await httpContent.ReadFromJsonAsync<TModel>(JsonSerializerOptions);
-    }
-
-    /// <summary>
-    /// Check respoonse status codes for errors.
-    /// </summary>
-    /// <param name="httpResponse">response from an http call.</param>
-    /// <exception cref="ArgumentNullException">Throws if httpResponse is null.</exception>
-    /// <exception cref="EnclaveApiException">throws if error codes are detected.</exception>
-    protected static async Task CheckStatusCodes(HttpResponseMessage httpResponse)
-    {
-        if (httpResponse is null)
-        {
-            throw new ArgumentNullException(nameof(httpResponse), "httpResponse should not be null are you sure a call has been made");
-        }
-
-        var responseText = await httpResponse.Content.ReadAsStringAsync();
-        if (httpResponse.StatusCode == HttpStatusCode.BadRequest)
-        {
-            throw new EnclaveApiException("Bad request; ensure you have provided the correct data to the Api", httpResponse.StatusCode, responseText, httpResponse.Headers);
-        }
-        else if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            throw new EnclaveApiException("Unauthorized request; ensure you have provided a valid Access Token with \'Authorization: Bearer {token}\'.", httpResponse.StatusCode, responseText, httpResponse.Headers);
-        }
-        else if (httpResponse.StatusCode == HttpStatusCode.Forbidden)
-        {
-            throw new EnclaveApiException("The provided token does not grant rights to this request.", httpResponse.StatusCode, responseText, httpResponse.Headers);
-        }
-        else if (!httpResponse.IsSuccessStatusCode)
-        {
-            throw new EnclaveApiException($"The HTTP status code of the response was not expected ({httpResponse.StatusCode}).", httpResponse.StatusCode, responseText, httpResponse.Headers);
-        }
+        return await httpContent.ReadFromJsonAsync<TModel>(Constants.JsonSerializerOptions);
     }
 
     /// <summary>

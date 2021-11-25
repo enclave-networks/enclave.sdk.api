@@ -1,6 +1,9 @@
 ﻿using Enclave.Sdk.Api.Clients.Interfaces;
+using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Organisations;
+using Enclave.Sdk.Api.Data.PatchModel;
+using System.Net.Http.Json;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -52,10 +55,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task<Organisation?> GetAsync()
     {
-        var result = await HttpClient.GetAsync(_orgRoute);
-        await CheckStatusCodes(result);
-
-        var model = await DeserialiseAsync<Organisation>(result.Content);
+        var model = await HttpClient.GetFromJsonAsync<Organisation>(_orgRoute);
 
         EnsureNotNull(model);
 
@@ -63,11 +63,14 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     }
 
     /// <inheritdoc/>
-    public async Task<Organisation> UpdateAsync(Dictionary<string, object> updatedModel)
+    public async Task<Organisation> UpdateAsync(PatchBuilder<OrganisationPatch> builder)
     {
-        using var encoded = CreateJsonContent(updatedModel);
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        } 
+        using var encoded = CreateJsonContent(builder.Send());
         var result = await HttpClient.PatchAsync(_orgRoute, encoded);
-        await CheckStatusCodes(result);
 
         var model = await DeserialiseAsync<Organisation>(result.Content);
 
@@ -79,10 +82,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task<IReadOnlyList<OrganisationUser>?> GetOrganisationUsersAsync()
     {
-        var result = await HttpClient.GetAsync($"{_orgRoute}/users");
-        await CheckStatusCodes(result);
-
-        var model = await DeserialiseAsync<OrganisationUsersTopLevel>(result.Content);
+        var model = await HttpClient.GetFromJsonAsync<OrganisationUsersTopLevel>($"{_orgRoute}/users");
 
         EnsureNotNull(model);
 
@@ -92,17 +92,13 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task RemoveUserAsync(string accountId)
     {
-        var result = await HttpClient.DeleteAsync($"{_orgRoute}/users/{accountId}");
-        await CheckStatusCodes(result);
+        await HttpClient.DeleteAsync($"{_orgRoute}/users/{accountId}");
     }
 
     /// <inheritdoc/>
     public async Task<IReadOnlyList<OrganisationInvite>> GetPendingInvitesAsync()
     {
-        var result = await HttpClient.GetAsync($"{_orgRoute}/invites");
-        await CheckStatusCodes(result);
-
-        var model = await DeserialiseAsync<OrganisationPendingInvites>(result.Content);
+        var model = await HttpClient.GetFromJsonAsync<OrganisationPendingInvites>($"{_orgRoute}/invites");
 
         EnsureNotNull(model);
 
@@ -118,7 +114,6 @@ public class OrganisationClient : ClientBase, IOrganisationClient
         });
 
         var result = await HttpClient.PostAsync($"{_orgRoute}/invites", encoded);
-        await CheckStatusCodes(result);
     }
 
     /// <inheritdoc/>
@@ -136,17 +131,13 @@ public class OrganisationClient : ClientBase, IOrganisationClient
             RequestUri = new Uri($"{HttpClient.BaseAddress}{_orgRoute}/invites"),
         };
 
-        var result = await HttpClient.SendAsync(request);
-        await CheckStatusCodes(result);
+        await HttpClient.SendAsync(request);
     }
 
     /// <inheritdoc/>
     public async Task<OrganisationPricing> GetOrganisationPricing()
     {
-        var result = await HttpClient.GetAsync($"{_orgRoute}/pricing");
-        await CheckStatusCodes(result);
-
-        var model = await DeserialiseAsync<OrganisationPricing>(result.Content);
+        var model = await HttpClient.GetFromJsonAsync<OrganisationPricing>($"{_orgRoute}/pricing");
 
         EnsureNotNull(model);
 

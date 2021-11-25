@@ -12,7 +12,7 @@ public class EnclaveClientOptions
     /// </summary>
     public EnclaveClientOptions()
     {
-        BaseUrl = "https://api.enclave.io";
+        BaseUrl = Constants.ApiUrl;
     }
 
     /// <summary>
@@ -24,10 +24,4 @@ public class EnclaveClientOptions
     /// The base URL of the Enclave API endpoint.
     /// </summary>
     public string BaseUrl { get; set; }
-
-    /// <summary>
-    /// Custom HttpClient for use with all Client classes.
-    /// </summary>
-    [JsonIgnore]
-    public HttpClient? HttpClient { get; set; }
 }

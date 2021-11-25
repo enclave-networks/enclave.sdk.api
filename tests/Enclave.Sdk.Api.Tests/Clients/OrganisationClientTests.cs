@@ -3,6 +3,7 @@ using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Organisations;
+using Enclave.Sdk.Api.Data.PatchModel;
 using FluentAssertions;
 using NUnit.Framework;
 using WireMock.FluentAssertions;
@@ -87,7 +88,7 @@ public class OrganisationClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
 
-        var patchModel = new Builder<Organisation>().Set(x => x.Website, "newWebsite").Send();
+        var patchModel = new PatchBuilder<OrganisationPatch>().Set(x => x.Website, "newWebsite");
 
         // Act
         var result = await _organisationClient.UpdateAsync(patchModel);
@@ -115,7 +116,7 @@ public class OrganisationClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
 
-        var patchModel = new Builder<Organisation>().Set(x => x.Website, "newWebsite").Send();
+        var patchModel = new PatchBuilder<OrganisationPatch>().Set(x => x.Website, "newWebsite");
 
         // Act
         var result = await _organisationClient.UpdateAsync(patchModel);

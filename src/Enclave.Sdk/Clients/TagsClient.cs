@@ -1,6 +1,7 @@
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.Tags;
+using System.Net.Http.Json;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -25,11 +26,7 @@ public class TagsClient : ClientBase, ITagsClient
     {
         var queryString = BuildQueryString(searchTerm, sortOrder, pageNumber, perPage);
 
-        var result = await HttpClient.GetAsync($"{_orgRoute}/tags?{queryString}");
-
-        await CheckStatusCodes(result);
-
-        var model = await DeserialiseAsync<PaginatedResponseModel<TagItem>>(result.Content);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TagItem>>($"{_orgRoute}/tags?{queryString}");
 
         EnsureNotNull(model);
 
@@ -38,6 +35,7 @@ public class TagsClient : ClientBase, ITagsClient
 
     private string? BuildQueryString(string? searchTerm, TagQuerySortOrder? sortOrder, int? pageNumber, int? perPage)
     {
+        // TODO: encode values.
         var queryStringSet = false;
         string? queryString = default;
         if (searchTerm is not null)

@@ -1,5 +1,7 @@
-﻿using Enclave.Sdk.Api.Data.Account;
+﻿using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Organisations;
+using Enclave.Sdk.Api.Data.PatchModel;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
@@ -100,7 +102,8 @@ public interface IOrganisationClient
     /// Patch request to update the organisation.
     /// Use Builder.cs to help you generate the dictionary.
     /// </summary>
-    /// <param ref="Builder" name="updatedModel">Use Builder.cs to properly generate.</param>
+    /// <param ref="Builder" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
     /// <returns>The updated organisation.</returns>
-    Task<Organisation> UpdateAsync(Dictionary<string, object> updatedModel);
+    /// <exception cref="ArgumentNullException">Throws if builder is null.</exception>
+    Task<Organisation> UpdateAsync(PatchBuilder<OrganisationPatch> builder);
 }

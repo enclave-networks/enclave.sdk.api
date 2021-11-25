@@ -6,6 +6,7 @@ using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
+using Enclave.Sdk.Api.Handlers;
 
 namespace Enclave.Sdk.Api;
 
@@ -14,13 +15,7 @@ namespace Enclave.Sdk.Api;
 /// </summary>
 public class EnclaveClient
 {
-    private const string FallbackUrl = "https://api.enclave.io/";
-
     private readonly HttpClient _httpClient;
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    };
 
     /// <summary>
     /// Create an <see cref="EnclaveClient"/> using settings found in the .enclave/credentials.json file in your user directory.
@@ -35,9 +30,7 @@ public class EnclaveClient
             throw new ArgumentNullException(nameof(options));
         }
 
-        _httpClient = new HttpClient();
-
-        SetupHttpClient(options);
+        _httpClient = SetupHttpClient(options);
     }
 
     /// <summary>
@@ -48,9 +41,7 @@ public class EnclaveClient
     {
         var options = new EnclaveClientOptions { PersonalAccessToken = personalAccessToken };
 
-        _httpClient = new HttpClient();
-
-        SetupHttpClient(options);
+        _httpClient = SetupHttpClient(options);
     }
 
     /// <summary>
@@ -60,14 +51,12 @@ public class EnclaveClient
     /// <exception cref="ArgumentNullException">Throws if options are null.</exception>
     public EnclaveClient(EnclaveClientOptions options)
     {
-        _httpClient = options?.HttpClient ?? new HttpClient();
-
         if (options is null)
         {
             throw new ArgumentNullException(nameof(options));
         }
 
-        SetupHttpClient(options);
+        _httpClient = SetupHttpClient(options);
     }
 
     /// <summary>
@@ -77,7 +66,7 @@ public class EnclaveClient
     /// <exception cref="InvalidOperationException">throws when the Api returns a null response.</exception>
     public async Task<List<AccountOrganisation>> GetOrganisationsAsync()
     {
-        var organisations = await _httpClient.GetFromJsonAsync<AccountOrganisationTopLevel>("/account/orgs", _jsonSerializerOptions);
+        var organisations = await _httpClient.GetFromJsonAsync<AccountOrganisationTopLevel>("/account/orgs", Constants.JsonSerializerOptions);
 
         if (organisations is null)
         {
@@ -121,16 +110,20 @@ public class EnclaveClient
         }
     }
 
-    private void SetupHttpClient(EnclaveClientOptions options)
+    private static HttpClient SetupHttpClient(EnclaveClientOptions options)
     {
-        _httpClient.BaseAddress = new Uri(options.BaseUrl ?? FallbackUrl);
+        var httpClient = new HttpClient(new ProblemDetailsHttpMessageHandler())
+        {
+            BaseAddress = new Uri(options.BaseUrl),
+        };
 
         if (!string.IsNullOrWhiteSpace(options.PersonalAccessToken))
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.PersonalAccessToken);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.PersonalAccessToken);
         }
 
         var clientHeader = new ProductInfoHeaderValue("Enclave.Sdk.Api", Assembly.GetExecutingAssembly().GetName().Version?.ToString());
-        _httpClient.DefaultRequestHeaders.UserAgent.Add(clientHeader);
+        httpClient.DefaultRequestHeaders.UserAgent.Add(clientHeader);
+        return httpClient;
     }
 }
