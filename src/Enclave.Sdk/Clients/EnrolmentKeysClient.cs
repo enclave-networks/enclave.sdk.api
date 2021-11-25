@@ -19,7 +19,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     /// It also calls the <see cref="ClientBase"/> constructor.
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
-    /// <param name="orgRoute">The API</param>
+    /// <param name="orgRoute">The organisation API route.</param>
     public EnrolmentKeysClient(HttpClient httpClient, string orgRoute)
     : base(httpClient)
     {

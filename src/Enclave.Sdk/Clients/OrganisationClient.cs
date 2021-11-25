@@ -23,6 +23,8 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     {
         Organisation = currentOrganisation;
         _orgRoute = $"org/{Organisation.OrgId}";
+
+        EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
@@ -35,7 +37,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     public IDnsClient Dns => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public IEnrolmentKeysClient EnrolmentKeys => throw new NotImplementedException();
+    public IEnrolmentKeysClient EnrolmentKeys { get; }
 
     /// <inheritdoc/>
     public ILogsClient Logs => throw new NotImplementedException();
