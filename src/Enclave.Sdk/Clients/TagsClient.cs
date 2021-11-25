@@ -2,6 +2,7 @@ using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.Tags;
 using System.Net.Http.Json;
+using System.Web;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -33,37 +34,29 @@ public class TagsClient : ClientBase, ITagsClient
         return model;
     }
 
-    private string? BuildQueryString(string? searchTerm, TagQuerySortOrder? sortOrder, int? pageNumber, int? perPage)
+    private static string? BuildQueryString(string? searchTerm, TagQuerySortOrder? sortOrder, int? pageNumber, int? perPage)
     {
-        // TODO: encode values.
-        var queryStringSet = false;
-        string? queryString = default;
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
         if (searchTerm is not null)
         {
-            queryString += $"search={searchTerm}";
-            queryStringSet = true;
+            queryString.Add("search", searchTerm);
         }
 
         if (sortOrder is not null)
         {
-            var delimiter = queryStringSet ? "&" : string.Empty;
-            queryString += $"{delimiter}sort={sortOrder}";
-            queryStringSet = true;
+            queryString.Add("sort", sortOrder.ToString());
         }
 
         if (pageNumber is not null)
         {
-            var delimiter = queryStringSet ? "&" : string.Empty;
-            queryString += $"{delimiter}page={pageNumber}";
-            queryStringSet = true;
+            queryString.Add("page", pageNumber.ToString());
         }
 
         if (perPage is not null)
         {
-            var delimiter = queryStringSet ? "&" : string.Empty;
-            queryString += $"{delimiter}per_page={perPage}";
+            queryString.Add("per_page", perPage.ToString());
         }
 
-        return queryString;
+        return queryString.ToString();
     }
 }

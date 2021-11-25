@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
-using Enclave.Sdk.Api.Exceptions;
 
 namespace Enclave.Sdk.Api.Clients;
 
