@@ -20,7 +20,7 @@ public interface IEnrolmentKeysClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many tags per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<SimpleEnrolmentKey>> GetEnrolmentKeysAsync(string? searchTerm = null, bool includeDisabled = false, EnrolmentKeySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null);
+    Task<PaginatedResponseModel<SimpleEnrolmentKey>> GetEnrolmentKeysAsync(string? searchTerm = null, bool? includeDisabled = null, EnrolmentKeySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null);
 
     /// <summary>
     /// Creates an Enrolment Key using a <see cref="EnrolmentKeyCreate"/> Model.

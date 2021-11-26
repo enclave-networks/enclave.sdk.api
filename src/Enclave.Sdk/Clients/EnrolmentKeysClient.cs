@@ -29,7 +29,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     /// <inheritdoc/>
     public async Task<PaginatedResponseModel<SimpleEnrolmentKey>> GetEnrolmentKeysAsync(
         string? searchTerm = null,
-        bool includeDisabled = false,
+        bool? includeDisabled = null,
         EnrolmentKeySortOrder? sortOrder = null,
         int? pageNumber = null,
         int? perPage = null)
