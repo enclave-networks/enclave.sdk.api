@@ -102,11 +102,6 @@ public class EnclaveClient
         {
             return null;
         }
-        catch
-        {
-            throw new ArgumentException("Can't find user settings file please refer to documentaiton for more information " +
-                "or provide a bearer token in the constructor");
-        }
     }
 
     private static HttpClient SetupHttpClient(EnclaveClientOptions options)

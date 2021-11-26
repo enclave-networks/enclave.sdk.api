@@ -66,7 +66,7 @@ public interface IOrganisationClient
     /// Gets the users that have access to the current organisaiton.
     /// </summary>
     /// <returns>List of users associated with the current organisation.</returns>
-    Task<IReadOnlyList<OrganisationUser>?> GetOrganisationUsersAsync();
+    Task<IReadOnlyList<OrganisationUser>> GetOrganisationUsersAsync();
 
     /// <summary>
     /// Get a list of invites that haven't been accepted.
