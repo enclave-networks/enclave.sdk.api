@@ -80,13 +80,13 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     }
 
     /// <inheritdoc/>
-    public async Task<IReadOnlyList<OrganisationUser>?> GetOrganisationUsersAsync()
+    public async Task<IReadOnlyList<OrganisationUser>> GetOrganisationUsersAsync()
     {
         var model = await HttpClient.GetFromJsonAsync<OrganisationUsersTopLevel>($"{_orgRoute}/users");
 
         EnsureNotNull(model);
 
-        return model.Users;
+        return model.Users ?? Array.Empty<OrganisationUser>();
     }
 
     /// <inheritdoc/>
@@ -102,7 +102,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
         EnsureNotNull(model);
 
-        return model.Invites;
+        return model.Invites ?? Array.Empty<OrganisationInvite>();
     }
 
     /// <inheritdoc/>
