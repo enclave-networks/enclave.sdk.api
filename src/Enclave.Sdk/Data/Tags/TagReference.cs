@@ -8,5 +8,5 @@ public class TagReference
     /// <summary>
     /// The tag name.
     /// </summary>
-    public string Tag { get; } = default!;
+    public string Tag { get; init; } = default!;
 }

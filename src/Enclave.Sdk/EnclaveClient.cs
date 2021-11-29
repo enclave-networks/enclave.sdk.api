@@ -63,7 +63,7 @@ public class EnclaveClient
     /// </summary>
     /// <returns>List of organisation containing the OrgId and Name and the users role in that organisation.</returns>
     /// <exception cref="InvalidOperationException">throws when the Api returns a null response.</exception>
-    public async Task<List<AccountOrganisation>> GetOrganisationsAsync()
+    public async Task<IReadOnlyList<AccountOrganisation>> GetOrganisationsAsync()
     {
         var organisations = await _httpClient.GetFromJsonAsync<AccountOrganisationTopLevel>("/account/orgs", Constants.JsonSerializerOptions);
 
