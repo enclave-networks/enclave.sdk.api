@@ -46,7 +46,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     /// <inheritdoc/>
     public async Task<FullEnrolmentKey> CreateAsync(EnrolmentKeyCreate createModel)
     {
-        if (createModel == null)
+        if (createModel is null)
         {
             throw new ArgumentNullException(nameof(createModel));
         }
