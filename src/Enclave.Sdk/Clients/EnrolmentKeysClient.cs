@@ -81,6 +81,8 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
         using var encoded = CreateJsonContent(builder.Send());
         var result = await HttpClient.PatchAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}", encoded);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<FullEnrolmentKey>(result.Content);
 
         EnsureNotNull(model);
@@ -113,7 +115,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<BulkKeyActionResult> BulkEnableAsync(params int[] enrolmentKeys)
+    public async Task<int> BulkEnableAsync(params int[] enrolmentKeys)
     {
         var requestModel = new
         {
@@ -124,15 +126,17 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/enable", content);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<BulkKeyActionResult>(result.Content);
 
         EnsureNotNull(model);
 
-        return model;
+        return model.KeysModified;
     }
 
     /// <inheritdoc/>
-    public async Task<BulkKeyActionResult> BulkDisableAsync(params int[] enrolmentKeys)
+    public async Task<int> BulkDisableAsync(params int[] enrolmentKeys)
     {
         var requestModel = new
         {
@@ -143,11 +147,13 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/disable", content);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<BulkKeyActionResult>(result.Content);
 
         EnsureNotNull(model);
 
-        return model;
+        return model.KeysModified;
     }
 
     private static string? BuildQueryString(string? searchTerm, bool? includeDisabled, EnrolmentKeySortOrder? sortOrder, int? pageNumber, int? perPage)

@@ -1,16 +1,17 @@
 ﻿using Enclave.Sdk.Api.Clients;
+using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.EnrolmentKeys;
+using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
 using Enclave.Sdk.Api.Data.Pagination;
+using Enclave.Sdk.Api.Data.PatchModel;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text.Json;
+using WireMock.FluentAssertions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using WireMock.FluentAssertions;
 using WireMock.Server;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
@@ -220,5 +221,179 @@ public class EnrolmentKeyClientTests
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/enrolment-keys?per_page={perPage}");
+    }
+
+    [Test]
+    public async Task Should_return_a_full_enrolment_key_model_when_calling_CreateAsync()
+    {
+        // Arrange
+        var response = new FullEnrolmentKey();
+
+        var createModel = new EnrolmentKeyCreate();
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys").UsingPost())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+
+
+        // Act
+        var result = await _enrolmentKeysClient.CreateAsync(createModel);
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task Should_return_a_full_enrolment_key_model_when_calling_GetAsync()
+    {
+        // Arrange
+        var response = new FullEnrolmentKey();
+
+        var enrolmentKeyId = 12;
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+
+
+        // Act
+        var result = await _enrolmentKeysClient.GetAsync(enrolmentKeyId);
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task Should_return_a_full_enrolment_key_model_when_calling_UpdateAsync()
+    {
+        // Arrange
+        var response = new FullEnrolmentKey();
+
+        var enrolmentKeyId = 12;
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}").UsingPatch())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var patchBuilder = new PatchBuilder<EnrolmentKeyPatchModel>().Set(e => e.Description, "New Value");
+
+
+        // Act
+        var result = await _enrolmentKeysClient.UpdateAsync(enrolmentKeyId, patchBuilder);
+
+        // Assert
+        result.Should().NotBeNull();
+   }
+
+    [Test]
+    public async Task Should_return_a_full_enrolment_key_model_when_calling_EnableAsync()
+    {
+        // Arrange
+        var response = new FullEnrolmentKey();
+
+        var enrolmentKeyId = 12;
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _enrolmentKeysClient.EnableAsync(enrolmentKeyId);
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task Should_return_a_full_enrolment_key_model_when_calling_DisableAsync()
+    {
+        // Arrange
+        var response = new FullEnrolmentKey();
+
+        var enrolmentKeyId = 12;
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/disable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _enrolmentKeysClient.DisableAsync(enrolmentKeyId);
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task Should_return_number_of_keys_modified_when_calling_BulkEnableAsync()
+    {
+        // Arrange
+        var response = new BulkKeyActionResult()
+        {
+            KeysModified = 4,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/enable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var keys = new int[] { 1, 2, 3, 4 };
+
+        // Act
+        var result = await _enrolmentKeysClient.BulkEnableAsync(keys);
+
+        // Assert
+        result.Should().Be(keys.Length);
+    }
+
+    [Test]
+    public async Task Should_return_number_of_keys_modified_when_calling_BulkDisableAsync()
+    {
+        // Arrange
+        var response = new BulkKeyActionResult()
+        {
+            KeysModified = 4,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/disable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var keys = new int[] { 1, 2, 3, 4 };
+
+        // Act
+        var result = await _enrolmentKeysClient.BulkDisableAsync(keys);
+
+        // Assert
+        result.Should().Be(keys.Length);
     }
 }

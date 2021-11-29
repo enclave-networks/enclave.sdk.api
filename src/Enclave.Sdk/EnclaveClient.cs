@@ -85,7 +85,7 @@ public class EnclaveClient
         return new OrganisationClient(_httpClient, organisation);
     }
 
-    private EnclaveClientOptions? GetSettingsFile()
+    private static EnclaveClientOptions? GetSettingsFile()
     {
         var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
@@ -104,6 +104,7 @@ public class EnclaveClient
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Needed for lifecycle of consumer")]
     private static HttpClient SetupHttpClient(EnclaveClientOptions options)
     {
         var httpClient = new HttpClient(new ProblemDetailsHttpMessageHandler())

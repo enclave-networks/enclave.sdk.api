@@ -75,6 +75,8 @@ public class OrganisationClient : ClientBase, IOrganisationClient
         using var encoded = CreateJsonContent(builder.Send());
         var result = await HttpClient.PatchAsync(_orgRoute, encoded);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<Organisation>(result.Content);
 
         EnsureNotNull(model);

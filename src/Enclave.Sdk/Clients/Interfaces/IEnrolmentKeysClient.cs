@@ -63,13 +63,13 @@ public interface IEnrolmentKeysClient
     /// Bulk enable mutliple Enrolment Keys.
     /// </summary>
     /// <param name="enrolmentKeys">An array of Enrolment Key Ids to enable.</param>
-    /// <returns>An object with the number of keys modified.</returns>
-    Task<BulkKeyActionResult> BulkEnableAsync(params int[] enrolmentKeys);
+    /// <returns>The number of keys modified.</returns>
+    Task<int> BulkEnableAsync(params int[] enrolmentKeys);
 
     /// <summary>
     /// Bulk disable mutliple Enrolment Keys.
     /// </summary>
     /// <param name="enrolmentKeys">An array of Enrolment Key Ids to disable.</param>
-    /// <returns>An object with the number of keys modified.</returns>
-    Task<BulkKeyActionResult> BulkDisableAsync(params int[] enrolmentKeys);
+    /// <returns>The number of keys modified.</returns>
+    Task<int> BulkDisableAsync(params int[] enrolmentKeys);
 }
