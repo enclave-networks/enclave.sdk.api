@@ -199,12 +199,21 @@ public class DnsClient : ClientBase, IDnsClient
         EnsureNotNull(model);
 
         return model;
-
     }
 
     private static string? BuildQueryString(DnsZoneId? dnsZoneId, string? hostname, int? pageNumber, int? perPage)
     {
         var queryString = HttpUtility.ParseQueryString(string.Empty);
+        if (dnsZoneId is not null)
+        {
+            queryString.Add("zoneId", dnsZoneId.ToString());
+        }
+
+        if (hostname is not null)
+        {
+            queryString.Add("hostname", hostname);
+        }
+
         if (pageNumber is not null)
         {
             queryString.Add("page", pageNumber.ToString());
