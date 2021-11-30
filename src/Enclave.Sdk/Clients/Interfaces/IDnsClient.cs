@@ -61,7 +61,11 @@ public interface IDnsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many items per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<BasicDnsRecord>> GetRecordsAsync(DnsZoneId? dnsZoneId = null, string? hostname = null, int? pageNumber = null, int? perPage = null)
+    Task<PaginatedResponseModel<BasicDnsRecord>> GetRecordsAsync(
+        DnsZoneId? dnsZoneId = null,
+        string? hostname = null,
+        int? pageNumber = null,
+        int? perPage = null);
 
     /// <summary>
     /// Create a DNS Record using a <see cref="DnsRecordCreate"/> model.

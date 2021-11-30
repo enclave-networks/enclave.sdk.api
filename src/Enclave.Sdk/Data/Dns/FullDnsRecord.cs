@@ -1,4 +1,4 @@
-﻿using Enclave.Sdk.Api.Data.System;
+﻿using Enclave.Sdk.Api.Data.SystemManagement;
 using Enclave.Sdk.Api.Data.Tags;
 
 namespace Enclave.Sdk.Api.Data.Dns;
@@ -52,5 +52,5 @@ public class FullDnsRecord
     /// <summary>
     /// Any provided notes for this record.
     /// </summary>
-    public string? Notes { get; }
+    public string? Notes { get; init; }
 }

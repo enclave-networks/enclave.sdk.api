@@ -103,7 +103,11 @@ public class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<BasicDnsRecord>> GetRecordsAsync(DnsZoneId? dnsZoneId = null, string? hostname = null, int? pageNumber = null, int? perPage = null)
+    public async Task<PaginatedResponseModel<BasicDnsRecord>> GetRecordsAsync(
+        DnsZoneId? dnsZoneId = null,
+        string? hostname = null,
+        int? pageNumber = null,
+        int? perPage = null)
     {
         var queryString = BuildQueryString(dnsZoneId, hostname, pageNumber, perPage);
 

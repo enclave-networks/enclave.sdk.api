@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Enclave.Sdk.Api.Data.System;
+﻿namespace Enclave.Sdk.Api.Data.SystemManagement;
 
 /// <summary>
 /// Abstraction for a system reference model so we can mix placeholder and "actual" reference models.
