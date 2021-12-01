@@ -13,6 +13,12 @@ public class DnsClient : ClientBase, IDnsClient
 {
     private string _orgRoute;
 
+    /// <summary>
+    /// This constructor is called by <see cref="EnclaveClient"/> when setting up the <see cref="DnsClient"/>.
+    /// It also calls the <see cref="ClientBase"/> constructor.
+    /// </summary>
+    /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
+    /// <param name="orgRoute">The organisation API route.</param>
     public DnsClient(HttpClient httpClient, string orgRoute)
     : base(httpClient)
     {
