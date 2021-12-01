@@ -426,6 +426,142 @@ public class DnsClientTests
     [Test]
     public async Task Should_return_a_full_dns_record_model_when_calling_CreateRecordAsync()
     {
+        // Arrange
+        var response = new FullDnsRecord
+        {
+            Id = DnsRecordId.FromInt(123),
+            Name = "Name",
+        };
 
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingPost())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var createModel = new DnsRecordCreate
+        {
+            Name = "Name",
+        };
+
+        // Act
+        var result = await _dnsClient.CreateRecordAsync(createModel);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Id.Should().Be(response.Id);
+    }
+
+    [Test]
+    public async Task Should_return_number_of_deleted_records_when_calling_DeleteRecordsAsync()
+    {
+        // Arrange
+        var response = new BulkDnsRecordDeleteResult
+        {
+             DnsRecordsDeleted = 3,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingDelete())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var records = new DnsRecordId[] { DnsRecordId.FromInt(1), DnsRecordId.FromInt(2), DnsRecordId.FromInt(3) };
+
+
+        // Act
+        var result = await _dnsClient.DeleteRecordsAsync(records);
+
+        // Assert
+        result.Should().Be(3);
+    }
+
+    [Test]
+    public async Task Should_return_full_dns_record_when_calling_GetRecordAsync()
+    {
+        // Arrange
+        var id = DnsRecordId.FromInt(123);
+        var response = new FullDnsRecord
+        {
+            Id = id,
+            Name = "Name",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/dns/records/{id}").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _dnsClient.GetRecordAsync(id);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Id.Should().Be(id);
+    }
+
+    [Test]
+    public async Task Should_return_full_dns_record_when_calling_UpdateRecordAsync()
+    {
+        // Arrange
+        var id = DnsRecordId.FromInt(123);
+        var response = new FullDnsRecord
+        {
+            Id = id,
+            Name = "New Name",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/dns/records/{id}").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var builder = new PatchBuilder<DnsRecordPatch>().Set(d => d.Name, "New Name");
+
+        // Act
+        var result = await _dnsClient.UpdateRecordAsync(id, builder);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Name.Should().Be(response.Name);
+    }
+
+
+    [Test]
+    public async Task Should_return_full_dns_record_when_calling_DeleteRecord()
+    {
+        // Arrange
+        var id = DnsRecordId.FromInt(123);
+        var response = new FullDnsRecord
+        {
+            Id = id,
+            Name = "Name",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/dns/records/{id}").UsingDelete())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _dnsClient.DeleteRecordAsync(id);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Id.Should().Be(id);
     }
 }
