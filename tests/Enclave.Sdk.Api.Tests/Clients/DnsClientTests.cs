@@ -520,7 +520,7 @@ public class DnsClientTests
         };
 
         _server
-          .Given(Request.Create().WithPath($"{_orgRoute}/dns/records/{id}").UsingGet())
+          .Given(Request.Create().WithPath($"{_orgRoute}/dns/records/{id}").UsingPatch())
           .RespondWith(
             Response.Create()
               .WithSuccess()
