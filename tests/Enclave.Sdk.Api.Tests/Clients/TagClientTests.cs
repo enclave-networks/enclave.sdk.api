@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Enclave.Sdk.Api.Clients;
+using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.Tags;
 using FluentAssertions;
@@ -31,11 +32,11 @@ public class TagClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var orgId = "testId";
+        var organisationId = OrganisationId.New();
+        _orgRoute = $"/org/{organisationId}";
 
-        _orgRoute = $"/org/{orgId}";
 
-        _tagClient = new TagsClient(httpClient, _orgRoute);
+        _tagClient = new TagsClient(httpClient, $"org/{organisationId}");
     }
 
     [Test]

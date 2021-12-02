@@ -34,9 +34,10 @@ public class DnsClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        _orgRoute = $"/org/{OrganisationId.New()}";
+        var organisationId = OrganisationId.New();
+        _orgRoute = $"/org/{organisationId}";
 
-        _dnsClient = new DnsClient(httpClient, _orgRoute);
+        _dnsClient = new DnsClient(httpClient, $"org/{organisationId}");
     }
 
     [Test]

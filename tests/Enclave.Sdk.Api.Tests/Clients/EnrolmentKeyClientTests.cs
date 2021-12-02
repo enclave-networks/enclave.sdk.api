@@ -34,11 +34,12 @@ public class EnrolmentKeyClientTests
         {
             BaseAddress = new Uri(_server.Urls[0]),
         };
-    
-        _orgRoute = $"/org/{OrganisationId.New()}";
 
-        // Not sure if this is the best way of doing this
-        _enrolmentKeysClient = new EnrolmentKeysClient(httpClient, _orgRoute);
+
+        var organisationId = OrganisationId.New();
+        _orgRoute = $"/org/{organisationId}";
+
+        _enrolmentKeysClient = new EnrolmentKeysClient(httpClient, $"org/{organisationId}");
     }
 
     [Test]
