@@ -1,4 +1,5 @@
-﻿using Enclave.Sdk.Api.Data.Policy;
+﻿using Enclave.Sdk.Api.Data.Policies;
+using Enclave.Sdk.Api.Data.Policy;
 
 namespace Enclave.Sdk.Api.Data.PatchModel;
 
@@ -30,7 +31,7 @@ public class PolicyPatch : IPatchModel
     /// <summary>
     /// The set of ACLs for the policy.
     /// </summary>
-    public PolicyAclModel[]? Acls { get; set; }
+    public PolicyAcl[]? Acls { get; set; }
 
     /// <summary>
     /// Notes for the policy.

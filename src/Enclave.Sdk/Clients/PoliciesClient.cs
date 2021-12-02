@@ -24,7 +24,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<Policy>> GetPolicies(
+    public async Task<PaginatedResponseModel<Policy>> GetPoliciesAsync(
         string? searchTerm = null,
         bool? includeDisabled = null,
         PolicySortOrder? sortOrder = null,
@@ -38,6 +38,49 @@ public class PoliciesClient : ClientBase, IPoliciesClient
         EnsureNotNull(model);
 
         return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Policy> CreateAsync(PolicyCreate createModel)
+    {
+        if (createModel is null)
+        {
+            throw new ArgumentNullException(nameof(createModel));
+        }
+
+        var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/policies", createModel, Constants.JsonSerializerOptions);
+
+        var model = await DeserialiseAsync<Policy>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DeletePoliciesAsync(params int[] policyIds)
+    {
+        using var content = CreateJsonContent(new
+        {
+            policyIds = policyIds,
+        });
+
+        using var request = new HttpRequestMessage
+        {
+            Content = content,
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri($"{HttpClient.BaseAddress}{_orgRoute}/policies"),
+        };
+
+        var result = await HttpClient.SendAsync(request);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<BulkPolicyDeleteResult>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model.PoliciesDeleted;
     }
 
     private static string? BuildQueryString(string? searchTerm, bool? includeDisabled, PolicySortOrder? sortOrder, int? pageNumber, int? perPage)
