@@ -15,8 +15,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     private string _orgRoute;
 
     /// <summary>
-    /// This constructor is called by <see cref="EnclaveClient"/> when setting up the <see cref="EnrolmentKeysClient"/>.
-    /// It also calls the <see cref="ClientBase"/> constructor.
+    /// Consutructor which will be called by <see cref="OrganisationClient"/> when it's created.
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
     /// <param name="orgRoute">The organisation API route.</param>
