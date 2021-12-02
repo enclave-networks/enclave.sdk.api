@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Enclave.Sdk.Api.Data.Dns;
+﻿namespace Enclave.Sdk.Api.Data.Dns;
 
 /// <summary>
 /// Basic model representing a summary of a DNS record.

@@ -26,6 +26,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
 
         EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
         Dns = new DnsClient(httpClient, _orgRoute);
+        UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
@@ -53,7 +54,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     public ITagsClient Tags => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public IUnapprovedSystemsClient UnapprovedSystems => throw new NotImplementedException();
+    public IUnapprovedSystemsClient UnapprovedSystems { get; }
 
     /// <inheritdoc/>
     public async Task<Organisation?> GetAsync()

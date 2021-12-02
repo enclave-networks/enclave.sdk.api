@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using FluentAssertions;
 using NUnit.Framework;

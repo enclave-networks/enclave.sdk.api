@@ -1,6 +1,5 @@
 ﻿using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Organisations.Enum;
-using System.Text.Json.Serialization;
 
 namespace Enclave.Sdk.Api.Data.Organisations;
 

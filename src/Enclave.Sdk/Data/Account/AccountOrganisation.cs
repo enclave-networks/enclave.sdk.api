@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Enclave.Sdk.Api.Data.Account;
+﻿namespace Enclave.Sdk.Api.Data.Account;
 
 /// <summary>
 /// Contains the role an account has within an organisation.

@@ -34,19 +34,11 @@ public class EnrolmentKeyClientTests
         {
             BaseAddress = new Uri(_server.Urls[0]),
         };
-
-        var currentOrganisation = new AccountOrganisation
-        {
-            OrgId = OrganisationId.New(),
-            OrgName = "TestName",
-            Role = UserOrganisationRole.Admin,
-        };
-
-        _orgRoute = $"/org/{currentOrganisation.OrgId}";
+    
+        _orgRoute = $"/org/{OrganisationId.New()}";
 
         // Not sure if this is the best way of doing this
-        var organisationClient = new OrganisationClient(httpClient, currentOrganisation);
-        _enrolmentKeysClient = (EnrolmentKeysClient)organisationClient.EnrolmentKeys;
+        _enrolmentKeysClient = new EnrolmentKeysClient(httpClient, _orgRoute);
     }
 
     [Test]

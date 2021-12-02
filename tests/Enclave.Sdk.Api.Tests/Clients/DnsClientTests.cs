@@ -34,18 +34,9 @@ public class DnsClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var currentOrganisation = new AccountOrganisation
-        {
-            OrgId = OrganisationId.New(),
-            OrgName = "TestName",
-            Role = UserOrganisationRole.Admin,
-        };
+        _orgRoute = $"/org/{OrganisationId.New()}";
 
-        _orgRoute = $"/org/{currentOrganisation.OrgId}";
-
-        // Not sure if this is the best way of doing this
-        var organisationClient = new OrganisationClient(httpClient, currentOrganisation);
-        _dnsClient = (DnsClient)organisationClient.Dns;
+        _dnsClient = new DnsClient(httpClient, _orgRoute);
     }
 
     [Test]
