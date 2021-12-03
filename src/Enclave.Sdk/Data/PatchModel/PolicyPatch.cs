@@ -1,5 +1,4 @@
 ﻿using Enclave.Sdk.Api.Data.Policies;
-using Enclave.Sdk.Api.Data.Policy;
 
 namespace Enclave.Sdk.Api.Data.PatchModel;
 
