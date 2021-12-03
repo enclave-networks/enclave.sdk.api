@@ -9,6 +9,8 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.FluentAssertions;
+using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.PatchModel;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
@@ -221,5 +223,241 @@ public class PoliciesClientTests
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/policies?per_page={page}");
+    }
+
+    [Test]
+    public async Task Should_return_policy_model_when_calling_CreateAsync()
+    {
+        // Arrange
+        var response = new Policy
+        {
+            Description = "test",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies").UsingPost())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var createModel = new PolicyCreate
+        {
+            Description = "test",
+        };
+
+        // Act
+        var result = await _policiesClient.CreateAsync(createModel);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Description.Should().Be(response.Description);
+    }
+
+    [Test]
+    public async Task Should_return_number_of_deleted_policies_when_calling_DeletePoliciesAsync()
+    {
+        // Arrange
+        var response = new BulkPolicyDeleteResult
+        {
+            PoliciesDeleted = 3,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies").UsingDelete())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _policiesClient.DeletePoliciesAsync(2, 3, 5);
+
+        // Assert
+        result.Should().Be(3);
+    }
+
+    [Test]
+    public async Task Should_return_policy_model_when_calling_GetAsync()
+    {
+        // Arrange
+        var response = new Policy
+        {
+            Id = 12,
+            Description = "test",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/{response.Id}").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _policiesClient.GetAsync(12);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Description.Should().Be(response.Description);
+    }
+
+    [Test]
+    public async Task Should_return_policy_model_when_calling_UpdateAsync()
+    {
+        // Arrange
+        var response = new Policy
+        {
+            Id = 12,
+            Description = "test",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/{response.Id}").UsingPatch())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var builder = new PatchBuilder<PolicyPatch>().Set(p => p.IsEnabled, false);
+
+        // Act
+        var result = await _policiesClient.UpdateAsync(12, builder);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Description.Should().Be(response.Description);
+    }
+
+    [Test]
+    public async Task Should_return_policy_model_when_calling_DeleteAsync()
+    {
+        // Arrange
+        var response = new Policy
+        {
+            Id = 12,
+            Description = "test",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/{response.Id}").UsingDelete())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _policiesClient.DeleteAsync(12);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Description.Should().Be(response.Description);
+    }
+
+    [Test]
+    public async Task Should_return_policy_model_when_calling_EnableAsync()
+    {
+        // Arrange
+        var response = new Policy
+        {
+            Id = 12,
+            Description = "test",
+            IsEnabled = true,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/{response.Id}/enable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _policiesClient.EnableAsync(12);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsEnabled.Should().Be(response.IsEnabled);
+    }
+
+    [Test]
+    public async Task Should_return_policy_model_when_calling_DisableAsync()
+    {
+        // Arrange
+        var response = new Policy
+        {
+            Id = 12,
+            Description = "test",
+            IsEnabled = false,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/{response.Id}/disable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _policiesClient.DisableAsync(12);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsEnabled.Should().Be(response.IsEnabled);
+    }
+
+    [Test]
+    public async Task Should_return_number_of_deleted_policies_when_calling_EnablePoliciesAsync()
+    {
+        // Arrange
+        var response = new BulkPolicyUpdateResult
+        {
+            PoliciesUpdated = 3,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/enable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _policiesClient.EnablePoliciesAsync(2, 3, 5);
+
+        // Assert
+        result.Should().Be(3);
+    }
+
+    [Test]
+    public async Task Should_return_number_of_deleted_policies_when_calling_DisablePoliciesAsync()
+    {
+        // Arrange
+        var response = new BulkPolicyUpdateResult
+        {
+            PoliciesUpdated = 3,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/disable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _policiesClient.DisablePoliciesAsync(2, 3, 5);
+
+        // Assert
+        result.Should().Be(3);
     }
 }
