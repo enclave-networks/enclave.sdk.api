@@ -11,6 +11,7 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.PatchModel;
+using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 

@@ -5,6 +5,7 @@ using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.PatchModel;
 using Enclave.Sdk.Api.Data.UnaprrovedSystems;
+using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
 
 namespace Enclave.Sdk.Api.Clients;
 

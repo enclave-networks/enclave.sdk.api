@@ -1,8 +1,11 @@
-﻿namespace Enclave.Sdk.Api.Data.UnaprrovedSystems;
+﻿using System.Text.Json.Serialization;
+
+namespace Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
 
 /// <summary>
 /// Sort modes for unapproved systems.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum UnapprovedSystemQuerySortMode
 {
     /// <summary>
