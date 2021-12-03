@@ -1,8 +1,11 @@
-﻿namespace Enclave.Sdk.Api.Data.Policies;
+﻿using System.Text.Json.Serialization;
+
+namespace Enclave.Sdk.Api.Data.Policies;
 
 /// <summary>
 /// Defines the possible states of policies.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum PolicyState
 {
     /// <summary>

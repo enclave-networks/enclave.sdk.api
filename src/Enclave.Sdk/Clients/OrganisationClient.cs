@@ -27,6 +27,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
         EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
         Dns = new DnsClient(httpClient, _orgRoute);
         UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
+        Policies = new PoliciesClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
@@ -45,7 +46,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     public ILogsClient Logs => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public IPoliciesClient Policies => throw new NotImplementedException();
+    public IPoliciesClient Policies { get; }
 
     /// <inheritdoc/>
     public ISystemsClient Systems => throw new NotImplementedException();
