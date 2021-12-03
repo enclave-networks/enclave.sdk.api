@@ -1,4 +1,6 @@
-﻿using Enclave.Sdk.Api.Data.Pagination;
+﻿using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.Pagination;
+using Enclave.Sdk.Api.Data.PatchModel;
 using Enclave.Sdk.Api.Data.Policies;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
@@ -30,4 +32,61 @@ public interface IPoliciesClient
     /// <param name="createModel">The model needed to create a Policy.</param>
     /// <returns>The created <see cref="Policy"/>.</returns>
     Task<Policy> CreateAsync(PolicyCreate createModel);
+
+    /// <summary>
+    /// Delete multiple Policies.
+    /// </summary>
+    /// <param name="policyIds">The ids of the Policies you want to delete.</param>
+    /// <returns>The number of deleted Policies.</returns>
+    Task<int> DeletePoliciesAsync(params int[] policyIds);
+
+    /// <summary>
+    /// Get a specific Policy.
+    /// </summary>
+    /// <param name="policyId">The Id of the Policy to get.</param>
+    /// <returns>The <see cref="Policy"/>.</returns>
+    Task<Policy> GetAsync(int policyId);
+
+    /// <summary>
+    /// Patch request to update a Policy.
+    /// </summary>
+    /// <param name="policyId">The Id of the Policy to update.</param>
+    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
+    /// <returns>The updated <see cref="Policy"/>.</returns>
+    Task<Policy> UpdateAsync(int policyId, PatchBuilder<PolicyPatch> builder);
+
+    /// <summary>
+    /// Delete a Policy.
+    /// </summary>
+    /// <param name="policyId">The Id of the Policy to delete.</param>
+    /// <returns>The deleted <see cref="Policy"/>.</returns>
+    Task<Policy> DeleteAsync(int policyId);
+
+    /// <summary>
+    /// Enable a Policy.
+    /// </summary>
+    /// <param name="policyId">The Id of the Policy to enable.</param>
+    /// <returns>The enabled <see cref="Policy"/>.</returns>
+    Task<Policy> EnableAsync(int policyId);
+
+    /// <summary>
+    /// Disable a Policy.
+    /// </summary>
+    /// <param name="policyId">The Id of the Policy to disable.</param>
+    /// <returns>The disabled <see cref="Policy"/>.</returns>
+    Task<Policy> DisableAsync(int policyId);
+
+    /// <summary>
+    /// Enable multiple Policies.
+    /// </summary>
+    /// <param name="policyIds">The ids of the Policies you want to enable.</param>
+    /// <returns>The number of enabled Policies.</returns>
+    Task<int> EnablePoliciesAsync(params int[] policyIds);
+
+    /// <summary>
+    /// Disable multiple Policies.
+    /// </summary>
+    /// <param name="policyIds">The ids of the Policies you want to disable.</param>
+    /// <returns>The number of disabled Policies.</returns>
+    Task<int> DisablePoliciesAsync(params int[] policyIds);
 }

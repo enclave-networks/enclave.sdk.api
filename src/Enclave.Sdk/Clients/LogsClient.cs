@@ -4,7 +4,7 @@ namespace Enclave.Sdk.Api.Clients;
 
 public class LogsClient : ClientBase, ILogsClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     public LogsClient(HttpClient httpClient, string orgRoute)
     : base(httpClient)

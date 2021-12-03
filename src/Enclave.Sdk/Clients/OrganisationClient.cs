@@ -10,7 +10,7 @@ namespace Enclave.Sdk.Api.Clients;
 /// <inheritdoc cref="IOrganisationClient" />
 public class OrganisationClient : ClientBase, IOrganisationClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
     /// This constructor is called by <see cref="EnclaveClient"/> when setting up the <see cref="OrganisationClient"/>.

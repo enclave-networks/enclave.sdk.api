@@ -11,7 +11,7 @@ namespace Enclave.Sdk.Api.Clients;
 /// <inheritdoc cref="IDnsClient" />
 public class DnsClient : ClientBase, IDnsClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
     /// Consutructor which will be called by <see cref="OrganisationClient"/> when it's created.

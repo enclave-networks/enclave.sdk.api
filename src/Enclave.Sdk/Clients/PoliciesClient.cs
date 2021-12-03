@@ -1,15 +1,17 @@
-﻿using Enclave.Sdk.Api.Clients.Interfaces;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.Policies;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Web;
+using Enclave.Sdk.Api.Clients.Interfaces;
+using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.Pagination;
+using Enclave.Sdk.Api.Data.PatchModel;
+using Enclave.Sdk.Api.Data.Policies;
 
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IPoliciesClient" />
 public class PoliciesClient : ClientBase, IPoliciesClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
     /// Consutructor which will be called by <see cref="OrganisationClient"/> when it's created.
@@ -81,6 +83,112 @@ public class PoliciesClient : ClientBase, IPoliciesClient
         EnsureNotNull(model);
 
         return model.PoliciesDeleted;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Policy> GetAsync(int policyId)
+    {
+        var model = await HttpClient.GetFromJsonAsync<Policy>($"{_orgRoute}/policies/{policyId}", Constants.JsonSerializerOptions);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Policy> UpdateAsync(int policyId, PatchBuilder<PolicyPatch> builder)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        using var encoded = CreateJsonContent(builder.Send());
+        var result = await HttpClient.PatchAsync($"{_orgRoute}/policies/{policyId}", encoded);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<Policy>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Policy> DeleteAsync(int policyId)
+    {
+        var result = await HttpClient.DeleteAsync($"{_orgRoute}/policies/{policyId}");
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<Policy>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Policy> EnableAsync(int policyId)
+    {
+        var result = await HttpClient.PutAsync($"{_orgRoute}/policies/{policyId}/enable", null);
+
+        var model = await DeserialiseAsync<Policy>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Policy> DisableAsync(int policyId)
+    {
+        var result = await HttpClient.PutAsync($"{_orgRoute}/policies/{policyId}/disable", null);
+
+        var model = await DeserialiseAsync<Policy>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> EnablePoliciesAsync(params int[] policyIds)
+    {
+        var requestModel = new
+        {
+            policyIds = policyIds,
+        };
+
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/policies/enable", requestModel, Constants.JsonSerializerOptions);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<BulkPolicyUpdateResult>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model.PoliciesUpdated;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DisablePoliciesAsync(params int[] policyIds)
+    {
+        var requestModel = new
+        {
+            policyIds = policyIds,
+        };
+
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/policies/disable", requestModel, Constants.JsonSerializerOptions);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<BulkPolicyUpdateResult>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model.PoliciesUpdated;
     }
 
     private static string? BuildQueryString(string? searchTerm, bool? includeDisabled, PolicySortOrder? sortOrder, int? pageNumber, int? perPage)

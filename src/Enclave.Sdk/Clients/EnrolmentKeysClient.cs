@@ -12,7 +12,7 @@ namespace Enclave.Sdk.Api.Clients;
 /// <inheritdoc cref="IEnrolmentKeysClient" />
 public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
     /// Consutructor which will be called by <see cref="OrganisationClient"/> when it's created.
@@ -121,9 +121,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
             keyIds = enrolmentKeys,
         };
 
-        using var content = CreateJsonContent(requestModel);
-
-        var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/enable", content);
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/enrolment-keys/enable", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 
@@ -142,9 +140,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
             keyIds = enrolmentKeys,
         };
 
-        using var content = CreateJsonContent(requestModel);
-
-        var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/disable", content);
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/enrolment-keys/disable", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 

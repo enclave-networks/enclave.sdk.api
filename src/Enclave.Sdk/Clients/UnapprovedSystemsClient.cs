@@ -12,7 +12,7 @@ namespace Enclave.Sdk.Api.Clients;
 /// <inheritdoc cref="IUnapprovedSystemsClient"/>
 public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
     /// This constructor is called by <see cref="EnclaveClient"/> when setting up the <see cref="UnapprovedSystemsClient"/>.
@@ -124,12 +124,12 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     /// <inheritdoc/>
     public async Task<int> ApproveSystemsAsync(params string[] systemIds)
     {
-        using var content = CreateJsonContent(new
+        var requestModel = new
         {
             systemIds = systemIds,
-        });
+        };
 
-        var result = await HttpClient.PutAsync($"{_orgRoute}/unapproved-systems/approve", content);
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/unapproved-systems/approve", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 
