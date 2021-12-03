@@ -1,4 +1,4 @@
-﻿namespace Enclave.Sdk.Api.Data.SystemManagement;
+﻿namespace Enclave.Sdk.Api.Data.SystemManagement.Enum;
 
 /// <summary>
 /// The possible states of an enrolled system.

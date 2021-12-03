@@ -46,11 +46,11 @@ public class EnrolmentKeyClientTests
     public async Task Should_return_paginated_response_when_calling_GetEnrolmentKeysAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SimpleEnrolmentKey>()
+        var response = new PaginatedResponseModel<EnrolmentKeySummary>()
         {
-            Items = new List<SimpleEnrolmentKey>
+            Items = new List<EnrolmentKeySummary>
             {
-                new SimpleEnrolmentKey(),
+                new EnrolmentKeySummary(),
             },            
         };
 
@@ -75,11 +75,11 @@ public class EnrolmentKeyClientTests
     public async Task Should_make_call_to_api_with_search_queryString_when_calling_GetEnrolmentKeysAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SimpleEnrolmentKey>()
+        var response = new PaginatedResponseModel<EnrolmentKeySummary>()
         {
-            Items = new List<SimpleEnrolmentKey>
+            Items = new List<EnrolmentKeySummary>
             {
-                new SimpleEnrolmentKey(),
+                new EnrolmentKeySummary(),
             },
         };
 
@@ -104,11 +104,11 @@ public class EnrolmentKeyClientTests
     public async Task Should_make_call_to_api_with_include_disabled_queryString_when_calling_GetEnrolmentKeysAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SimpleEnrolmentKey>()
+        var response = new PaginatedResponseModel<EnrolmentKeySummary>()
         {
-            Items = new List<SimpleEnrolmentKey>
+            Items = new List<EnrolmentKeySummary>
             {
-                new SimpleEnrolmentKey(),
+                new EnrolmentKeySummary(),
             },
         };
 
@@ -133,11 +133,11 @@ public class EnrolmentKeyClientTests
     public async Task Should_make_call_to_api_with_sort_queryString_when_calling_GetEnrolmentKeysAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SimpleEnrolmentKey>()
+        var response = new PaginatedResponseModel<EnrolmentKeySummary>()
         {
-            Items = new List<SimpleEnrolmentKey>
+            Items = new List<EnrolmentKeySummary>
             {
-                new SimpleEnrolmentKey(),
+                new EnrolmentKeySummary(),
             },
         };
 
@@ -162,11 +162,11 @@ public class EnrolmentKeyClientTests
     public async Task Should_make_call_to_api_with_page_queryString_when_calling_GetEnrolmentKeysAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SimpleEnrolmentKey>()
+        var response = new PaginatedResponseModel<EnrolmentKeySummary>()
         {
-            Items = new List<SimpleEnrolmentKey>
+            Items = new List<EnrolmentKeySummary>
             {
-                new SimpleEnrolmentKey(),
+                new EnrolmentKeySummary(),
             },
         };
 
@@ -191,11 +191,11 @@ public class EnrolmentKeyClientTests
     public async Task Should_make_call_to_api_with_per_page_queryString_when_calling_GetEnrolmentKeysAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SimpleEnrolmentKey>()
+        var response = new PaginatedResponseModel<EnrolmentKeySummary>()
         {
-            Items = new List<SimpleEnrolmentKey>
+            Items = new List<EnrolmentKeySummary>
             {
-                new SimpleEnrolmentKey(),
+                new EnrolmentKeySummary(),
             },
         };
 
@@ -220,7 +220,7 @@ public class EnrolmentKeyClientTests
     public async Task Should_return_a_full_enrolment_key_model_when_calling_CreateAsync()
     {
         // Arrange
-        var response = new FullEnrolmentKey();
+        var response = new EnrolmentKey();
 
         var createModel = new EnrolmentKeyCreate();
 
@@ -245,7 +245,7 @@ public class EnrolmentKeyClientTests
     public async Task Should_return_a_full_enrolment_key_model_when_calling_GetAsync()
     {
         // Arrange
-        var response = new FullEnrolmentKey();
+        var response = new EnrolmentKey();
 
         var enrolmentKeyId = EnrolmentKeyId.FromInt(12);
 
@@ -270,7 +270,7 @@ public class EnrolmentKeyClientTests
     public async Task Should_return_a_full_enrolment_key_model_when_calling_UpdateAsync()
     {
         // Arrange
-        var response = new FullEnrolmentKey();
+        var response = new EnrolmentKey();
 
         var enrolmentKeyId = EnrolmentKeyId.FromInt(12);
 
@@ -296,7 +296,7 @@ public class EnrolmentKeyClientTests
     public async Task Should_return_a_full_enrolment_key_model_when_calling_EnableAsync()
     {
         // Arrange
-        var response = new FullEnrolmentKey();
+        var response = new EnrolmentKey();
 
         var enrolmentKeyId = EnrolmentKeyId.FromInt(12);
 
@@ -319,7 +319,7 @@ public class EnrolmentKeyClientTests
     public async Task Should_return_a_full_enrolment_key_model_when_calling_DisableAsync()
     {
         // Arrange
-        var response = new FullEnrolmentKey();
+        var response = new EnrolmentKey();
 
         var enrolmentKeyId = EnrolmentKeyId.FromInt(12);
 

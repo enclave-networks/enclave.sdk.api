@@ -6,7 +6,7 @@ namespace Enclave.Sdk.Api.Data.Dns;
 /// <summary>
 /// Detailed model representing a DNS record.
 /// </summary>
-public class FullDnsRecord
+public class DnsRecord
 {
 
     /// <summary>

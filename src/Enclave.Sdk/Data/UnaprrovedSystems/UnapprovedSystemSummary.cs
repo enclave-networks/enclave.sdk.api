@@ -6,7 +6,7 @@ namespace Enclave.Sdk.Api.Data.UnaprrovedSystems;
 /// <summary>
 /// Model representing an unapproved system.
 /// </summary>
-public class UnapprovedSystemDetail
+public class UnapprovedSystemSummary
 {
     /// <summary>
     /// The system ID.
@@ -46,12 +46,7 @@ public class UnapprovedSystemDetail
     /// <summary>
     /// The description of the enrolment key used to enrol the system.
     /// </summary>
-    public string EnrolmentKeyDescription { get; init; } = default!;
-
-    /// <summary>
-    /// Any additional notes for the system.
-    /// </summary>
-    public string? Notes { get; init; }
+    public string? EnrolmentKeyDescription { get; init; }
 
     /// <summary>
     /// The locally-defined host name of the system.

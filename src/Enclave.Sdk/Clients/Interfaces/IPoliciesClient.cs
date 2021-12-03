@@ -12,7 +12,7 @@ namespace Enclave.Sdk.Api.Clients.Interfaces;
 public interface IPoliciesClient
 {
     /// <summary>
-    /// Gets a paginated list of Policies which can be searched and interated upon.
+    /// Gets a paginated list of Policies which can be searched and iterated upon.
     /// </summary>
     /// <param name="searchTerm">A partial matching search term.</param>
     /// <param name="includeDisabled">Include the disabled Policies in the results.</param>

@@ -1,4 +1,6 @@
-﻿namespace Enclave.Sdk.Api.Data.SystemManagement;
+﻿using Enclave.Sdk.Api.Data.SystemManagement.Enum;
+
+namespace Enclave.Sdk.Api.Data.SystemManagement;
 
 /// <summary>
 /// Abstraction for a system reference model so we can mix placeholder and "actual" reference models.

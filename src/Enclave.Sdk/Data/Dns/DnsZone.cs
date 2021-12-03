@@ -1,9 +1,9 @@
 ﻿namespace Enclave.Sdk.Api.Data.Dns;
 
 /// <summary>
-/// Basic model representing a summary of a DNS record.
+/// Detailed model representing a DNS zone.
 /// </summary>
-public class BasicDnsZone
+public class DnsZone
 {
     /// <summary>
     /// The ID of the zone.
@@ -30,4 +30,9 @@ public class BasicDnsZone
     /// </summary>
     // Public-facing APIs use the display name of the record type rather than the actual enum name. SeeDnsRecordTypeFormatConverter
     public IReadOnlyDictionary<string, int>? RecordTypeCounts { get; init; }
+
+    /// <summary>
+    /// Any provided notes for this zone.
+    /// </summary>s
+    public string? Notes { get; init; }
 }

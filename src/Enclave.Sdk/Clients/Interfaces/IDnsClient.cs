@@ -22,21 +22,21 @@ public interface IDnsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many items per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<BasicDnsZone>> GetZonesAsync(int? pageNumber = null, int? perPage = null);
+    Task<PaginatedResponseModel<DnsZoneSummary>> GetZonesAsync(int? pageNumber = null, int? perPage = null);
 
     /// <summary>
     /// Creates a DNS Zone using a <see cref="DnsZoneCreate"/> Model.
     /// </summary>
     /// <param name="createModel">The model needed to create a DNS Zone.</param>
-    /// <returns>The created DNS Zone as a <see cref="FullDnsZone"/>.</returns>
-    Task<FullDnsZone> CreateZoneAsync(DnsZoneCreate createModel);
+    /// <returns>The created DNS Zone as a <see cref="DnsZone"/>.</returns>
+    Task<DnsZone> CreateZoneAsync(DnsZoneCreate createModel);
 
     /// <summary>
     /// Gets the details of a specific DNS Zone.
     /// </summary>
     /// <param name="dnsZoneId">The DNS Zone ID that you want to get.</param>
     /// <returns>A full DNS Zone object.</returns>
-    Task<FullDnsZone> GetZoneAsync(DnsZoneId dnsZoneId);
+    Task<DnsZone> GetZoneAsync(DnsZoneId dnsZoneId);
 
     /// <summary>
     /// Patch request to update a DNS Zone.
@@ -44,14 +44,14 @@ public interface IDnsClient
     /// <param name="dnsZoneId">The DNS Zone ID that you want to update.</param>
     /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
     /// <returns>A full DNS Zone object.</returns>
-    Task<FullDnsZone> UpdateZoneAsync(DnsZoneId dnsZoneId, PatchBuilder<DnsZonePatch> builder);
+    Task<DnsZone> UpdateZoneAsync(DnsZoneId dnsZoneId, PatchBuilder<DnsZonePatch> builder);
 
     /// <summary>
     /// Delete a DNS Zone and it's associated record. This is irriversable.
     /// </summary>
     /// <param name="dnsZoneId">The DNS Zone ID that you want to update.</param>
     /// <returns>The deleted DNS Zone object.</returns>
-    Task<FullDnsZone> DeleteZoneAsync(DnsZoneId dnsZoneId);
+    Task<DnsZone> DeleteZoneAsync(DnsZoneId dnsZoneId);
 
     /// <summary>
     /// Gets a paginated list of DNS records.
@@ -61,7 +61,7 @@ public interface IDnsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many items per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<BasicDnsRecord>> GetRecordsAsync(
+    Task<PaginatedResponseModel<DnsRecordSummary>> GetRecordsAsync(
         DnsZoneId? dnsZoneId = null,
         string? hostname = null,
         int? pageNumber = null,
@@ -72,7 +72,7 @@ public interface IDnsClient
     /// </summary>
     /// <param name="createModel">The model needed to create a DNS Record</param>
     /// <returns>The created DNS Record as <see cref="DnsRecordCreate"/>.</returns>
-    Task<FullDnsRecord> CreateRecordAsync(DnsRecordCreate createModel);
+    Task<DnsRecord> CreateRecordAsync(DnsRecordCreate createModel);
 
     /// <summary>
     /// Delete multiple DNS Records.
@@ -93,7 +93,7 @@ public interface IDnsClient
     /// </summary>
     /// <param name="dnsRecordId">The id of the DNS Record you want to get.</param>
     /// <returns>A detailed DNS Record object</returns>
-    Task<FullDnsRecord> GetRecordAsync(DnsRecordId dnsRecordId);
+    Task<DnsRecord> GetRecordAsync(DnsRecordId dnsRecordId);
 
     /// <summary>
     /// Patch request to update a DNS Record.
@@ -101,12 +101,12 @@ public interface IDnsClient
     /// <param name="dnsRecordId">The DNS Record ID that you want to update.</param>
     /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
     /// <returns>A full DNS Record object.</returns>
-    Task<FullDnsRecord> UpdateRecordAsync(DnsRecordId dnsRecordId, PatchBuilder<DnsRecordPatch> builder);
+    Task<DnsRecord> UpdateRecordAsync(DnsRecordId dnsRecordId, PatchBuilder<DnsRecordPatch> builder);
 
     /// <summary>
     /// Delete a single DNS Record.
     /// </summary>
     /// <param name="dnsRecordId">The DNS Record ID that you want to delete.</param>
     /// <returns>The deleted DNS Record object.</returns>
-    Task<FullDnsRecord> DeleteRecordAsync(DnsRecordId dnsRecordId);
+    Task<DnsRecord> DeleteRecordAsync(DnsRecordId dnsRecordId);
 }
