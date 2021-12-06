@@ -23,11 +23,6 @@ public class EnrolmentKeyIpConstraintInput
             throw new ArgumentException("Incorrect CIDR Format");
         }
 
-        if (!IPNetwork.TryParse(cidrNotation, out var network))
-        {
-            throw new ArgumentException("Incorrect CIDR Format");
-        }
-
         Range = cidrNotation;
     }
 
@@ -68,7 +63,7 @@ public class EnrolmentKeyIpConstraintInput
     /// <summary>
     /// The IP range.
     /// </summary>
-    public string Range { get; } = default!;
+    public string Range { get; }
 
     /// <summary>
     /// A description for the range.

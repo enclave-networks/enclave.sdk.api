@@ -17,7 +17,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="IPNetwork2" Version="2.5.381" />
         <PackageReference Include="TypedIds" Version="1.1.2" />
         <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
