@@ -8,5 +8,5 @@ public enum PolicyAclProtocol
     Any,
     Tcp,
     Udp,
-    Icmp
+    Icmp,
 }

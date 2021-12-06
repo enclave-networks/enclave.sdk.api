@@ -10,7 +10,7 @@ using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IUnapprovedSystemsClient"/>
-public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
+internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
 {
     private readonly string _orgRoute;
 
@@ -67,6 +67,12 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
         EnsureNotNull(model);
 
         return model.SystemsDeclined;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DeclineSystems(IEnumerable<SystemId> systemIds)
+    {
+        return await DeclineSystems(systemIds.ToArray());
     }
 
     /// <inheritdoc/>
@@ -138,6 +144,12 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
         EnsureNotNull(model);
 
         return model.SystemsApproved;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> ApproveSystemsAsync(IEnumerable<SystemId> systemIds)
+    {
+        return await ApproveSystemsAsync(systemIds.ToArray());
     }
 
     private static string? BuildQueryString(

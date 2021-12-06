@@ -7,7 +7,7 @@ using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
 /// <summary>
-/// Perform CRUD operations on Unapproved Systems.
+/// Provides operations to get, create, and manipulate Unapproved Systems.
 /// </summary>
 public interface IUnapprovedSystemsClient
 {
@@ -33,6 +33,13 @@ public interface IUnapprovedSystemsClient
     /// <param name="systemIds">System Ids to decline.</param>
     /// <returns>The number of systesm declined.</returns>
     Task<int> DeclineSystems(params SystemId[] systemIds);
+
+    /// <summary>
+    /// Permanetly decline multiple Unapproved Systems.
+    /// </summary>
+    /// <param name="systemIds">System Ids to decline.</param>
+    /// <returns>The number of systesm declined.</returns>
+    Task<int> DeclineSystems(IEnumerable<SystemId> systemIds);
 
     /// <summary>
     /// Get the details of an Unapproved System.
@@ -68,4 +75,11 @@ public interface IUnapprovedSystemsClient
     /// <param name="systemIds">System Ids to approve.</param>
     /// <returns>The number of systesm approved.</returns>
     Task<int> ApproveSystemsAsync(params SystemId[] systemIds);
+
+    /// <summary>
+    /// Approve multiple Unapproved Systems.
+    /// </summary>
+    /// <param name="systemIds">System Ids to approve.</param>
+    /// <returns>The number of systesm approved.</returns>
+    Task<int> ApproveSystemsAsync(IEnumerable<SystemId> systemIds);
 }

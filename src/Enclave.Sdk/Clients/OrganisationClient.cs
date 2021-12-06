@@ -8,7 +8,7 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IOrganisationClient" />
-public class OrganisationClient : ClientBase, IOrganisationClient
+internal class OrganisationClient : ClientBase, IOrganisationClient
 {
     private readonly string _orgRoute;
 

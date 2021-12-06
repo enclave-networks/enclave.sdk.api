@@ -10,7 +10,7 @@ using Enclave.Sdk.Api.Data.Policies.Enum;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IPoliciesClient" />
-public class PoliciesClient : ClientBase, IPoliciesClient
+internal class PoliciesClient : ClientBase, IPoliciesClient
 {
     private readonly string _orgRoute;
 
@@ -84,6 +84,12 @@ public class PoliciesClient : ClientBase, IPoliciesClient
         EnsureNotNull(model);
 
         return model.PoliciesDeleted;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DeletePoliciesAsync(IEnumerable<PolicyId> policyIds)
+    {
+        return await DeletePoliciesAsync(policyIds.ToArray());
     }
 
     /// <inheritdoc/>
@@ -174,6 +180,12 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
+    public async Task<int> EnablePoliciesAsync(IEnumerable<PolicyId> policyIds)
+    {
+        return await EnablePoliciesAsync(policyIds.ToArray());
+    }
+
+    /// <inheritdoc/>
     public async Task<int> DisablePoliciesAsync(params PolicyId[] policyIds)
     {
         var requestModel = new
@@ -190,6 +202,12 @@ public class PoliciesClient : ClientBase, IPoliciesClient
         EnsureNotNull(model);
 
         return model.PoliciesUpdated;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DisablePoliciesAsync(IEnumerable<PolicyId> policyIds)
+    {
+        return await DisablePoliciesAsync(policyIds.ToArray());
     }
 
     private static string? BuildQueryString(string? searchTerm, bool? includeDisabled, PolicySortOrder? sortOrder, int? pageNumber, int? perPage)

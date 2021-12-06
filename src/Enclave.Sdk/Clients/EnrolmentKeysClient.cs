@@ -10,7 +10,7 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IEnrolmentKeysClient" />
-public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
+internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 {
     private readonly string _orgRoute;
 
@@ -133,6 +133,12 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
+    public async Task<int> BulkEnableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys)
+    {
+        return await BulkEnableAsync(enrolmentKeys.ToArray());
+    }
+
+    /// <inheritdoc/>
     public async Task<int> BulkDisableAsync(params EnrolmentKeyId[] enrolmentKeys)
     {
         var requestModel = new
@@ -149,6 +155,12 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
         EnsureNotNull(model);
 
         return model.KeysModified;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> BulkDisableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys)
+    {
+        return await BulkDisableAsync(enrolmentKeys.ToArray());
     }
 
     private static string? BuildQueryString(string? searchTerm, bool? includeDisabled, EnrolmentKeySortOrder? sortOrder, int? pageNumber, int? perPage)

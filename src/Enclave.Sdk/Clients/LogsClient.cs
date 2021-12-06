@@ -2,7 +2,7 @@ using Enclave.Sdk.Api.Clients.Interfaces;
 
 namespace Enclave.Sdk.Api.Clients;
 
-public class LogsClient : ClientBase, ILogsClient
+internal class LogsClient : ClientBase, ILogsClient
 {
     private readonly string _orgRoute;
 

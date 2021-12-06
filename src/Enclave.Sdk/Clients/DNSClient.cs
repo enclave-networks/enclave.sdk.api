@@ -9,7 +9,7 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IDnsClient" />
-public class DnsClient : ClientBase, IDnsClient
+internal class DnsClient : ClientBase, IDnsClient
 {
     private readonly string _orgRoute;
 
@@ -164,6 +164,17 @@ public class DnsClient : ClientBase, IDnsClient
         EnsureNotNull(model);
 
         return model.DnsRecordsDeleted;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DeleteRecordsAsync(IEnumerable<DnsRecordId> records)
+    {
+        if (records is null)
+        {
+            throw new ArgumentNullException(nameof(records));
+        }
+
+        return await DeleteRecordsAsync(records.ToArray());
     }
 
     /// <inheritdoc/>

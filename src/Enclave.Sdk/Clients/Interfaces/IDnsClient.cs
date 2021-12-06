@@ -6,7 +6,7 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
 /// <summary>
-/// Perform CRUD operations on DNS rules.
+/// Provides operations to get, create, and manipulate DNS rules.
 /// </summary>
 public interface IDnsClient
 {
@@ -80,6 +80,13 @@ public interface IDnsClient
     /// <param name="records">An Array of the Record Ids to delete.</param>
     /// <returns>The number of records deleted.</returns>
     Task<int> DeleteRecordsAsync(params DnsRecordId[] records);
+
+    /// <summary>
+    /// Delete multiple DNS Records.
+    /// </summary>
+    /// <param name="records">An IEnumerable of the Record Ids to delete.</param>
+    /// <returns>The number of records deleted.</returns>
+    Task<int> DeleteRecordsAsync(IEnumerable<DnsRecordId> records);
 
     /// <summary>
     /// Get a detailed DNS Record.

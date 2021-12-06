@@ -2,7 +2,7 @@
 
 namespace Enclave.Sdk.Api.Clients;
 
-public class AuthorityClient : ClientBase, IAuthorityClient
+internal class AuthorityClient : ClientBase, IAuthorityClient
 {
     private readonly string _orgRoute;
 

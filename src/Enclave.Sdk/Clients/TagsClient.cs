@@ -7,7 +7,7 @@ using Enclave.Sdk.Api.Data.Tags;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="ITagsClient"/>
-public class TagsClient : ClientBase, ITagsClient
+internal class TagsClient : ClientBase, ITagsClient
 {
     private readonly string _orgRoute;
 

@@ -9,7 +9,7 @@ namespace Enclave.Sdk.Api.Clients;
 /// <summary>
 /// Base class used for commonly accessed methods and properties for all clients.
 /// </summary>
-public abstract class ClientBase
+internal abstract class ClientBase
 {
     /// <summary>
     /// HttpClient used for all clients API calls.

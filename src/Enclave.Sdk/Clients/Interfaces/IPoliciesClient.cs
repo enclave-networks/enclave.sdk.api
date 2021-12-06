@@ -7,7 +7,7 @@ using Enclave.Sdk.Api.Data.Policies.Enum;
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
 /// <summary>
-/// Perform CRUD operations on DNS rules.
+/// Provides operations to get, create, and manipulate DNS rules.
 /// </summary>
 public interface IPoliciesClient
 {
@@ -40,6 +40,13 @@ public interface IPoliciesClient
     /// <param name="policyIds">The ids of the Policies you want to delete.</param>
     /// <returns>The number of deleted Policies.</returns>
     Task<int> DeletePoliciesAsync(params PolicyId[] policyIds);
+
+    /// <summary>
+    /// Delete multiple Policies.
+    /// </summary>
+    /// <param name="policyIds">The ids of the Policies you want to delete.</param>
+    /// <returns>The number of deleted Policies.</returns>
+    Task<int> DeletePoliciesAsync(IEnumerable<PolicyId> policyIds);
 
     /// <summary>
     /// Get a specific Policy.
@@ -85,9 +92,23 @@ public interface IPoliciesClient
     Task<int> EnablePoliciesAsync(params PolicyId[] policyIds);
 
     /// <summary>
+    /// Enable multiple Policies.
+    /// </summary>
+    /// <param name="policyIds">The ids of the Policies you want to enable.</param>
+    /// <returns>The number of enabled Policies.</returns>
+    Task<int> EnablePoliciesAsync(IEnumerable<PolicyId> policyIds);
+
+    /// <summary>
     /// Disable multiple Policies.
     /// </summary>
     /// <param name="policyIds">The ids of the Policies you want to disable.</param>
     /// <returns>The number of disabled Policies.</returns>
     Task<int> DisablePoliciesAsync(params PolicyId[] policyIds);
+
+    /// <summary>
+    /// Disable multiple Policies.
+    /// </summary>
+    /// <param name="policyIds">The ids of the Policies you want to disable.</param>
+    /// <returns>The number of disabled Policies.</returns>
+    Task<int> DisablePoliciesAsync(IEnumerable<PolicyId> policyIds);
 }

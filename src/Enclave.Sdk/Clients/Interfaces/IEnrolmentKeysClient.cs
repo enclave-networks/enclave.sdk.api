@@ -7,7 +7,7 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
 /// <summary>
-/// Perform CRUD operations on Enrolment Keys.
+/// Provides operations to get, create, and manipulate Enrolment Keys.
 /// </summary>
 public interface IEnrolmentKeysClient
 {
@@ -67,9 +67,23 @@ public interface IEnrolmentKeysClient
     Task<int> BulkEnableAsync(params EnrolmentKeyId[] enrolmentKeys);
 
     /// <summary>
+    /// Bulk enable mutliple Enrolment Keys.
+    /// </summary>
+    /// <param name="enrolmentKeys">An IEnumerable of Enrolment Key Ids to enable.</param>
+    /// <returns>The number of keys modified.</returns>
+    Task<int> BulkEnableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys);
+
+    /// <summary>
     /// Bulk disable mutliple Enrolment Keys.
     /// </summary>
     /// <param name="enrolmentKeys">An array of Enrolment Key Ids to disable.</param>
     /// <returns>The number of keys modified.</returns>
     Task<int> BulkDisableAsync(params EnrolmentKeyId[] enrolmentKeys);
+
+    /// <summary>
+    /// Bulk disable mutliple Enrolment Keys.
+    /// </summary>
+    /// <param name="enrolmentKeys">An IEnumerable of Enrolment Key Ids to disable.</param>
+    /// <returns>The number of keys modified.</returns>
+    Task<int> BulkDisableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys);
 }
