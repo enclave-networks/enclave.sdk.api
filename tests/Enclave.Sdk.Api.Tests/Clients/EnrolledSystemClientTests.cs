@@ -10,6 +10,7 @@ using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.FluentAssertions;
 using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
+using Enclave.Sdk.Api.Data.Organisations;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 

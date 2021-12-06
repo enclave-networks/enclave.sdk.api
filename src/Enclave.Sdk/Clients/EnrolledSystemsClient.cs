@@ -1,3 +1,5 @@
+using System.Net.Http.Json;
+using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.EnrolledSystems;
@@ -8,7 +10,7 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IEnrolledSystemsClient" />
-public class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
+internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
 {
     private readonly string _orgRoute;
 

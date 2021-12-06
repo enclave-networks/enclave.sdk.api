@@ -11,7 +11,7 @@ public class EnrolledSystem
     /// <summary>
     /// Unique ID for the System.
     /// </summary>
-    public string SystemId { get; init; } = default!;
+    public SystemId SystemId { get; init; } = default!;
 
     /// <summary>
     /// The configured description of the system.
@@ -86,12 +86,12 @@ public class EnrolledSystem
     /// <summary>
     /// The tags assigned to the system.
     /// </summary>
-    public IReadOnlyList<TagReference> Tags { get; init; }
+    public IReadOnlyList<TagReference> Tags { get; init; } = Array.Empty<TagReference>();
 
     /// <summary>
     /// The set of DNS entries applied to the system.
     /// </summary>
-    public IReadOnlyList<SystemDnsEntry> Dns { get; init; }
+    public IReadOnlyList<SystemDnsEntry> Dns { get; init; } = Array.Empty<SystemDnsEntry>();
 
     /// <summary>
     /// Any additional notes attached to the system.
