@@ -1,5 +1,4 @@
 ﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.UnaprrovedSystems;
 using FluentAssertions;
@@ -12,6 +11,7 @@ using WireMock.ResponseBuilders;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.PatchModel;
 using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
+using Enclave.Sdk.Api.Data.Organisations;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
@@ -242,7 +242,7 @@ public class UnapprovedSystemsClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _unapprovedSystemsClient.DeclineSystems("system1", "system2");
+        var result = await _unapprovedSystemsClient.DeclineSystems(SystemId.FromString("system1"), SystemId.FromString("system2"));
 
         // Assert
         result.Should().Be(2);
@@ -254,7 +254,7 @@ public class UnapprovedSystemsClientTests
         // Arrange
         var response = new UnapprovedSystemDetail
         {
-            SystemId = "newId",
+            SystemId = SystemId.FromString("newId"),
         };
 
         _server
@@ -266,7 +266,7 @@ public class UnapprovedSystemsClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _unapprovedSystemsClient.GetAsync("newId");
+        var result = await _unapprovedSystemsClient.GetAsync(SystemId.FromString("newId"));
 
         // Assert
         result.Should().NotBeNull();
@@ -279,7 +279,7 @@ public class UnapprovedSystemsClientTests
         // Arrange
         var response = new UnapprovedSystemDetail
         {
-            SystemId = "newId",
+            SystemId = SystemId.FromString("newId"),
         };
 
         _server
@@ -293,7 +293,7 @@ public class UnapprovedSystemsClientTests
         var builder = new PatchBuilder<UnapprovedSystemPatch>().Set(u => u.Description, "New System");
 
         // Act
-        var result = await _unapprovedSystemsClient.UpdateAsync("newId", builder);
+        var result = await _unapprovedSystemsClient.UpdateAsync(SystemId.FromString("newId"), builder);
 
         // Assert
         result.Should().NotBeNull();
@@ -306,7 +306,7 @@ public class UnapprovedSystemsClientTests
         // Arrange
         var response = new UnapprovedSystemDetail
         {
-            SystemId = "newId",
+            SystemId = SystemId.FromString("newId"),
         };
 
         _server
@@ -318,7 +318,7 @@ public class UnapprovedSystemsClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _unapprovedSystemsClient.DeclineAsync("newId");
+        var result = await _unapprovedSystemsClient.DeclineAsync(SystemId.FromString("newId"));
 
         // Assert
         result.Should().NotBeNull();
@@ -331,7 +331,7 @@ public class UnapprovedSystemsClientTests
         // Arrange
         var response = new UnapprovedSystemDetail
         {
-            SystemId = "newId",
+            SystemId = SystemId.FromString("newId"),
         };
 
         _server
@@ -343,7 +343,7 @@ public class UnapprovedSystemsClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        await _unapprovedSystemsClient.ApproveAsync("newId");
+        await _unapprovedSystemsClient.ApproveAsync(SystemId.FromString("newId"));
     }
 
     [Test]
@@ -363,7 +363,7 @@ public class UnapprovedSystemsClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _unapprovedSystemsClient.ApproveSystemsAsync("system1", "system2");
+        var result = await _unapprovedSystemsClient.ApproveSystemsAsync(SystemId.FromString("system1") , SystemId.FromString("system2"));
 
         // Assert
         result.Should().Be(2);

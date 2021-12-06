@@ -34,7 +34,7 @@ public interface IEnrolmentKeysClient
     /// </summary>
     /// <param name="enrolmentKeyId">The Id of the Enrolment Key to get.</param>
     /// <returns>A detailed Enrolment Key.</returns>
-    Task<FullEnrolmentKey> GetAsync(int enrolmentKeyId);
+    Task<FullEnrolmentKey> GetAsync(EnrolmentKeyId enrolmentKeyId);
 
     /// <summary>
     /// Patch request to update the EnrolmentKey.
@@ -43,33 +43,33 @@ public interface IEnrolmentKeysClient
     /// <param name="enrolmentKeyId">The Id of the Enrolment Key to update.</param>
     /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
     /// <returns>A detailed Enrolment Key.</returns>
-    Task<FullEnrolmentKey> UpdateAsync(int enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder);
+    Task<FullEnrolmentKey> UpdateAsync(EnrolmentKeyId enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder);
 
     /// <summary>
     /// Enable an Enrolment Key.
     /// </summary>
     /// <param name="enrolmentKeyId">The Id of the Enrolment Key to enable.</param>
     /// <returns>A detailed Enrolment Key.</returns>
-    Task<FullEnrolmentKey> EnableAsync(int enrolmentKeyId);
+    Task<FullEnrolmentKey> EnableAsync(EnrolmentKeyId enrolmentKeyId);
 
     /// <summary>
     /// Disable an Enrolment Key.
     /// </summary>
     /// <param name="enrolmentKeyId">The Id of the Enrolment Key to disable.</param>
     /// <returns>A detailed Enrolment Key.</returns>
-    Task<FullEnrolmentKey> DisableAsync(int enrolmentKeyId);
+    Task<FullEnrolmentKey> DisableAsync(EnrolmentKeyId enrolmentKeyId);
 
     /// <summary>
     /// Bulk enable mutliple Enrolment Keys.
     /// </summary>
     /// <param name="enrolmentKeys">An array of Enrolment Key Ids to enable.</param>
     /// <returns>The number of keys modified.</returns>
-    Task<int> BulkEnableAsync(params int[] enrolmentKeys);
+    Task<int> BulkEnableAsync(params EnrolmentKeyId[] enrolmentKeys);
 
     /// <summary>
     /// Bulk disable mutliple Enrolment Keys.
     /// </summary>
     /// <param name="enrolmentKeys">An array of Enrolment Key Ids to disable.</param>
     /// <returns>The number of keys modified.</returns>
-    Task<int> BulkDisableAsync(params int[] enrolmentKeys);
+    Task<int> BulkDisableAsync(params EnrolmentKeyId[] enrolmentKeys);
 }

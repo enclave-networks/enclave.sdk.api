@@ -5,6 +5,7 @@ using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.PatchModel;
 using Enclave.Sdk.Api.Data.Policies;
+using Enclave.Sdk.Api.Data.Policies.Enum;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -60,7 +61,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> DeletePoliciesAsync(params int[] policyIds)
+    public async Task<int> DeletePoliciesAsync(params PolicyId[] policyIds)
     {
         using var content = CreateJsonContent(new
         {
@@ -86,7 +87,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> GetAsync(int policyId)
+    public async Task<Policy> GetAsync(PolicyId policyId)
     {
         var model = await HttpClient.GetFromJsonAsync<Policy>($"{_orgRoute}/policies/{policyId}", Constants.JsonSerializerOptions);
 
@@ -96,7 +97,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> UpdateAsync(int policyId, PatchBuilder<PolicyPatch> builder)
+    public async Task<Policy> UpdateAsync(PolicyId policyId, PatchBuilder<PolicyPatch> builder)
     {
         if (builder is null)
         {
@@ -116,7 +117,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> DeleteAsync(int policyId)
+    public async Task<Policy> DeleteAsync(PolicyId policyId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/policies/{policyId}");
 
@@ -130,7 +131,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> EnableAsync(int policyId)
+    public async Task<Policy> EnableAsync(PolicyId policyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/policies/{policyId}/enable", null);
 
@@ -142,7 +143,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> DisableAsync(int policyId)
+    public async Task<Policy> DisableAsync(PolicyId policyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/policies/{policyId}/disable", null);
 
@@ -154,7 +155,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> EnablePoliciesAsync(params int[] policyIds)
+    public async Task<int> EnablePoliciesAsync(params PolicyId[] policyIds)
     {
         var requestModel = new
         {
@@ -173,7 +174,7 @@ public class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> DisablePoliciesAsync(params int[] policyIds)
+    public async Task<int> DisablePoliciesAsync(params PolicyId[] policyIds)
     {
         var requestModel = new
         {

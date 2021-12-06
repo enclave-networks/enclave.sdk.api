@@ -1,4 +1,6 @@
-﻿namespace Enclave.Sdk.Api.Data.Account;
+﻿using Enclave.Sdk.Api.Data.Organisations;
+
+namespace Enclave.Sdk.Api.Data.Account;
 
 /// <summary>
 /// Contains the role an account has within an organisation.

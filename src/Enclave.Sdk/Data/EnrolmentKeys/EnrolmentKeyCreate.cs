@@ -1,5 +1,5 @@
-﻿using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
 
 namespace Enclave.Sdk.Api.Data.EnrolmentKeys;
 
@@ -8,7 +8,6 @@ namespace Enclave.Sdk.Api.Data.EnrolmentKeys;
 /// </summary>
 public class EnrolmentKeyCreate
 {
-
     /// <summary>
     /// Defines the type of key being created, general purpose (default) or ephemeral (enrolled systems are automatically removed).
     /// </summary>
@@ -40,7 +39,7 @@ public class EnrolmentKeyCreate
     /// <summary>
     /// A set of tags automatically applied to systems enrolled with this key.
     /// </summary>
-    public string[]? Tags { get; set; } = Array.Empty<string>();
+    public List<string> Tags { get; set; } = new List<string>();
 
     /// <summary>
     /// Defines the number of minutes an ephemeral system enrolled with this key will be retained after a non-graceful disconnect.

@@ -20,17 +20,17 @@ public class PolicyPatch : IPatchModel
     /// <summary>
     /// A set of sender tags.
     /// </summary>
-    public string[]? SenderTags { get; set; }
+    public List<string> SenderTags { get; set; } = new List<string>();
 
     /// <summary>
     ///  A set of receiver tags.
     /// </summary>
-    public string[]? ReceiverTags { get; set; }
+    public List<string> ReceiverTags { get; set; } = new List<string>();
 
     /// <summary>
     /// The set of ACLs for the policy.
     /// </summary>
-    public PolicyAcl[]? Acls { get; set; }
+    public List<PolicyAcl> Acls { get; set; } = new List<PolicyAcl>();
 
     /// <summary>
     /// Notes for the policy.

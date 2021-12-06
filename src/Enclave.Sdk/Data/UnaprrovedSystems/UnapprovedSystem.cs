@@ -11,7 +11,7 @@ public class UnapprovedSystem
     /// <summary>
     /// The system ID.
     /// </summary>
-    public string SystemId { get; init; } = default!;
+    public SystemId SystemId { get; init; } = default!;
 
     /// <summary>
     /// The system type.
@@ -36,7 +36,7 @@ public class UnapprovedSystem
     /// <summary>
     /// The set of tags assigned to the system (either manually or automatically from the key).
     /// </summary>
-    public IReadOnlyList<TagReference>? Tags { get; init; }
+    public IReadOnlyList<TagReference> Tags { get; init; } = Array.Empty<TagReference>();
 
     /// <summary>
     /// The ID of the enrolment key used to enrol the system.

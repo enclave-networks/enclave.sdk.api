@@ -13,7 +13,7 @@ public class UnapprovedSystemPatch : IPatchModel
     /// <summary>
     /// The set of tags applied to the system.
     /// </summary>
-    public string[]? Tags { get; set; }
+    public List<string> Tags { get; set; } = new List<string>();
 
     /// <summary>
     /// Any notes or additional info for this system.

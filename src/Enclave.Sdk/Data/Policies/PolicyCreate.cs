@@ -21,17 +21,17 @@ public class PolicyCreate
     /// <summary>
     /// A set of sender tags.
     /// </summary>
-    public string[] SenderTags { get; set; } = Array.Empty<string>();
+    public List<string> SenderTags { get; set; } = new List<string>();
 
     /// <summary>
     /// A set of receiver tags.
     /// </summary>
-    public string[] ReceiverTags { get; set; } = Array.Empty<string>();
+    public List<string> ReceiverTags { get; set; } = new List<string>();
 
     /// <summary>
     /// The set of ACLs for the policy.
     /// </summary>
-    public PolicyAcl[] Acls { get; set; } = Array.Empty<PolicyAcl>();
+    public List<PolicyAcl> Acls { get; set; } = new List<PolicyAcl>();
 
     /// <summary>
     /// Optional notes for the policy.

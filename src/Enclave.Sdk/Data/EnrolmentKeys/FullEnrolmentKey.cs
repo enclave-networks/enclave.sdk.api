@@ -11,7 +11,7 @@ public class FullEnrolmentKey
     /// <summary>
     /// The ID of the enrolment key.
     /// </summary>
-    public int Id { get; init; }
+    public EnrolmentKeyId Id { get; init; }
 
     /// <summary>
     /// The UTC timestamp when the key was created.
@@ -44,12 +44,12 @@ public class FullEnrolmentKey
     /// <summary>
     /// The key value that can be used to enrol systems.
     /// </summary>
-    public string Key { get; init; }
+    public string Key { get; init; } = default!;
 
     /// <summary>
     /// The provided description of the key.
     /// </summary>
-    public string Description { get; init; }
+    public string Description { get; init; } = default!;
 
     /// <summary>
     /// Whether or not this key is enabled.
@@ -74,7 +74,7 @@ public class FullEnrolmentKey
     /// <summary>
     /// The set of tags applied to the key.
     /// </summary>
-    public IReadOnlyList<TagReference> Tags { get; init; }
+    public IReadOnlyList<TagReference>? Tags { get; init; } = Array.Empty<TagReference>();
 
     /// <summary>
     /// Defines the number of minutes an ephemeral system enrolled with this key will be retained after a non-graceful disconnect.

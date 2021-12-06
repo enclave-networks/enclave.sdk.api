@@ -44,7 +44,7 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> DeclineSystems(params string[] systemIds)
+    public async Task<int> DeclineSystems(params SystemId[] systemIds)
     {
         using var content = CreateJsonContent(new
         {
@@ -70,7 +70,7 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystemDetail> GetAsync(string systemId)
+    public async Task<UnapprovedSystemDetail> GetAsync(SystemId systemId)
     {
         var model = await HttpClient.GetFromJsonAsync<UnapprovedSystemDetail>($"{_orgRoute}/unapproved-systems/{systemId}", Constants.JsonSerializerOptions);
 
@@ -80,7 +80,7 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystemDetail> UpdateAsync(string systemId, PatchBuilder<UnapprovedSystemPatch> builder)
+    public async Task<UnapprovedSystemDetail> UpdateAsync(SystemId systemId, PatchBuilder<UnapprovedSystemPatch> builder)
     {
         if (builder is null)
         {
@@ -100,7 +100,7 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystemDetail> DeclineAsync(string systemId)
+    public async Task<UnapprovedSystemDetail> DeclineAsync(SystemId systemId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/unapproved-systems/{systemId}");
 
@@ -114,7 +114,7 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task ApproveAsync(string systemId)
+    public async Task ApproveAsync(SystemId systemId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/unapproved-systems/{systemId}/approve", null);
 
@@ -122,7 +122,7 @@ public class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> ApproveSystemsAsync(params string[] systemIds)
+    public async Task<int> ApproveSystemsAsync(params SystemId[] systemIds)
     {
         var requestModel = new
         {

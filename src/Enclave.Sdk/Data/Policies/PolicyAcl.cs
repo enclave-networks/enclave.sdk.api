@@ -1,4 +1,6 @@
-﻿namespace Enclave.Sdk.Api.Data.Policies;
+﻿using Enclave.Sdk.Api.Data.Policies.Enum;
+
+namespace Enclave.Sdk.Api.Data.Policies;
 
 /// <summary>
 /// Model representing a single ACL entry for a policy.

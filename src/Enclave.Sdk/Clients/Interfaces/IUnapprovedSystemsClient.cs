@@ -32,14 +32,14 @@ public interface IUnapprovedSystemsClient
     /// </summary>
     /// <param name="systemIds">System Ids to decline.</param>
     /// <returns>The number of systesm declined.</returns>
-    Task<int> DeclineSystems(params string[] systemIds);
+    Task<int> DeclineSystems(params SystemId[] systemIds);
 
     /// <summary>
     /// Get the details of an Unapproved System.
     /// </summary>
     /// <param name="systemId">The system Id you want to get.</param>
     /// <returns>A Detailed Unapproved System Model.</returns>
-    Task<UnapprovedSystemDetail> GetAsync(string systemId);
+    Task<UnapprovedSystemDetail> GetAsync(SystemId systemId);
 
     /// <summary>
     /// Patch request to update an Unapproved System.
@@ -47,25 +47,25 @@ public interface IUnapprovedSystemsClient
     /// <param name="systemId">The system Id you want to update.</param>
     /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
     /// <returns>An updated Detailed Unapproved System model.</returns>
-    Task<UnapprovedSystemDetail> UpdateAsync(string systemId, PatchBuilder<UnapprovedSystemPatch> builder);
+    Task<UnapprovedSystemDetail> UpdateAsync(SystemId systemId, PatchBuilder<UnapprovedSystemPatch> builder);
 
     /// <summary>
     /// Decline an Unapproved System.
     /// </summary>
     /// <param name="systemId">The system Id you want to decline.</param>
     /// <returns>The declined System.</returns>
-    Task<UnapprovedSystemDetail> DeclineAsync(string systemId);
+    Task<UnapprovedSystemDetail> DeclineAsync(SystemId systemId);
 
     /// <summary>
     /// Approve a System.
     /// </summary>
     /// <param name="systemId">The system Id you want to approve.</param>
-    Task ApproveAsync(string systemId);
+    Task ApproveAsync(SystemId systemId);
 
     /// <summary>
     /// Approve multiple Unapproved Systems.
     /// </summary>
     /// <param name="systemIds">System Ids to approve.</param>
     /// <returns>The number of systesm approved.</returns>
-    Task<int> ApproveSystemsAsync(params string[] systemIds);
+    Task<int> ApproveSystemsAsync(params SystemId[] systemIds);
 }

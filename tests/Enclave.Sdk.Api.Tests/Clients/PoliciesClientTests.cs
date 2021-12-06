@@ -1,5 +1,4 @@
 ﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.Policies;
 using FluentAssertions;
@@ -11,6 +10,8 @@ using WireMock.Server;
 using WireMock.FluentAssertions;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.PatchModel;
+using Enclave.Sdk.Api.Data.Policies.Enum;
+using Enclave.Sdk.Api.Data.Organisations;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
@@ -273,7 +274,7 @@ public class PoliciesClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _policiesClient.DeletePoliciesAsync(2, 3, 5);
+        var result = await _policiesClient.DeletePoliciesAsync(PolicyId.FromInt(2), PolicyId.FromInt(3), PolicyId.FromInt(5));
 
         // Assert
         result.Should().Be(3);
@@ -285,7 +286,7 @@ public class PoliciesClientTests
         // Arrange
         var response = new Policy
         {
-            Id = 12,
+            Id = PolicyId.FromInt(12),
             Description = "test",
         };
 
@@ -298,7 +299,7 @@ public class PoliciesClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _policiesClient.GetAsync(12);
+        var result = await _policiesClient.GetAsync(PolicyId.FromInt(12));
 
         // Assert
         result.Should().NotBeNull();
@@ -311,7 +312,7 @@ public class PoliciesClientTests
         // Arrange
         var response = new Policy
         {
-            Id = 12,
+            Id = PolicyId.FromInt(12),
             Description = "test",
         };
 
@@ -326,7 +327,7 @@ public class PoliciesClientTests
         var builder = new PatchBuilder<PolicyPatch>().Set(p => p.IsEnabled, false);
 
         // Act
-        var result = await _policiesClient.UpdateAsync(12, builder);
+        var result = await _policiesClient.UpdateAsync(PolicyId.FromInt(12), builder);
 
         // Assert
         result.Should().NotBeNull();
@@ -339,7 +340,7 @@ public class PoliciesClientTests
         // Arrange
         var response = new Policy
         {
-            Id = 12,
+            Id = PolicyId.FromInt(12),
             Description = "test",
         };
 
@@ -352,7 +353,7 @@ public class PoliciesClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _policiesClient.DeleteAsync(12);
+        var result = await _policiesClient.DeleteAsync(PolicyId.FromInt(12));
 
         // Assert
         result.Should().NotBeNull();
@@ -365,7 +366,7 @@ public class PoliciesClientTests
         // Arrange
         var response = new Policy
         {
-            Id = 12,
+            Id = PolicyId.FromInt(12),
             Description = "test",
             IsEnabled = true,
         };
@@ -379,7 +380,7 @@ public class PoliciesClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _policiesClient.EnableAsync(12);
+        var result = await _policiesClient.EnableAsync(PolicyId.FromInt(12));
 
         // Assert
         result.Should().NotBeNull();
@@ -392,7 +393,7 @@ public class PoliciesClientTests
         // Arrange
         var response = new Policy
         {
-            Id = 12,
+            Id = PolicyId.FromInt(12),
             Description = "test",
             IsEnabled = false,
         };
@@ -406,7 +407,7 @@ public class PoliciesClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _policiesClient.DisableAsync(12);
+        var result = await _policiesClient.DisableAsync(PolicyId.FromInt(12));
 
         // Assert
         result.Should().NotBeNull();
@@ -431,7 +432,7 @@ public class PoliciesClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _policiesClient.EnablePoliciesAsync(2, 3, 5);
+        var result = await _policiesClient.EnablePoliciesAsync(PolicyId.FromInt(2), PolicyId.FromInt(3), PolicyId.FromInt(5));
 
         // Assert
         result.Should().Be(3);
@@ -455,7 +456,7 @@ public class PoliciesClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _policiesClient.DisablePoliciesAsync(2, 3, 5);
+        var result = await _policiesClient.DisablePoliciesAsync(PolicyId.FromInt(2), PolicyId.FromInt(3), PolicyId.FromInt(5));
 
         // Assert
         result.Should().Be(3);

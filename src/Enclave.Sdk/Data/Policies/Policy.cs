@@ -1,4 +1,5 @@
-﻿using Enclave.Sdk.Api.Data.Tags;
+﻿using Enclave.Sdk.Api.Data.Policies.Enum;
+using Enclave.Sdk.Api.Data.Tags;
 
 namespace Enclave.Sdk.Api.Data.Policies;
 
@@ -10,7 +11,7 @@ public class Policy
     /// <summary>
     /// The ID of the policy.
     /// </summary>
-    public int Id { get; init; }
+    public PolicyId Id { get; init; }
 
     /// <summary>
     /// The UTC timestamp when the policy was created.
@@ -35,12 +36,12 @@ public class Policy
     /// <summary>
     /// The sender-side tags.
     /// </summary>
-    public IReadOnlyList<TagReference> SenderTags { get; init; }
+    public IReadOnlyList<TagReference> SenderTags { get; init; } = Array.Empty<TagReference>();
 
     /// <summary>
     /// The receiver-side tags.
     /// </summary>
-    public IReadOnlyList<TagReference> ReceiverTags { get; init; }
+    public IReadOnlyList<TagReference> ReceiverTags { get; init; } = Array.Empty<TagReference>();
 
     /// <summary>
     /// Access control lists.

@@ -42,7 +42,7 @@ public class FullDnsRecord
     /// <summary>
     /// The set of tags to which this DNS name is applied.
     /// </summary>
-    public IReadOnlyList<TagReference>? Tags { get; init; }
+    public IReadOnlyList<TagReference> Tags { get; init; } = Array.Empty<TagReference>();
 
     /// <summary>
     /// The set of systems to which this DNS name is applied.

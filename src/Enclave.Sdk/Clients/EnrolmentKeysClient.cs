@@ -60,7 +60,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> GetAsync(int enrolmentKeyId)
+    public async Task<FullEnrolmentKey> GetAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var model = await HttpClient.GetFromJsonAsync<FullEnrolmentKey>($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}", Constants.JsonSerializerOptions);
 
@@ -70,7 +70,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> UpdateAsync(int enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder)
+    public async Task<FullEnrolmentKey> UpdateAsync(EnrolmentKeyId enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder)
     {
         if (builder is null)
         {
@@ -90,7 +90,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> EnableAsync(int enrolmentKeyId)
+    public async Task<FullEnrolmentKey> EnableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable", null);
 
@@ -102,7 +102,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> DisableAsync(int enrolmentKeyId)
+    public async Task<FullEnrolmentKey> DisableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/disable", null);
 
@@ -114,7 +114,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkEnableAsync(params int[] enrolmentKeys)
+    public async Task<int> BulkEnableAsync(params EnrolmentKeyId[] enrolmentKeys)
     {
         var requestModel = new
         {
@@ -133,7 +133,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkDisableAsync(params int[] enrolmentKeys)
+    public async Task<int> BulkDisableAsync(params EnrolmentKeyId[] enrolmentKeys)
     {
         var requestModel = new
         {

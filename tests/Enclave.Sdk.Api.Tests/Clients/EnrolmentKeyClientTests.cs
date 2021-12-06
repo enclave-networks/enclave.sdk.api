@@ -1,8 +1,8 @@
 ﻿using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.EnrolmentKeys;
 using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
+using Enclave.Sdk.Api.Data.Organisations;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.PatchModel;
 using FluentAssertions;
@@ -247,7 +247,7 @@ public class EnrolmentKeyClientTests
         // Arrange
         var response = new FullEnrolmentKey();
 
-        var enrolmentKeyId = 12;
+        var enrolmentKeyId = EnrolmentKeyId.FromInt(12);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}").UsingGet())
@@ -272,7 +272,7 @@ public class EnrolmentKeyClientTests
         // Arrange
         var response = new FullEnrolmentKey();
 
-        var enrolmentKeyId = 12;
+        var enrolmentKeyId = EnrolmentKeyId.FromInt(12);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}").UsingPatch())
@@ -298,7 +298,7 @@ public class EnrolmentKeyClientTests
         // Arrange
         var response = new FullEnrolmentKey();
 
-        var enrolmentKeyId = 12;
+        var enrolmentKeyId = EnrolmentKeyId.FromInt(12);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable").UsingPut())
@@ -321,7 +321,7 @@ public class EnrolmentKeyClientTests
         // Arrange
         var response = new FullEnrolmentKey();
 
-        var enrolmentKeyId = 12;
+        var enrolmentKeyId = EnrolmentKeyId.FromInt(12);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/disable").UsingPut())
@@ -344,7 +344,7 @@ public class EnrolmentKeyClientTests
         // Arrange
         var response = new BulkKeyActionResult()
         {
-            KeysModified = 4,
+            KeysModified = 2,
         };
 
         _server
@@ -355,7 +355,7 @@ public class EnrolmentKeyClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
-        var keys = new int[] { 1, 2, 3, 4 };
+        var keys = new EnrolmentKeyId[] { EnrolmentKeyId.FromInt(1), EnrolmentKeyId.FromInt(2) };
 
         // Act
         var result = await _enrolmentKeysClient.BulkEnableAsync(keys);
@@ -370,7 +370,7 @@ public class EnrolmentKeyClientTests
         // Arrange
         var response = new BulkKeyActionResult()
         {
-            KeysModified = 4,
+            KeysModified = 2,
         };
 
         _server
@@ -381,7 +381,7 @@ public class EnrolmentKeyClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
-        var keys = new int[] { 1, 2, 3, 4 };
+        var keys = new EnrolmentKeyId[] { EnrolmentKeyId.FromInt(1), EnrolmentKeyId.FromInt(2) };
 
         // Act
         var result = await _enrolmentKeysClient.BulkDisableAsync(keys);

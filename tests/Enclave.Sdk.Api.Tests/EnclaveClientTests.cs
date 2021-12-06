@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Enclave.Sdk.Api.Data.Account;
+using Enclave.Sdk.Api.Data.Organisations;
 using FluentAssertions;
 using NUnit.Framework;
 using WireMock.RequestBuilders;
