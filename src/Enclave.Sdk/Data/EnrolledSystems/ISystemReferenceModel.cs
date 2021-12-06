@@ -1,4 +1,4 @@
-﻿using Enclave.Sdk.Api.Data.SystemManagement.Enum;
+﻿using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
 
 namespace Enclave.Sdk.Api.Data.EnrolledSystems;
 
