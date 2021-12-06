@@ -40,7 +40,7 @@ public class EnrolmentKeyCreate
     /// <summary>
     /// A set of tags automatically applied to systems enrolled with this key.
     /// </summary>
-    public string[]? Tags { get; set; } = Array.Empty<string>();
+    public List<string>? Tags { get; set; } = new List<string>();
 
     /// <summary>
     /// Defines the number of minutes an ephemeral system enrolled with this key will be retained after a non-graceful disconnect.

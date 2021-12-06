@@ -85,7 +85,7 @@ public class FullEnrolmentKey
     /// <summary>
     /// The set of IP constraints for the key.
     /// </summary>
-    public IReadOnlyList<EnrolmentKeyIpConstraintInput> IpConstraints { get; init; }
+    public IReadOnlyList<EnrolmentKeyIpConstraint> IpConstraints { get; init; } = Array.Empty<EnrolmentKeyIpConstraint>();
 
     /// <summary>
     /// Any notes or additional info for this key.

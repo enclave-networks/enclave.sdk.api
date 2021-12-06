@@ -31,5 +31,5 @@ public class AccountOrganisationTopLevel
     /// <summary>
     /// The set of organisations.
     /// </summary>
-    public IReadOnlyList<AccountOrganisation> Orgs { get; init; } = default!;
+    public IReadOnlyList<AccountOrganisation> Orgs { get; init; } = Array.Empty<AccountOrganisation>();
 }
