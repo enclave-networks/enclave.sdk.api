@@ -6,9 +6,18 @@
 public class EnrolmentKeyIpConstraintInput
 {
     /// <summary>
+    /// A mandatory constructor for creating the IP Constraint.
+    /// </summary>
+    /// <param name="range">The IP range.</param>
+    public EnrolmentKeyIpConstraintInput(string range)
+    {
+        Range = range;
+    }
+
+    /// <summary>
     /// The IP range.
     /// </summary>
-    public string Range { get; set; } = default!;
+    public string Range { get; } = default!;
 
     /// <summary>
     /// A description for the range.

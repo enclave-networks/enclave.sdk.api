@@ -15,10 +15,10 @@ public interface IEnrolmentKeysClient
     /// Gets a paginated list of Enrolment Keys which can be searched and interated upon.
     /// </summary>
     /// <param name="searchTerm">A partial matching search term.</param>
-    /// <param name="includeDisabled">Include the disabled enorlment keys in the results.</param>
+    /// <param name="includeDisabled">Include the disabled Enrolment Keys in the results.</param>
     /// <param name="sortOrder">Sort order for the pagination.</param>
     /// <param name="pageNumber">Which page number do you want to return.</param>
-    /// <param name="perPage">How many tags per page.</param>
+    /// <param name="perPage">How many Enrolment Keys per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
     Task<PaginatedResponseModel<SimpleEnrolmentKey>> GetEnrolmentKeysAsync(string? searchTerm = null, bool? includeDisabled = null, EnrolmentKeySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null);
 
