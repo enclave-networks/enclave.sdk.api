@@ -1,4 +1,4 @@
-﻿namespace Enclave.Sdk.Api.Data.SystemManagement;
+﻿namespace Enclave.Sdk.Api.Data.EnrolledSystems;
 
 /// <summary>
 /// The result of a bulk system revocation.

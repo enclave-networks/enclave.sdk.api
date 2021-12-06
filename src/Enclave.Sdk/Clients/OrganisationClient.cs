@@ -27,6 +27,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
         EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
         Dns = new DnsClient(httpClient, _orgRoute);
         UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
+        EnrolledSystems = new EnrolledSystemsClient(httpClient, _orgRoute);
         Policies = new PoliciesClient(httpClient, _orgRoute);
     }
 
@@ -49,7 +50,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     public IPoliciesClient Policies { get; }
 
     /// <inheritdoc/>
-    public ISystemsClient Systems => throw new NotImplementedException();
+    public IEnrolledSystemsClient EnrolledSystems { get; }
 
     /// <inheritdoc/>
     public ITagsClient Tags => throw new NotImplementedException();

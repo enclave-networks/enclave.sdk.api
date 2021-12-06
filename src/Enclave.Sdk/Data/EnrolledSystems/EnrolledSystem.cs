@@ -1,12 +1,12 @@
 ﻿using Enclave.Sdk.Api.Data.SystemManagement.Enum;
 using Enclave.Sdk.Api.Data.Tags;
 
-namespace Enclave.Sdk.Api.Data.SystemManagement;
+namespace Enclave.Sdk.Api.Data.EnrolledSystems;
 
 /// <summary>
-/// A basic model representing a single system.
+/// A detailed model representing a single system.
 /// </summary>
-public class SystemSummary
+public class EnrolledSystem
 {
     /// <summary>
     /// Unique ID for the System.
@@ -51,7 +51,7 @@ public class SystemSummary
     /// <summary>
     /// The description of the enrolment key used to enrol the system.
     /// </summary>
-    public string EnrolmentKeyDescription { get; init; } = default!;
+    public string? EnrolmentKeyDescription { get; init; }
 
     /// <summary>
     /// Whether or not the system is enabled.
@@ -86,7 +86,17 @@ public class SystemSummary
     /// <summary>
     /// The tags assigned to the system.
     /// </summary>
-    public IReadOnlyList<TagReference>? Tags { get; init; }
+    public IReadOnlyList<TagReference> Tags { get; init; }
+
+    /// <summary>
+    /// The set of DNS entries applied to the system.
+    /// </summary>
+    public IReadOnlyList<SystemDnsEntry> Dns { get; init; }
+
+    /// <summary>
+    /// Any additional notes attached to the system.
+    /// </summary>
+    public string? Notes { get; init; }
 
     /// <summary>
     /// Defines the number of minutes this system will be retained after a non-graceful disconnect.

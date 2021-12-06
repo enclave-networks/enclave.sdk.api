@@ -1,7 +1,7 @@
 ﻿using Enclave.Sdk.Api.Data.Dns;
 using Enclave.Sdk.Api.Data.Tags;
 
-namespace Enclave.Sdk.Api.Data.SystemManagement;
+namespace Enclave.Sdk.Api.Data.EnrolledSystems;
 
 /// <summary>
 /// Represents a single system DNS entry.

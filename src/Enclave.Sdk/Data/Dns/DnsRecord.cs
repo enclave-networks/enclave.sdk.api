@@ -1,4 +1,4 @@
-﻿using Enclave.Sdk.Api.Data.SystemManagement;
+﻿using Enclave.Sdk.Api.Data.EnrolledSystems;
 using Enclave.Sdk.Api.Data.Tags;
 
 namespace Enclave.Sdk.Api.Data.Dns;
