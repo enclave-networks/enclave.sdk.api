@@ -94,9 +94,9 @@ public interface IOrganisationClient
 
     /// <summary>
     /// Patch request to update the organisation.
-    /// Use Builder.cs to help you generate the dictionary.
+    /// Use <see cref="PatchBuilder{TModel}"/>.
     /// </summary>
-    /// <param ref="Builder" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
+    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
     /// <returns>The updated organisation.</returns>
     /// <exception cref="ArgumentNullException">Throws if builder is null.</exception>
     Task<Organisation> UpdateAsync(PatchBuilder<OrganisationPatch> builder);

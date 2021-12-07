@@ -23,6 +23,8 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     {
         Organisation = currentOrganisation;
         _orgRoute = $"org/{Organisation.OrgId}";
+
+        EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
@@ -35,7 +37,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     public IDnsClient Dns => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public IEnrolmentKeysClient EnrolmentKeys => throw new NotImplementedException();
+    public IEnrolmentKeysClient EnrolmentKeys { get; }
 
     /// <inheritdoc/>
     public ILogsClient Logs => throw new NotImplementedException();
@@ -68,9 +70,12 @@ public class OrganisationClient : ClientBase, IOrganisationClient
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
-        } 
+        }
+
         using var encoded = CreateJsonContent(builder.Send());
         var result = await HttpClient.PatchAsync(_orgRoute, encoded);
+
+        result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<Organisation>(result.Content);
 
