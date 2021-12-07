@@ -38,7 +38,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     {
         var queryString = BuildQueryString(enrolmentKeyId, searchTerm, includeDisabled, sortOrder, dnsName, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<EnrolledSystemSummary>>($"{_orgRoute}/systems?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<EnrolledSystemSummary>>($"{_orgRoute}/systems?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

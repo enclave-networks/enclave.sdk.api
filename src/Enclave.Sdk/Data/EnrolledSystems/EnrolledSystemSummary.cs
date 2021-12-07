@@ -11,7 +11,7 @@ public class EnrolledSystemSummary
     /// <summary>
     /// Unique ID for the System.
     /// </summary>
-    public string SystemId { get; init; } = default!;
+    public SystemId SystemId { get; init; } = default!;
 
     /// <summary>
     /// The configured description of the system.

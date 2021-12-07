@@ -15,7 +15,7 @@ public interface ISystemReferenceModel
     /// <summary>
     /// The System ID.
     /// </summary>
-    string Id { get; }
+    SystemId Id { get; }
 
     /// <summary>
     /// The local hostname of the system (if known).
