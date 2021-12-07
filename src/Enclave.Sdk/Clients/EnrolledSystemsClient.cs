@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
@@ -45,7 +46,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> RevokeSystems(params string[] systemIds)
+    public async Task<int> RevokeSystemsAsync(params SystemId[] systemIds)
     {
         using var content = CreateJsonContent(new
         {
@@ -71,7 +72,13 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> GetAsync(string systemId)
+    public async Task<int> RevokeSystemsAsync(IEnumerable<SystemId> systemIds)
+    {
+        return await RevokeSystemsAsync(systemIds.ToArray());
+    }
+
+    /// <inheritdoc/>
+    public async Task<EnrolledSystem> GetAsync(SystemId systemId)
     {
         var model = await HttpClient.GetFromJsonAsync<EnrolledSystem>($"{_orgRoute}/systems/{systemId}", Constants.JsonSerializerOptions);
 
@@ -81,7 +88,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> UpdateAsync(string systemId, PatchBuilder<SystemPatch> builder)
+    public async Task<EnrolledSystem> UpdateAsync(SystemId systemId, PatchBuilder<EnrolledSystemPatch> builder)
     {
         if (builder is null)
         {
@@ -101,7 +108,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> RevokeAsync(string systemId)
+    public async Task<EnrolledSystem> RevokeAsync(SystemId systemId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/systems/{systemId}");
 
@@ -115,7 +122,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> EnableAsync(int systemId)
+    public async Task<EnrolledSystem> EnableAsync(SystemId systemId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/systems/{systemId}/enable", null);
 
@@ -127,7 +134,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> DisableAsync(int systemId)
+    public async Task<EnrolledSystem> DisableAsync(SystemId systemId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/systems/{systemId}/disable", null);
 
@@ -139,7 +146,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkEnableAsync(params string[] systemIds)
+    public async Task<int> BulkEnableAsync(params SystemId[] systemIds)
     {
         var requestModel = new
         {
@@ -158,7 +165,13 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkDisableAsync(params string[] systemIds)
+    public async Task<int> BulkEnableAsync(IEnumerable<SystemId> systemIds)
+    {
+        return await BulkEnableAsync(systemIds.ToArray());
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> BulkDisableAsync(params SystemId[] systemIds)
     {
         var requestModel = new
         {
@@ -174,6 +187,12 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
         EnsureNotNull(model);
 
         return model.SystemsUpdated;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> BulkDisableAsync(IEnumerable<SystemId> systemIds)
+    {
+        return await BulkDisableAsync(systemIds.ToArray());
     }
 
     private static string? BuildQueryString(

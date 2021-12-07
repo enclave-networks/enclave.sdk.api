@@ -11,6 +11,8 @@ using WireMock.Server;
 using WireMock.FluentAssertions;
 using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
 using Enclave.Sdk.Api.Data.Organisations;
+using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.PatchModel;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
@@ -285,5 +287,184 @@ public class EnrolledSystemClientTests
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/systems?per_page={page}");
     }
+
+    [Test]
+    public async Task Should_return_number_of_revoked_systems_when_calling_RevokeSystemsAsync()
+    {
+        // Arrange
+        var response = new BulkSystemRevokedResult
+        {
+            SystemsRevoked = 2,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingDelete())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _enrolledSystemsClient.RevokeSystemsAsync(SystemId.FromString("asdf"), SystemId.FromString("asdf3"));
+
+        // Assert
+        result.Should().Be(2);
+    }
+
+    [Test]
+    public async Task Should_return_the_updated_system_when_calling_UpdateAsync()
+    {
+        // Arrange
+        var response = new EnrolledSystem
+        {
+            SystemId = SystemId.FromString("system1"),
+            Description = "new description",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{response.SystemId}").UsingPatch())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var builder = new PatchBuilder<EnrolledSystemPatch>().Set(e => e.Description, "new description");
+
+        // Act
+        var result = await _enrolledSystemsClient.UpdateAsync(response.SystemId, builder);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Description.Should().Be(response.Description);
+    }
+
+    [Test]
+    public async Task Should_return_the_revoked_system_when_calling_RevokeAsync()
+    {
+        // Arrange
+        var response = new EnrolledSystem
+        {
+            SystemId = SystemId.FromString("system1"),
+            Description = "description",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{response.SystemId}").UsingDelete())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _enrolledSystemsClient.RevokeAsync(response.SystemId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.SystemId.Should().Be(response.SystemId);
+    }
+
+    [Test]
+    public async Task Should_return_the_enabled_system_when_calling_EnableAsync()
+    {
+        // Arrange
+        var response = new EnrolledSystem
+        {
+            SystemId = SystemId.FromString("system1"),
+            Description = "description",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{response.SystemId}/enable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _enrolledSystemsClient.EnableAsync(response.SystemId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.SystemId.Should().Be(response.SystemId);
+    }
+
+    [Test]
+    public async Task Should_return_the_disabled_system_when_calling_DisableAsync()
+    {
+        // Arrange
+        var response = new EnrolledSystem
+        {
+            SystemId = SystemId.FromString("system1"),
+            Description = "description",
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{response.SystemId}/disable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _enrolledSystemsClient.DisableAsync(response.SystemId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.SystemId.Should().Be(response.SystemId);
+    }
+
+    [Test]
+    public async Task Should_return_number_of_enabled_systems_when_calling_BulkEnableAsync()
+    {
+        // Arrange
+        var response = new BulkSystemUpdateResult
+        {
+            SystemsUpdated = 2,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/enable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _enrolledSystemsClient.BulkEnableAsync(SystemId.FromString("asdf"), SystemId.FromString("asdf3"));
+
+        // Assert
+        result.Should().Be(2);
+    }
+
+    [Test]
+    public async Task Should_return_number_of_disabled_systems_when_calling_BulkDisableAsync()
+    {
+        // Arrange
+        var response = new BulkSystemUpdateResult
+        {
+            SystemsUpdated = 2,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/disable").UsingPut())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _enrolledSystemsClient.BulkDisableAsync(SystemId.FromString("asdf"), SystemId.FromString("asdf3"));
+
+        // Assert
+        result.Should().Be(2);
+    }
+
 
 }

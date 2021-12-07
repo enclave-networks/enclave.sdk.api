@@ -18,7 +18,7 @@ public interface IPoliciesClient
     /// <param name="includeDisabled">Include the disabled Policies in the results.</param>
     /// <param name="sortOrder">Sort order for the pagination.</param>
     /// <param name="pageNumber">Which page number do you want to return.</param>
-    /// <param name="perPage">How many tags per page.</param>
+    /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
     Task<PaginatedResponseModel<Policy>> GetPoliciesAsync(
         string? searchTerm = null,
