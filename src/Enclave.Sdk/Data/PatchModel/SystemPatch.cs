@@ -18,7 +18,7 @@ public class SystemPatch : IPatchModel
     /// <summary>
     /// The set of tags applied to the system.
     /// </summary>
-    public string[]? Tags { get; set; }
+    public IReadOnlyList<string>? Tags { get; set; }
 
     /// <summary>
     /// Any notes or additional info for this system.

@@ -31,12 +31,12 @@ public class EnrolmentKeyPatchModel : IPatchModel
     /// <summary>
     /// The set of IP Address constraints on the key.
     /// </summary>
-    public List<EnrolmentKeyIpConstraintInput>? IpConstraints { get; set; }
+    public IReadOnlyList<EnrolmentKeyIpConstraintInput>? IpConstraints { get; set; }
 
     /// <summary>
     /// A set of tags automatically applied to systems enrolled with this key.
     /// </summary>
-    public string[]? Tags { get; set; }
+    public List<string> Tags { get; set; } = new List<string>();
 
     /// <summary>
     /// Defines the number of minutes an ephemeral system enrolled with this key will be retained after a non-graceful disconnect.

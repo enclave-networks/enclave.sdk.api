@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using Enclave.Sdk.Api.Data.Organisations;
 
 namespace Enclave.Sdk.Api.Data.Account;
 

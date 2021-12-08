@@ -1,5 +1,5 @@
-﻿using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
 
 namespace Enclave.Sdk.Api.Data.EnrolmentKeys;
 
@@ -8,7 +8,6 @@ namespace Enclave.Sdk.Api.Data.EnrolmentKeys;
 /// </summary>
 public class EnrolmentKeyCreate
 {
-
     /// <summary>
     /// Defines the type of key being created, general purpose (default) or ephemeral (enrolled systems are automatically removed).
     /// </summary>

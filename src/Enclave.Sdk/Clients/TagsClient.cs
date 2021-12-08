@@ -1,18 +1,18 @@
+using System.Net.Http.Json;
+using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.Tags;
-using System.Net.Http.Json;
-using System.Web;
 
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="ITagsClient"/>
-public class TagsClient : ClientBase, ITagsClient
+internal class TagsClient : ClientBase, ITagsClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
-    /// Consutructor which will be called by <see cref="OrganisationClient"/> when it's created.
+    /// Constructor  which will be called by <see cref="OrganisationClient"/> when it's created.
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
     /// <param name="orgRoute">the orgRoute which specifies the orgId.</param>

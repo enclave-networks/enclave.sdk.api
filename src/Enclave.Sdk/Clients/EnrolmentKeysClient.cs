@@ -10,13 +10,12 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IEnrolmentKeysClient" />
-public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
+internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
-    /// This constructor is called by <see cref="EnclaveClient"/> when setting up the <see cref="EnrolmentKeysClient"/>.
-    /// It also calls the <see cref="ClientBase"/> constructor.
+    /// Constructor  which will be called by <see cref="OrganisationClient"/> when it's created.
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
     /// <param name="orgRoute">The organisation API route.</param>
@@ -46,7 +45,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     /// <inheritdoc/>
     public async Task<FullEnrolmentKey> CreateAsync(EnrolmentKeyCreate createModel)
     {
-        if (createModel == null)
+        if (createModel is null)
         {
             throw new ArgumentNullException(nameof(createModel));
         }
@@ -61,7 +60,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> GetAsync(int enrolmentKeyId)
+    public async Task<FullEnrolmentKey> GetAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var model = await HttpClient.GetFromJsonAsync<FullEnrolmentKey>($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}", Constants.JsonSerializerOptions);
 
@@ -71,7 +70,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> UpdateAsync(int enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder)
+    public async Task<FullEnrolmentKey> UpdateAsync(EnrolmentKeyId enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder)
     {
         if (builder is null)
         {
@@ -91,7 +90,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> EnableAsync(int enrolmentKeyId)
+    public async Task<FullEnrolmentKey> EnableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable", null);
 
@@ -103,7 +102,7 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> DisableAsync(int enrolmentKeyId)
+    public async Task<FullEnrolmentKey> DisableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/disable", null);
 
@@ -115,16 +114,14 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkEnableAsync(params int[] enrolmentKeys)
+    public async Task<int> BulkEnableAsync(params EnrolmentKeyId[] enrolmentKeys)
     {
         var requestModel = new
         {
             keyIds = enrolmentKeys,
         };
 
-        using var content = CreateJsonContent(requestModel);
-
-        var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/enable", content);
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/enrolment-keys/enable", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 
@@ -136,16 +133,20 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkDisableAsync(params int[] enrolmentKeys)
+    public async Task<int> BulkEnableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys)
+    {
+        return await BulkEnableAsync(enrolmentKeys.ToArray());
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> BulkDisableAsync(params EnrolmentKeyId[] enrolmentKeys)
     {
         var requestModel = new
         {
             keyIds = enrolmentKeys,
         };
 
-        using var content = CreateJsonContent(requestModel);
-
-        var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/disable", content);
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/enrolment-keys/disable", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 
@@ -154,6 +155,12 @@ public class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
         EnsureNotNull(model);
 
         return model.KeysModified;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> BulkDisableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys)
+    {
+        return await BulkDisableAsync(enrolmentKeys.ToArray());
     }
 
     private static string? BuildQueryString(string? searchTerm, bool? includeDisabled, EnrolmentKeySortOrder? sortOrder, int? pageNumber, int? perPage)

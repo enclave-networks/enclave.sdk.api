@@ -1,11 +1,8 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
+﻿namespace Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
 
 /// <summary>
 /// The status of an enrolment key.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum EnrolmentKeyStatus
 {
     /// <summary>

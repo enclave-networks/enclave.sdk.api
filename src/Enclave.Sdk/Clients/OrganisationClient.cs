@@ -8,9 +8,9 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IOrganisationClient" />
-public class OrganisationClient : ClientBase, IOrganisationClient
+internal class OrganisationClient : ClientBase, IOrganisationClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
     /// This constructor is called by <see cref="EnclaveClient"/> when setting up the <see cref="OrganisationClient"/>.
@@ -25,6 +25,9 @@ public class OrganisationClient : ClientBase, IOrganisationClient
         _orgRoute = $"org/{Organisation.OrgId}";
 
         EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
+        Dns = new DnsClient(httpClient, _orgRoute);
+        UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
+        Policies = new PoliciesClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
@@ -34,7 +37,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     public IAuthorityClient Authority => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public IDnsClient Dns => throw new NotImplementedException();
+    public IDnsClient Dns { get; }
 
     /// <inheritdoc/>
     public IEnrolmentKeysClient EnrolmentKeys { get; }
@@ -43,7 +46,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     public ILogsClient Logs => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public IPoliciesClient Policies => throw new NotImplementedException();
+    public IPoliciesClient Policies { get; }
 
     /// <inheritdoc/>
     public ISystemsClient Systems => throw new NotImplementedException();
@@ -52,7 +55,7 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     public ITagsClient Tags => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public IUnapprovedSystemsClient UnapprovedSystems => throw new NotImplementedException();
+    public IUnapprovedSystemsClient UnapprovedSystems { get; }
 
     /// <inheritdoc/>
     public async Task<Organisation?> GetAsync()
