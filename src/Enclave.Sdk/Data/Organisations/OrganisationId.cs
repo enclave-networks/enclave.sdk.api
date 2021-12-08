@@ -3,7 +3,7 @@
 namespace Enclave.Sdk.Api.Data.Organisations;
 
 /// <summary>
-/// OrganisaitonId struct to distinguish between Id types.
+/// OrganisationId struct to distinguish between Id types.
 /// </summary>
 [TypedId]
 public readonly partial struct OrganisationId
