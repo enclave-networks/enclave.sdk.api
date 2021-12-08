@@ -13,12 +13,12 @@ public class DnsRecordPatch : IPatchModel
     /// <summary>
     /// The set of tags to which this DNS name is applied.
     /// </summary>
-    public List<string>? Tags { get; set; }
+    public IReadOnlyList<string>? Tags { get; set; }
 
     /// <summary>
     /// The set of systems to which this DNS name is applied.
     /// </summary>
-    public List<string>? Systems { get; set; }
+    public IReadOnlyList<string>? Systems { get; set; }
 
     /// <summary>
     /// Any notes or additional info for this record.

@@ -47,7 +47,7 @@ public class FullDnsRecord
     /// <summary>
     /// The set of systems to which this DNS name is applied.
     /// </summary>
-    public IReadOnlyList<ISystemReferenceModel>? Systems { get; init; }
+    public IReadOnlyList<SystemReference>? Systems { get; init; }
 
     /// <summary>
     /// Any provided notes for this record.
