@@ -15,7 +15,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     private readonly string _orgRoute;
 
     /// <summary>
-    /// Consutructor which will be called by <see cref="OrganisationClient"/> when it's created.
+    /// Constructor  which will be called by <see cref="OrganisationClient"/> when it's created.
     /// It also calls the <see cref="ClientBase"/> constructor.
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>

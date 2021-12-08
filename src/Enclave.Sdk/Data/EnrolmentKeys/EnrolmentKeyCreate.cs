@@ -34,7 +34,7 @@ public class EnrolmentKeyCreate
     /// <summary>
     /// The set of IP Address constraints on the key.
     /// </summary>
-    public List<EnrolmentKeyIpConstraintInput>? IpConstraints { get; set; } = new List<EnrolmentKeyIpConstraintInput>();
+    public List<EnrolmentKeyIpConstraintInput> IpConstraints { get; set; } = new List<EnrolmentKeyIpConstraintInput>();
 
     /// <summary>
     /// A set of tags automatically applied to systems enrolled with this key.

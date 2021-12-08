@@ -31,7 +31,7 @@ public class EnrolmentKeyPatchModel : IPatchModel
     /// <summary>
     /// The set of IP Address constraints on the key.
     /// </summary>
-    public List<EnrolmentKeyIpConstraintInput>? IpConstraints { get; set; }
+    public IReadOnlyList<EnrolmentKeyIpConstraintInput>? IpConstraints { get; set; }
 
     /// <summary>
     /// A set of tags automatically applied to systems enrolled with this key.

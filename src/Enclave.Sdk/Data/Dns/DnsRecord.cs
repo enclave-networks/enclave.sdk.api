@@ -1,4 +1,5 @@
 ﻿using Enclave.Sdk.Api.Data.EnrolledSystems;
+using Enclave.Sdk.Api.Data.SystemManagement;
 using Enclave.Sdk.Api.Data.Tags;
 
 namespace Enclave.Sdk.Api.Data.Dns;
@@ -47,7 +48,7 @@ public class DnsRecord
     /// <summary>
     /// The set of systems to which this DNS name is applied.
     /// </summary>
-    public IReadOnlyList<ISystemReferenceModel>? Systems { get; init; }
+    public IReadOnlyList<SystemReference>? Systems { get; init; }
 
     /// <summary>
     /// Any provided notes for this record.

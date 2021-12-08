@@ -13,7 +13,7 @@ public class UnapprovedSystemPatch : IPatchModel
     /// <summary>
     /// The set of tags applied to the system.
     /// </summary>
-    public List<string> Tags { get; set; } = new List<string>();
+    public IReadOnlyList<string>? Tags { get; set; }
 
     /// <summary>
     /// Any notes or additional info for this system.

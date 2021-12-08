@@ -21,7 +21,7 @@ public class Policy
     /// <summary>
     /// The provided description of the policy.
     /// </summary>
-    public string Description { get; init; }
+    public string Description { get; init; } = default!;
 
     /// <summary>
     /// Whether or not this policy is enabled.
@@ -46,7 +46,7 @@ public class Policy
     /// <summary>
     /// Access control lists.
     /// </summary>
-    public IReadOnlyList<PolicyAcl> Acls { get; init; }
+    public IReadOnlyList<PolicyAcl> Acls { get; init; } = Array.Empty<PolicyAcl>();
 
     /// <summary>
     /// Optional notes for the policy.

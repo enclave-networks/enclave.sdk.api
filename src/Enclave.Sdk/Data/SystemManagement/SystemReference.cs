@@ -1,39 +1,39 @@
 ﻿using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
 
-namespace Enclave.Sdk.Api.Data.EnrolledSystems;
+namespace Enclave.Sdk.Api.Data.SystemManagement;
 
 /// <summary>
-/// Abstraction for a system reference model so we can mix placeholder and "actual" reference models.
+/// Defines a system reference model.
 /// </summary>
-public interface ISystemReferenceModel
+public class SystemReference
 {
     /// <summary>
     /// Contains the last connected IP of the system.
     /// </summary>
-    string? ConnectedFrom { get; }
+    public string? ConnectedFrom { get; init; }
 
     /// <summary>
     /// The System ID.
     /// </summary>
-    SystemId Id { get; }
+    public string Id { get; init; }
 
     /// <summary>
     /// The local hostname of the system (if known).
     /// </summary>
-    string? MachineName { get; }
+    public string? MachineName { get; init; }
 
     /// <summary>
     /// The set name of the system (if one was provided).
     /// </summary>
-    string? Name { get; }
+    public string? Name { get; init; }
 
     /// <summary>
     /// The System platform type (if known).
     /// </summary>
-    string? PlatformType { get; }
+    public string? PlatformType { get; init; }
 
     /// <summary>
     /// The state of the system.
     /// </summary>
-    SystemState State { get; }
+    public SystemState State { get; init; }
 }
