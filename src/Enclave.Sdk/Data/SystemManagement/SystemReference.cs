@@ -15,7 +15,7 @@ public class SystemReference
     /// <summary>
     /// The System ID.
     /// </summary>
-    public string Id { get; init; }
+    public string Id { get; init; } = default!;
 
     /// <summary>
     /// The local hostname of the system (if known).

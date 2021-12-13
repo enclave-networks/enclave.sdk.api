@@ -8,7 +8,7 @@ public class PaginationLinks
     /// <summary>
     /// The first page of data.
     /// </summary>
-    public Uri First { get; init; }
+    public Uri? First { get; init; }
 
     /// <summary>
     /// The previous page of data (or null if this is the first page).
@@ -23,5 +23,5 @@ public class PaginationLinks
     /// <summary>
     /// The last page of data.
     /// </summary>
-    public Uri Last { get; init; }
+    public Uri? Last { get; init; }
 }

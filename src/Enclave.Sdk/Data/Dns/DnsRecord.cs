@@ -9,7 +9,6 @@ namespace Enclave.Sdk.Api.Data.Dns;
 /// </summary>
 public class DnsRecord
 {
-
     /// <summary>
     /// The ID of the record.
     /// </summary>

@@ -24,18 +24,17 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
         Organisation = currentOrganisation;
         _orgRoute = $"org/{Organisation.OrgId}";
 
-        EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
         Dns = new DnsClient(httpClient, _orgRoute);
-        UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
-        EnrolledSystems = new EnrolledSystemsClient(httpClient, _orgRoute);
+        EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
+        Logs = new LogsClient(httpClient, _orgRoute);
         Policies = new PoliciesClient(httpClient, _orgRoute);
+        EnrolledSystems = new EnrolledSystemsClient(httpClient, _orgRoute);
+        Tags = new TagsClient(httpClient, _orgRoute);
+        UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
     public AccountOrganisation Organisation { get; }
-
-    /// <inheritdoc/>
-    public IAuthorityClient Authority => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public IDnsClient Dns { get; }
@@ -44,7 +43,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     public IEnrolmentKeysClient EnrolmentKeys { get; }
 
     /// <inheritdoc/>
-    public ILogsClient Logs => throw new NotImplementedException();
+    public ILogsClient Logs { get; }
 
     /// <inheritdoc/>
     public IPoliciesClient Policies { get; }
@@ -53,7 +52,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     public IEnrolledSystemsClient EnrolledSystems { get; }
 
     /// <inheritdoc/>
-    public ITagsClient Tags => throw new NotImplementedException();
+    public ITagsClient Tags { get; }
 
     /// <inheritdoc/>
     public IUnapprovedSystemsClient UnapprovedSystems { get; }

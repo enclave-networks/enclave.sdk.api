@@ -70,7 +70,7 @@ public interface IDnsClient
     /// <summary>
     /// Create a DNS Record using a <see cref="DnsRecordCreate"/> model.
     /// </summary>
-    /// <param name="createModel">The model needed to create a DNS Record</param>
+    /// <param name="createModel">The model needed to create a DNS Record.</param>
     /// <returns>The created DNS Record as <see cref="DnsRecordCreate"/>.</returns>
     Task<DnsRecord> CreateRecordAsync(DnsRecordCreate createModel);
 
@@ -92,7 +92,7 @@ public interface IDnsClient
     /// Get a detailed DNS Record.
     /// </summary>
     /// <param name="dnsRecordId">The id of the DNS Record you want to get.</param>
-    /// <returns>A detailed DNS Record object</returns>
+    /// <returns>A detailed DNS Record object.</returns>
     Task<DnsRecord> GetRecordAsync(DnsRecordId dnsRecordId);
 
     /// <summary>
