@@ -12,13 +12,13 @@ namespace Enclave.Sdk.Api.Clients.Interfaces;
 public interface IPoliciesClient
 {
     /// <summary>
-    /// Gets a paginated list of Policies which can be searched and interated upon.
+    /// Gets a paginated list of Policies which can be searched and iterated upon.
     /// </summary>
     /// <param name="searchTerm">A partial matching search term.</param>
     /// <param name="includeDisabled">Include the disabled Policies in the results.</param>
     /// <param name="sortOrder">Sort order for the pagination.</param>
     /// <param name="pageNumber">Which page number do you want to return.</param>
-    /// <param name="perPage">How many tags per page.</param>
+    /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
     Task<PaginatedResponseModel<Policy>> GetPoliciesAsync(
         string? searchTerm = null,

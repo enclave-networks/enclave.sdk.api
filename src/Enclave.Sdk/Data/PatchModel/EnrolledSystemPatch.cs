@@ -3,7 +3,7 @@
 /// <summary>
 /// Defines the modifiable properties of a system.
 /// </summary>
-public class SystemPatch : IPatchModel
+public class EnrolledSystemPatch : IPatchModel
 {
     /// <summary>
     /// The system description.

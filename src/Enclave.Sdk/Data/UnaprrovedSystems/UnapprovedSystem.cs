@@ -46,7 +46,12 @@ public class UnapprovedSystem
     /// <summary>
     /// The description of the enrolment key used to enrol the system.
     /// </summary>
-    public string? EnrolmentKeyDescription { get; init; }
+    public string EnrolmentKeyDescription { get; init; } = default!;
+
+    /// <summary>
+    /// Any additional notes for the system.
+    /// </summary>
+    public string? Notes { get; init; }
 
     /// <summary>
     /// The locally-defined host name of the system.

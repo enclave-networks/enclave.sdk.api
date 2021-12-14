@@ -38,7 +38,13 @@ public class OrganisationUser
     public UserOrganisationRole Role { get; init; }
 }
 
+/// <summary>
+/// Top Level model for organisation user requests.
+/// </summary>
 public class OrganisationUsersTopLevel
 {
+    /// <summary>
+    /// A list of Organisation Users.
+    /// </summary>
     public IReadOnlyList<OrganisationUser>? Users { get; init; }
 }

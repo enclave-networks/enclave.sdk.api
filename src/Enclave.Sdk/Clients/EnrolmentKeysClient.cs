@@ -26,7 +26,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<SimpleEnrolmentKey>> GetEnrolmentKeysAsync(
+    public async Task<PaginatedResponseModel<EnrolmentKeySummary>> GetEnrolmentKeysAsync(
         string? searchTerm = null,
         bool? includeDisabled = null,
         EnrolmentKeySortOrder? sortOrder = null,
@@ -35,7 +35,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     {
         var queryString = BuildQueryString(searchTerm, includeDisabled, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<SimpleEnrolmentKey>>($"{_orgRoute}/enrolment-keys?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<EnrolmentKeySummary>>($"{_orgRoute}/enrolment-keys?{queryString}");
 
         EnsureNotNull(model);
 
@@ -43,7 +43,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> CreateAsync(EnrolmentKeyCreate createModel)
+    public async Task<EnrolmentKey> CreateAsync(EnrolmentKeyCreate createModel)
     {
         if (createModel is null)
         {
@@ -52,7 +52,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/enrolment-keys", createModel, Constants.JsonSerializerOptions);
 
-        var model = await DeserialiseAsync<FullEnrolmentKey>(result.Content);
+        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
 
         EnsureNotNull(model);
 
@@ -60,9 +60,9 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> GetAsync(EnrolmentKeyId enrolmentKeyId)
+    public async Task<EnrolmentKey> GetAsync(EnrolmentKeyId enrolmentKeyId)
     {
-        var model = await HttpClient.GetFromJsonAsync<FullEnrolmentKey>($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<EnrolmentKey>($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -70,7 +70,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> UpdateAsync(EnrolmentKeyId enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder)
+    public async Task<EnrolmentKey> UpdateAsync(EnrolmentKeyId enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder)
     {
         if (builder is null)
         {
@@ -82,7 +82,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<FullEnrolmentKey>(result.Content);
+        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
 
         EnsureNotNull(model);
 
@@ -90,11 +90,11 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> EnableAsync(EnrolmentKeyId enrolmentKeyId)
+    public async Task<EnrolmentKey> EnableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable", null);
 
-        var model = await DeserialiseAsync<FullEnrolmentKey>(result.Content);
+        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
 
         EnsureNotNull(model);
 
@@ -102,11 +102,11 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<FullEnrolmentKey> DisableAsync(EnrolmentKeyId enrolmentKeyId)
+    public async Task<EnrolmentKey> DisableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/disable", null);
 
-        var model = await DeserialiseAsync<FullEnrolmentKey>(result.Content);
+        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
 
         EnsureNotNull(model);
 

@@ -1,4 +1,5 @@
-﻿using Enclave.Sdk.Api.Data.SystemManagement;
+﻿using Enclave.Sdk.Api.Data.EnrolledSystems;
+using Enclave.Sdk.Api.Data.SystemManagement;
 using Enclave.Sdk.Api.Data.Tags;
 
 namespace Enclave.Sdk.Api.Data.Dns;
@@ -6,9 +7,8 @@ namespace Enclave.Sdk.Api.Data.Dns;
 /// <summary>
 /// Detailed model representing a DNS record.
 /// </summary>
-public class FullDnsRecord
+public class DnsRecord
 {
-
     /// <summary>
     /// The ID of the record.
     /// </summary>

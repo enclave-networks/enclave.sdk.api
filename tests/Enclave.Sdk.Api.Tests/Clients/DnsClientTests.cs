@@ -68,11 +68,11 @@ public class DnsClientTests
     public async Task Should_return_a_paginated_response_model_when_calling_GetZonesAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<BasicDnsZone>
+        var response = new PaginatedResponseModel<DnsZoneSummary>
         {
-            Items = new List<BasicDnsZone>
+            Items = new List<DnsZoneSummary>
             {
-                new BasicDnsZone { Name = "test"}
+                new DnsZoneSummary { Name = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -97,11 +97,11 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_page_quertString_when_calling_GetZonesAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<BasicDnsZone>
+        var response = new PaginatedResponseModel<DnsZoneSummary>
         {
-            Items = new List<BasicDnsZone>
+            Items = new List<DnsZoneSummary>
             {
-                new BasicDnsZone { Name = "test"}
+                new DnsZoneSummary { Name = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -128,11 +128,11 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_per_page_quertString_when_calling_GetZonesAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<BasicDnsZone>
+        var response = new PaginatedResponseModel<DnsZoneSummary>
         {
-            Items = new List<BasicDnsZone>
+            Items = new List<DnsZoneSummary>
             {
-                new BasicDnsZone { Name = "test"}
+                new DnsZoneSummary { Name = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -159,7 +159,7 @@ public class DnsClientTests
     public async Task Should_return_a_full_dns_zone_when_calling_CreateZoneAsync()
     {
         // Arrange
-        var response = new FullDnsZone
+        var response = new DnsZone
         {
             Id = DnsZoneId.FromInt(123),
             Name = "test",
@@ -185,7 +185,7 @@ public class DnsClientTests
     public async Task Should_return_a_full_dns_zone_when_calling_GetZoneAsync()
     {
         // Arrange
-        var response = new FullDnsZone
+        var response = new DnsZone
         {
             Id = DnsZoneId.FromInt(123),
             Name = "test",
@@ -211,7 +211,7 @@ public class DnsClientTests
     public async Task Should_return_a_full_dns_zone_when_calling_UpdateZoneAsync()
     {
         // Arrange
-        var response = new FullDnsZone
+        var response = new DnsZone
         {
             Id = DnsZoneId.FromInt(123),
             Name = "New Name",
@@ -239,7 +239,7 @@ public class DnsClientTests
     public async Task Should_return_a_full_dns_zone_when_calling_DeleteZoneAsync()
     {
         // Arrange
-        var response = new FullDnsZone
+        var response = new DnsZone
         {
             Id = DnsZoneId.FromInt(123),
             Name = "New Name",
@@ -265,11 +265,11 @@ public class DnsClientTests
     public async Task Should_return_a_paginated_response_model_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<BasicDnsRecord>
+        var response = new PaginatedResponseModel<DnsRecordSummary>
         {
-            Items = new List<BasicDnsRecord>
+            Items = new List<DnsRecordSummary>
             {
-                new BasicDnsRecord { Name = "test"}
+                new DnsRecordSummary { Name = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -294,11 +294,11 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_zoneId_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<BasicDnsRecord>
+        var response = new PaginatedResponseModel<DnsRecordSummary>
         {
-            Items = new List<BasicDnsRecord>
+            Items = new List<DnsRecordSummary>
             {
-                new BasicDnsRecord { Name = "test"}
+                new DnsRecordSummary { Name = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -325,11 +325,11 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_hostname_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<BasicDnsRecord>
+        var response = new PaginatedResponseModel<DnsRecordSummary>
         {
-            Items = new List<BasicDnsRecord>
+            Items = new List<DnsRecordSummary>
             {
-                new BasicDnsRecord { Name = "test"}
+                new DnsRecordSummary { Name = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -357,11 +357,11 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_page_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<BasicDnsRecord>
+        var response = new PaginatedResponseModel<DnsRecordSummary>
         {
-            Items = new List<BasicDnsRecord>
+            Items = new List<DnsRecordSummary>
             {
-                new BasicDnsRecord { Name = "test"}
+                new DnsRecordSummary { Name = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -388,11 +388,11 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_per_page_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<BasicDnsRecord>
+        var response = new PaginatedResponseModel<DnsRecordSummary>
         {
-            Items = new List<BasicDnsRecord>
+            Items = new List<DnsRecordSummary>
             {
-                new BasicDnsRecord { Name = "test"}
+                new DnsRecordSummary { Name = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -419,7 +419,7 @@ public class DnsClientTests
     public async Task Should_return_a_full_dns_record_model_when_calling_CreateRecordAsync()
     {
         // Arrange
-        var response = new FullDnsRecord
+        var response = new DnsRecord
         {
             Id = DnsRecordId.FromInt(123),
             Name = "Name",
@@ -478,7 +478,7 @@ public class DnsClientTests
     {
         // Arrange
         var id = DnsRecordId.FromInt(123);
-        var response = new FullDnsRecord
+        var response = new DnsRecord
         {
             Id = id,
             Name = "Name",
@@ -505,7 +505,7 @@ public class DnsClientTests
     {
         // Arrange
         var id = DnsRecordId.FromInt(123);
-        var response = new FullDnsRecord
+        var response = new DnsRecord
         {
             Id = id,
             Name = "New Name",
@@ -535,7 +535,7 @@ public class DnsClientTests
     {
         // Arrange
         var id = DnsRecordId.FromInt(123);
-        var response = new FullDnsRecord
+        var response = new DnsRecord
         {
             Id = id,
             Name = "Name",

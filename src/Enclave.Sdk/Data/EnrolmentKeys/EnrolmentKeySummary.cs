@@ -6,7 +6,7 @@ namespace Enclave.Sdk.Api.Data.EnrolmentKeys;
 /// <summary>
 /// Represents a single Enclave Enrolment Key.
 /// </summary>
-public class SimpleEnrolmentKey
+public class EnrolmentKeySummary
 {
     /// <summary>
     /// The ID of the enrolment key.

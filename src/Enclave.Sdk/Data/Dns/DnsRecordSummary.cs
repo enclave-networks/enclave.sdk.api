@@ -1,12 +1,13 @@
-﻿using Enclave.Sdk.Api.Data.SystemManagement;
+﻿using Enclave.Sdk.Api.Data.EnrolledSystems;
+using Enclave.Sdk.Api.Data.SystemManagement;
 using Enclave.Sdk.Api.Data.Tags;
 
 namespace Enclave.Sdk.Api.Data.Dns;
 
 /// <summary>
-/// Basic model representing a summary of a DNS record.
+/// Model representing a summary of a DNS record.
 /// </summary>
-public class BasicDnsRecord
+public class DnsRecordSummary
 {
     /// <summary>
     /// The ID of the record.

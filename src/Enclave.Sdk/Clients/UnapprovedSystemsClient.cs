@@ -27,7 +27,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<UnapprovedSystem>> GetSystemsAsync(
+    public async Task<PaginatedResponseModel<UnapprovedSystemSummary>> GetSystemsAsync(
         int? enrolmentKeyId = null,
         string? searchTerm = null,
         UnapprovedSystemQuerySortMode? sortOrder = null,
@@ -36,7 +36,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     {
         var queryString = BuildQueryString(enrolmentKeyId, searchTerm, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<UnapprovedSystem>>($"{_orgRoute}/unapproved-systems?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<UnapprovedSystemSummary>>($"{_orgRoute}/unapproved-systems?{queryString}");
 
         EnsureNotNull(model);
 
@@ -76,9 +76,9 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystemDetail> GetAsync(SystemId systemId)
+    public async Task<UnapprovedSystem> GetAsync(SystemId systemId)
     {
-        var model = await HttpClient.GetFromJsonAsync<UnapprovedSystemDetail>($"{_orgRoute}/unapproved-systems/{systemId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<UnapprovedSystem>($"{_orgRoute}/unapproved-systems/{systemId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -86,7 +86,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystemDetail> UpdateAsync(SystemId systemId, PatchBuilder<UnapprovedSystemPatch> builder)
+    public async Task<UnapprovedSystem> UpdateAsync(SystemId systemId, PatchBuilder<UnapprovedSystemPatch> builder)
     {
         if (builder is null)
         {
@@ -98,7 +98,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<UnapprovedSystemDetail>(result.Content);
+        var model = await DeserialiseAsync<UnapprovedSystem>(result.Content);
 
         EnsureNotNull(model);
 
@@ -106,13 +106,13 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystemDetail> DeclineAsync(SystemId systemId)
+    public async Task<UnapprovedSystem> DeclineAsync(SystemId systemId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/unapproved-systems/{systemId}");
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<UnapprovedSystemDetail>(result.Content);
+        var model = await DeserialiseAsync<UnapprovedSystem>(result.Content);
 
         EnsureNotNull(model);
 

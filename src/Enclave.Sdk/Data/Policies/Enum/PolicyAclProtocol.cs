@@ -5,8 +5,23 @@
 /// </summary>
 public enum PolicyAclProtocol
 {
+    /// <summary>
+    /// Any Protocol.
+    /// </summary>
     Any,
+
+    /// <summary>
+    /// Tcp.
+    /// </summary>
     Tcp,
+
+    /// <summary>
+    /// Udp.
+    /// </summary>
     Udp,
+
+    /// <summary>
+    /// Icmp.
+    /// </summary>
     Icmp,
 }

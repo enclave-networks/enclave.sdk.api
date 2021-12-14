@@ -1,9 +1,9 @@
 ﻿namespace Enclave.Sdk.Api.Data.Dns;
 
 /// <summary>
-/// Detailed model representing a DNS zone.
+/// Model representing a summary of a DNS record.
 /// </summary>
-public class FullDnsZone
+public class DnsZoneSummary
 {
     /// <summary>
     /// The ID of the zone.
@@ -30,9 +30,4 @@ public class FullDnsZone
     /// </summary>
     // Public-facing APIs use the display name of the record type rather than the actual enum name. SeeDnsRecordTypeFormatConverter
     public IReadOnlyDictionary<string, int>? RecordTypeCounts { get; init; }
-
-    /// <summary>
-    /// Any provided notes for this zone.
-    /// </summary>s
-    public string? Notes { get; init; }
 }

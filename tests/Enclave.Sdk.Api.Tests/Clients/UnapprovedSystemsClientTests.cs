@@ -44,11 +44,11 @@ public class UnapprovedSystemsClientTests
     public async Task Should_return_a_paginated_response_model_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<UnapprovedSystem>
+        var response = new PaginatedResponseModel<UnapprovedSystemSummary>
         {
-            Items = new List<UnapprovedSystem>
+            Items = new List<UnapprovedSystemSummary>
             {
-                new UnapprovedSystem { Description = "test"}
+                new UnapprovedSystemSummary { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -73,11 +73,11 @@ public class UnapprovedSystemsClientTests
     public async Task Should_make_a_call_to_api_with_enrolment_key_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<UnapprovedSystem>
+        var response = new PaginatedResponseModel<UnapprovedSystemSummary>
         {
-            Items = new List<UnapprovedSystem>
+            Items = new List<UnapprovedSystemSummary>
             {
-                new UnapprovedSystem { Description = "test"}
+                new UnapprovedSystemSummary { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -104,11 +104,11 @@ public class UnapprovedSystemsClientTests
     public async Task Should_make_a_call_to_api_with_search_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<UnapprovedSystem>
+        var response = new PaginatedResponseModel<UnapprovedSystemSummary>
         {
-            Items = new List<UnapprovedSystem>
+            Items = new List<UnapprovedSystemSummary>
             {
-                new UnapprovedSystem { Description = "test"}
+                new UnapprovedSystemSummary { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -136,11 +136,11 @@ public class UnapprovedSystemsClientTests
     public async Task Should_make_a_call_to_api_with_sort_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<UnapprovedSystem>
+        var response = new PaginatedResponseModel<UnapprovedSystemSummary>
         {
-            Items = new List<UnapprovedSystem>
+            Items = new List<UnapprovedSystemSummary>
             {
-                new UnapprovedSystem { Description = "test"}
+                new UnapprovedSystemSummary { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -167,11 +167,11 @@ public class UnapprovedSystemsClientTests
     public async Task Should_make_a_call_to_api_with_page_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<UnapprovedSystem>
+        var response = new PaginatedResponseModel<UnapprovedSystemSummary>
         {
-            Items = new List<UnapprovedSystem>
+            Items = new List<UnapprovedSystemSummary>
             {
-                new UnapprovedSystem { Description = "test"}
+                new UnapprovedSystemSummary { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -198,11 +198,11 @@ public class UnapprovedSystemsClientTests
     public async Task Should_make_a_call_to_api_with_per_page_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<UnapprovedSystem>
+        var response = new PaginatedResponseModel<UnapprovedSystemSummary>
         {
-            Items = new List<UnapprovedSystem>
+            Items = new List<UnapprovedSystemSummary>
             {
-                new UnapprovedSystem { Description = "test"}
+                new UnapprovedSystemSummary { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -252,7 +252,7 @@ public class UnapprovedSystemsClientTests
     public async Task Should_return_unapproved_system_detail_model_when_calling_GetAsync()
     {
         // Arrange
-        var response = new UnapprovedSystemDetail
+        var response = new UnapprovedSystem
         {
             SystemId = SystemId.FromString("newId"),
         };
@@ -277,7 +277,7 @@ public class UnapprovedSystemsClientTests
     public async Task Should_return_unapproved_system_detail_model_when_calling_UpdateAsync()
     {
         // Arrange
-        var response = new UnapprovedSystemDetail
+        var response = new UnapprovedSystem
         {
             SystemId = SystemId.FromString("newId"),
         };
@@ -304,7 +304,7 @@ public class UnapprovedSystemsClientTests
     public async Task Should_return_unapproved_system_detail_model_when_calling_DeclineAsync()
     {
         // Arrange
-        var response = new UnapprovedSystemDetail
+        var response = new UnapprovedSystem
         {
             SystemId = SystemId.FromString("newId"),
         };
@@ -329,7 +329,7 @@ public class UnapprovedSystemsClientTests
     public async Task Should_not_throw_an_error_when_calling_ApproveAsync()
     {
         // Arrange
-        var response = new UnapprovedSystemDetail
+        var response = new UnapprovedSystem
         {
             SystemId = SystemId.FromString("newId"),
         };

@@ -17,11 +17,6 @@ public interface IOrganisationClient
     AccountOrganisation Organisation { get; }
 
     /// <summary>
-    /// An instance of <see cref="AuthorityClient"/> associated with the current organisaiton.
-    /// </summary>
-    IAuthorityClient Authority { get; }
-
-    /// <summary>
     /// An instance of <see cref="DnsClient"/> associated with the current organisaiton.
     /// </summary>
     IDnsClient Dns { get; }
@@ -42,9 +37,9 @@ public interface IOrganisationClient
     IPoliciesClient Policies { get; }
 
     /// <summary>
-    /// An instance of <see cref="SystemsClient"/> associated with the current organisaiton.
+    /// An instance of <see cref="EnrolledSystemsClient"/> associated with the current organisaiton.
     /// </summary>
-    ISystemsClient Systems { get; }
+    IEnrolledSystemsClient EnrolledSystems { get; }
 
     /// <summary>
     /// An instance of <see cref="TagsClient"/> associated with the current organisaiton.

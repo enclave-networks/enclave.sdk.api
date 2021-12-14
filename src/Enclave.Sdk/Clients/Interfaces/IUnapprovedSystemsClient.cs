@@ -18,9 +18,9 @@ public interface IUnapprovedSystemsClient
     /// <param name="searchTerm">A partial matching search term.</param>
     /// <param name="sortOrder">Sort order for the pagination.</param>
     /// <param name="pageNumber">Which page number do you want to return.</param>
-    /// <param name="perPage">How many tags per page.</param>
+    /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<UnapprovedSystem>> GetSystemsAsync(
+    Task<PaginatedResponseModel<UnapprovedSystemSummary>> GetSystemsAsync(
         int? enrolmentKeyId = null,
         string? searchTerm = null,
         UnapprovedSystemQuerySortMode? sortOrder = null,
@@ -46,7 +46,7 @@ public interface IUnapprovedSystemsClient
     /// </summary>
     /// <param name="systemId">The system Id you want to get.</param>
     /// <returns>A Detailed Unapproved System Model.</returns>
-    Task<UnapprovedSystemDetail> GetAsync(SystemId systemId);
+    Task<UnapprovedSystem> GetAsync(SystemId systemId);
 
     /// <summary>
     /// Patch request to update an Unapproved System.
@@ -54,14 +54,14 @@ public interface IUnapprovedSystemsClient
     /// <param name="systemId">The system Id you want to update.</param>
     /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
     /// <returns>An updated Detailed Unapproved System model.</returns>
-    Task<UnapprovedSystemDetail> UpdateAsync(SystemId systemId, PatchBuilder<UnapprovedSystemPatch> builder);
+    Task<UnapprovedSystem> UpdateAsync(SystemId systemId, PatchBuilder<UnapprovedSystemPatch> builder);
 
     /// <summary>
     /// Decline an Unapproved System.
     /// </summary>
     /// <param name="systemId">The system Id you want to decline.</param>
     /// <returns>The declined System.</returns>
-    Task<UnapprovedSystemDetail> DeclineAsync(SystemId systemId);
+    Task<UnapprovedSystem> DeclineAsync(SystemId systemId);
 
     /// <summary>
     /// Approve a System.

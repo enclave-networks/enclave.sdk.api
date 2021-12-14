@@ -9,7 +9,6 @@ internal static class Constants
     {
         get
         {
-
             var options = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

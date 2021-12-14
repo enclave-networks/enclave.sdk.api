@@ -1,7 +1,7 @@
-﻿namespace Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
+﻿namespace Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
 
 /// <summary>
-/// Defines the types of Enrolment Keys.
+/// Defines the types of Systems.
 /// </summary>
 public enum SystemType
 {

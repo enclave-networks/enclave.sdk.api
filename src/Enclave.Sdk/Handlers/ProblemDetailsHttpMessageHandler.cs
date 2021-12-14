@@ -7,7 +7,9 @@ internal sealed class ProblemDetailsHttpMessageHandler : DelegatingHandler
 {
     public ProblemDetailsHttpMessageHandler()
 #pragma warning disable CA2000 // Dispose objects before losing scope
-        : base(new HttpClientHandler()) { }
+        : base(new HttpClientHandler())
+    {
+    }
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
