@@ -17,8 +17,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="TypedIds" Version="1.1.2" />
+        <PackageReference Include="TypedIds" Version="1.1.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+        <InternalsVisibleTo Include="Enclave.Sdk.Api.Tests" />
     </ItemGroup>
 
 </Project>

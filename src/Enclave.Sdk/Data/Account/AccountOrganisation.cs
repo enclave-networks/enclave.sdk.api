@@ -1,4 +1,6 @@
-﻿namespace Enclave.Sdk.Api.Data.Account;
+﻿using Enclave.Sdk.Api.Data.Organisations;
+
+namespace Enclave.Sdk.Api.Data.Account;
 
 /// <summary>
 /// Contains the role an account has within an organisation.
@@ -29,5 +31,5 @@ public class AccountOrganisationTopLevel
     /// <summary>
     /// The set of organisations.
     /// </summary>
-    public List<AccountOrganisation> Orgs { get; init; } = default!;
+    public IReadOnlyList<AccountOrganisation> Orgs { get; init; } = Array.Empty<AccountOrganisation>();
 }

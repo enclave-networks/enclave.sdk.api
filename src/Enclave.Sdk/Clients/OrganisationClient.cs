@@ -8,9 +8,9 @@ using Enclave.Sdk.Api.Data.PatchModel;
 namespace Enclave.Sdk.Api.Clients;
 
 /// <inheritdoc cref="IOrganisationClient" />
-public class OrganisationClient : ClientBase, IOrganisationClient
+internal class OrganisationClient : ClientBase, IOrganisationClient
 {
-    private string _orgRoute;
+    private readonly string _orgRoute;
 
     /// <summary>
     /// This constructor is called by <see cref="EnclaveClient"/> when setting up the <see cref="OrganisationClient"/>.
@@ -23,34 +23,39 @@ public class OrganisationClient : ClientBase, IOrganisationClient
     {
         Organisation = currentOrganisation;
         _orgRoute = $"org/{Organisation.OrgId}";
+
+        Dns = new DnsClient(httpClient, _orgRoute);
+        EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
+        Logs = new LogsClient(httpClient, _orgRoute);
+        Policies = new PoliciesClient(httpClient, _orgRoute);
+        EnrolledSystems = new EnrolledSystemsClient(httpClient, _orgRoute);
+        Tags = new TagsClient(httpClient, _orgRoute);
+        UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
     public AccountOrganisation Organisation { get; }
 
     /// <inheritdoc/>
-    public IAuthorityClient Authority => throw new NotImplementedException();
+    public IDnsClient Dns { get; }
 
     /// <inheritdoc/>
-    public IDnsClient Dns => throw new NotImplementedException();
+    public IEnrolmentKeysClient EnrolmentKeys { get; }
 
     /// <inheritdoc/>
-    public IEnrolmentKeysClient EnrolmentKeys => throw new NotImplementedException();
+    public ILogsClient Logs { get; }
 
     /// <inheritdoc/>
-    public ILogsClient Logs => throw new NotImplementedException();
+    public IPoliciesClient Policies { get; }
 
     /// <inheritdoc/>
-    public IPoliciesClient Policies => throw new NotImplementedException();
+    public IEnrolledSystemsClient EnrolledSystems { get; }
 
     /// <inheritdoc/>
-    public ISystemsClient Systems => throw new NotImplementedException();
+    public ITagsClient Tags { get; }
 
     /// <inheritdoc/>
-    public ITagsClient Tags => throw new NotImplementedException();
-
-    /// <inheritdoc/>
-    public IUnapprovedSystemsClient UnapprovedSystems => throw new NotImplementedException();
+    public IUnapprovedSystemsClient UnapprovedSystems { get; }
 
     /// <inheritdoc/>
     public async Task<Organisation?> GetAsync()
@@ -68,9 +73,12 @@ public class OrganisationClient : ClientBase, IOrganisationClient
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
-        } 
+        }
+
         using var encoded = CreateJsonContent(builder.Send());
         var result = await HttpClient.PatchAsync(_orgRoute, encoded);
+
+        result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<Organisation>(result.Content);
 

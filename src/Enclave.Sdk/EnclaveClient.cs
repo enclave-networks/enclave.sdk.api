@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Text.Json;
 using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Clients.Interfaces;
-using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Handlers;
 
@@ -64,7 +63,7 @@ public class EnclaveClient
     /// </summary>
     /// <returns>List of organisation containing the OrgId and Name and the users role in that organisation.</returns>
     /// <exception cref="InvalidOperationException">throws when the Api returns a null response.</exception>
-    public async Task<List<AccountOrganisation>> GetOrganisationsAsync()
+    public async Task<IReadOnlyList<AccountOrganisation>> GetOrganisationsAsync()
     {
         var organisations = await _httpClient.GetFromJsonAsync<AccountOrganisationTopLevel>("/account/orgs", Constants.JsonSerializerOptions);
 
@@ -86,7 +85,7 @@ public class EnclaveClient
         return new OrganisationClient(_httpClient, organisation);
     }
 
-    private EnclaveClientOptions? GetSettingsFile()
+    private static EnclaveClientOptions? GetSettingsFile()
     {
         var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
@@ -105,6 +104,7 @@ public class EnclaveClient
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Needed for lifecycle of consumer")]
     private static HttpClient SetupHttpClient(EnclaveClientOptions options)
     {
         var httpClient = new HttpClient(new ProblemDetailsHttpMessageHandler())

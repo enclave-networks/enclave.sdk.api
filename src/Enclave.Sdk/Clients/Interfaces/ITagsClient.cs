@@ -14,7 +14,7 @@ public interface ITagsClient
     /// <param name="searchTerm">A partial matching search term.</param>
     /// <param name="sortOrder">Sort order for the pagination.</param>
     /// <param name="pageNumber">Which page number do you want to return.</param>
-    /// <param name="perPage">How many tags per page.</param>
+    /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
     Task<PaginatedResponseModel<TagItem>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null);
 }

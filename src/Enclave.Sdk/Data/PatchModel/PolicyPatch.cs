@@ -1,4 +1,4 @@
-﻿using Enclave.Sdk.Api.Data.Policy;
+﻿using Enclave.Sdk.Api.Data.Policies;
 
 namespace Enclave.Sdk.Api.Data.PatchModel;
 
@@ -20,17 +20,17 @@ public class PolicyPatch : IPatchModel
     /// <summary>
     /// A set of sender tags.
     /// </summary>
-    public string[]? SenderTags { get; set; }
+    public IReadOnlyList<string>? SenderTags { get; set; }
 
     /// <summary>
     ///  A set of receiver tags.
     /// </summary>
-    public string[]? ReceiverTags { get; set; }
+    public IReadOnlyList<string>? ReceiverTags { get; set; }
 
     /// <summary>
     /// The set of ACLs for the policy.
     /// </summary>
-    public PolicyAclModel[]? Acls { get; set; }
+    public IReadOnlyList<PolicyAcl>? Acls { get; set; }
 
     /// <summary>
     /// Notes for the policy.

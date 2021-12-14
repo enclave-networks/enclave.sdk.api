@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Enclave.Sdk.Api;
+﻿namespace Enclave.Sdk.Api;
 
 /// <summary>
 /// A representation of options used when creating <see cref="EnclaveClient"/>.

@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
@@ -10,7 +9,7 @@ namespace Enclave.Sdk.Api.Clients;
 /// <summary>
 /// Base class used for commonly accessed methods and properties for all clients.
 /// </summary>
-public abstract class ClientBase
+internal abstract class ClientBase
 {
     /// <summary>
     /// HttpClient used for all clients API calls.
@@ -33,7 +32,7 @@ public abstract class ClientBase
     /// <param name="data">the object to encode.</param>
     /// <returns>String content of object.</returns>
     /// <exception cref="ArgumentNullException">throws if data provided is null.</exception>
-    protected StringContent CreateJsonContent<TModel>(TModel data)
+    protected static StringContent CreateJsonContent<TModel>(TModel data)
     {
         if (data is null)
         {
@@ -52,7 +51,7 @@ public abstract class ClientBase
     /// <typeparam name="TModel">the object type to deserialise to.</typeparam>
     /// <param name="httpContent">httpContent from the API call.</param>
     /// <returns>the object of type specified.</returns>
-    protected async Task<TModel?> DeserialiseAsync<TModel>(HttpContent httpContent)
+    protected static async Task<TModel?> DeserialiseAsync<TModel>(HttpContent httpContent)
     {
         if (httpContent is null)
         {

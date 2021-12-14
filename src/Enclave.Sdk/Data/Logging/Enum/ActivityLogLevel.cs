@@ -1,22 +1,22 @@
-﻿namespace Enclave.Sdk.Api.Data.Organisations.Enum;
+﻿namespace Enclave.Sdk.Api.Data.Logging.Enum;
 
 /// <summary>
-/// Defines levels for billing events.
+/// Log Error Type.
 /// </summary>
-public enum BillingEventLevel
+public enum ActivityLogLevel
 {
     /// <summary>
-    /// Info.
+    /// Information log level.
     /// </summary>
     Information,
 
     /// <summary>
-    /// Warning.
+    /// Warning Log.
     /// </summary>
     Warning,
 
     /// <summary>
-    /// Error.
+    /// Error Log.
     /// </summary>
     Error,
 }

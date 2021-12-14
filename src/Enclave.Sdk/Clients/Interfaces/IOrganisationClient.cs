@@ -17,11 +17,6 @@ public interface IOrganisationClient
     AccountOrganisation Organisation { get; }
 
     /// <summary>
-    /// An instance of <see cref="AuthorityClient"/> associated with the current organisaiton.
-    /// </summary>
-    IAuthorityClient Authority { get; }
-
-    /// <summary>
     /// An instance of <see cref="DnsClient"/> associated with the current organisaiton.
     /// </summary>
     IDnsClient Dns { get; }
@@ -42,9 +37,9 @@ public interface IOrganisationClient
     IPoliciesClient Policies { get; }
 
     /// <summary>
-    /// An instance of <see cref="SystemsClient"/> associated with the current organisaiton.
+    /// An instance of <see cref="EnrolledSystemsClient"/> associated with the current organisaiton.
     /// </summary>
-    ISystemsClient Systems { get; }
+    IEnrolledSystemsClient EnrolledSystems { get; }
 
     /// <summary>
     /// An instance of <see cref="TagsClient"/> associated with the current organisaiton.
@@ -94,9 +89,9 @@ public interface IOrganisationClient
 
     /// <summary>
     /// Patch request to update the organisation.
-    /// Use Builder.cs to help you generate the dictionary.
+    /// Use <see cref="PatchBuilder{TModel}"/>.
     /// </summary>
-    /// <param ref="Builder" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
+    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
     /// <returns>The updated organisation.</returns>
     /// <exception cref="ArgumentNullException">Throws if builder is null.</exception>
     Task<Organisation> UpdateAsync(PatchBuilder<OrganisationPatch> builder);

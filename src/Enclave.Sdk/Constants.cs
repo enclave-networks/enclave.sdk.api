@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Enclave.Sdk.Api;
 
 internal static class Constants
 {
-    public static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions
+    public static JsonSerializerOptions JsonSerializerOptions
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    };
+        get
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+
+            options.Converters.Add(new JsonStringEnumConverter());
+            return options;
+        }
+    }
 
     public const string ApiUrl = "https://api.enclave.io";
 }
