@@ -36,7 +36,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     {
         var queryString = BuildQueryString(enrolmentKeyId, searchTerm, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<UnapprovedSystemSummary>>($"{_orgRoute}/unapproved-systems?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<UnapprovedSystemSummary>>($"{_orgRoute}/unapproved-systems?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

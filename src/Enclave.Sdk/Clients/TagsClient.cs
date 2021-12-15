@@ -27,7 +27,7 @@ internal class TagsClient : ClientBase, ITagsClient
     {
         var queryString = BuildQueryString(searchTerm, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TagItem>>($"{_orgRoute}/tags?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TagItem>>($"{_orgRoute}/tags?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

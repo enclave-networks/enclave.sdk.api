@@ -27,7 +27,7 @@ internal class LogsClient : ClientBase, ILogsClient
     {
         var queryString = BuildQueryString(pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<LogEntry>>($"{_orgRoute}/logs?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<LogEntry>>($"{_orgRoute}/logs?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

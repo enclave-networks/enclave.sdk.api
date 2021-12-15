@@ -36,7 +36,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     {
         var queryString = BuildQueryString(searchTerm, includeDisabled, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<Policy>>($"{_orgRoute}/policies?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<Policy>>($"{_orgRoute}/policies?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

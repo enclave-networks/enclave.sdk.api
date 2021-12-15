@@ -60,7 +60,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task<Organisation?> GetAsync()
     {
-        var model = await HttpClient.GetFromJsonAsync<Organisation>(_orgRoute);
+        var model = await HttpClient.GetFromJsonAsync<Organisation>(_orgRoute, Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -90,7 +90,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task<IReadOnlyList<OrganisationUser>> GetOrganisationUsersAsync()
     {
-        var model = await HttpClient.GetFromJsonAsync<OrganisationUsersTopLevel>($"{_orgRoute}/users");
+        var model = await HttpClient.GetFromJsonAsync<OrganisationUsersTopLevel>($"{_orgRoute}/users", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -106,7 +106,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task<IReadOnlyList<OrganisationInvite>> GetPendingInvitesAsync()
     {
-        var model = await HttpClient.GetFromJsonAsync<OrganisationPendingInvites>($"{_orgRoute}/invites");
+        var model = await HttpClient.GetFromJsonAsync<OrganisationPendingInvites>($"{_orgRoute}/invites", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
