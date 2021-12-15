@@ -39,7 +39,7 @@ internal class DnsClient : ClientBase, IDnsClient
     {
         var queryString = BuildQueryString(null, null, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsZoneSummary>>($"{_orgRoute}/dns/zones?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsZoneSummary>>($"{_orgRoute}/dns/zones?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -116,7 +116,7 @@ internal class DnsClient : ClientBase, IDnsClient
     {
         var queryString = BuildQueryString(dnsZoneId, hostname, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsRecordSummary>>($"{_orgRoute}/dns/records?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsRecordSummary>>($"{_orgRoute}/dns/records?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

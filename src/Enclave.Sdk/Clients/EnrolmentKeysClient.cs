@@ -35,7 +35,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     {
         var queryString = BuildQueryString(searchTerm, includeDisabled, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<EnrolmentKeySummary>>($"{_orgRoute}/enrolment-keys?{queryString}");
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<EnrolmentKeySummary>>($"{_orgRoute}/enrolment-keys?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
