@@ -37,13 +37,11 @@ public interface IEnrolmentKeysClient
     Task<EnrolmentKey> GetAsync(EnrolmentKeyId enrolmentKeyId);
 
     /// <summary>
-    /// Patch request to update the EnrolmentKey.
-    /// Use <see cref="PatchBuilder{TModel}"/>.
+    /// Starts an update patch request.
     /// </summary>
-    /// <param name="enrolmentKeyId">The Id of the Enrolment Key to update.</param>
-    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
-    /// <returns>A detailed Enrolment Key.</returns>
-    Task<EnrolmentKey> UpdateAsync(EnrolmentKeyId enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder);
+    /// <param name="enrolmentKeyId">The EnrolmentKeyId to update.</param>
+    /// <returns>A PatchClient for fluent updating.</returns>
+    IPatchClient<EnrolmentKeyPatchModel, EnrolmentKey> Update(EnrolmentKeyId enrolmentKeyId);
 
     /// <summary>
     /// Enable an Enrolment Key.

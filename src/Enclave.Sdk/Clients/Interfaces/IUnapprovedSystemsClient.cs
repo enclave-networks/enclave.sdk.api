@@ -49,12 +49,11 @@ public interface IUnapprovedSystemsClient
     Task<UnapprovedSystem> GetAsync(SystemId systemId);
 
     /// <summary>
-    /// Patch request to update an Unapproved System.
+    /// Starts an update patch request.
     /// </summary>
-    /// <param name="systemId">The system Id you want to update.</param>
-    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
-    /// <returns>An updated Detailed Unapproved System model.</returns>
-    Task<UnapprovedSystem> UpdateAsync(SystemId systemId, PatchBuilder<UnapprovedSystemPatch> builder);
+    /// <param name="systemId">The SystemId to update.</param>
+    /// <returns>A PatchClient for fluent updating.</returns>
+    IPatchClient<UnapprovedSystemPatch, UnapprovedSystem> Update(SystemId systemId);
 
     /// <summary>
     /// Decline an Unapproved System.

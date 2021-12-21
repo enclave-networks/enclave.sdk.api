@@ -86,23 +86,9 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystem> UpdateAsync(SystemId systemId, PatchBuilder<UnapprovedSystemPatch> builder)
+    public IPatchClient<UnapprovedSystemPatch, UnapprovedSystem> Update(SystemId systemId)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        using var encoded = CreateJsonContent(builder.Send());
-        var result = await HttpClient.PatchAsync($"{_orgRoute}/unapproved-systems/{systemId}", encoded);
-
-        result.EnsureSuccessStatusCode();
-
-        var model = await DeserialiseAsync<UnapprovedSystem>(result.Content);
-
-        EnsureNotNull(model);
-
-        return model;
+        return new PatchClient<UnapprovedSystemPatch, UnapprovedSystem>(HttpClient, $"{_orgRoute}/unapproved-systems/{systemId}");
     }
 
     /// <inheritdoc/>

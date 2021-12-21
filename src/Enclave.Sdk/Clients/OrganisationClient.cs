@@ -68,23 +68,9 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     }
 
     /// <inheritdoc/>
-    public async Task<Organisation> UpdateAsync(PatchBuilder<OrganisationPatch> builder)
+    public IPatchClient<OrganisationPatch, Organisation> Update()
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        using var encoded = CreateJsonContent(builder.Send());
-        var result = await HttpClient.PatchAsync(_orgRoute, encoded);
-
-        result.EnsureSuccessStatusCode();
-
-        var model = await DeserialiseAsync<Organisation>(result.Content);
-
-        EnsureNotNull(model);
-
-        return model;
+        return new PatchClient<OrganisationPatch, Organisation>(HttpClient, _orgRoute);
     }
 
     /// <inheritdoc/>

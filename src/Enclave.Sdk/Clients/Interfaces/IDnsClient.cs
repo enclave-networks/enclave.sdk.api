@@ -39,12 +39,11 @@ public interface IDnsClient
     Task<DnsZone> GetZoneAsync(DnsZoneId dnsZoneId);
 
     /// <summary>
-    /// Patch request to update a DNS Zone.
+    /// Starts an update patch request.
     /// </summary>
-    /// <param name="dnsZoneId">The DNS Zone ID that you want to update.</param>
-    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
-    /// <returns>A full DNS Zone object.</returns>
-    Task<DnsZone> UpdateZoneAsync(DnsZoneId dnsZoneId, PatchBuilder<DnsZonePatch> builder);
+    /// <param name="dnsZoneId">The DnsZoneId to update.</param>
+    /// <returns>A PatchClient for fluent updating.</returns>
+    IPatchClient<DnsZonePatch, DnsZone> UpdateZone(DnsZoneId dnsZoneId);
 
     /// <summary>
     /// Delete a DNS Zone and it's associated record. This is irriversable.
@@ -96,12 +95,11 @@ public interface IDnsClient
     Task<DnsRecord> GetRecordAsync(DnsRecordId dnsRecordId);
 
     /// <summary>
-    /// Patch request to update a DNS Record.
+    /// Starts an update patch request.
     /// </summary>
-    /// <param name="dnsRecordId">The DNS Record ID that you want to update.</param>
-    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
-    /// <returns>A full DNS Record object.</returns>
-    Task<DnsRecord> UpdateRecordAsync(DnsRecordId dnsRecordId, PatchBuilder<DnsRecordPatch> builder);
+    /// <param name="dnsRecordId">The DnsRecordId to update.</param>
+    /// <returns>A PatchClient for fluent updating.</returns>
+    IPatchClient<DnsRecordPatch, DnsRecord> UpdateRecord(DnsRecordId dnsRecordId);
 
     /// <summary>
     /// Delete a single DNS Record.

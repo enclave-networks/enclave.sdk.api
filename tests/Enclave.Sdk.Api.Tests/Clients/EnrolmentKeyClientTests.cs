@@ -282,11 +282,9 @@ public class EnrolmentKeyClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
-        var patchBuilder = new PatchBuilder<EnrolmentKeyPatchModel>().Set(e => e.Description, "New Value");
-
 
         // Act
-        var result = await _enrolmentKeysClient.UpdateAsync(enrolmentKeyId, patchBuilder);
+        var result = await _enrolmentKeysClient.Update(enrolmentKeyId).Set(e => e.Description, "New Value").SendAsync();
 
         // Assert
         result.Should().NotBeNull();

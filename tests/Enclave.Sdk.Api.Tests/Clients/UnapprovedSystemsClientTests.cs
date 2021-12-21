@@ -290,10 +290,8 @@ public class UnapprovedSystemsClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
-        var builder = new PatchBuilder<UnapprovedSystemPatch>().Set(u => u.Description, "New System");
-
         // Act
-        var result = await _unapprovedSystemsClient.UpdateAsync(SystemId.FromString("newId"), builder);
+        var result = await _unapprovedSystemsClient.Update(SystemId.FromString("newId")).Set(u => u.Description, "New System").SendAsync();
 
         // Assert
         result.Should().NotBeNull();

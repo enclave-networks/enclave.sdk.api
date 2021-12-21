@@ -88,11 +88,8 @@ public interface IOrganisationClient
     Task RemoveUserAsync(string accountId);
 
     /// <summary>
-    /// Patch request to update the organisation.
-    /// Use <see cref="PatchBuilder{TModel}"/>.
+    /// Starts an update patch request.
     /// </summary>
-    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
-    /// <returns>The updated organisation.</returns>
-    /// <exception cref="ArgumentNullException">Throws if builder is null.</exception>
-    Task<Organisation> UpdateAsync(PatchBuilder<OrganisationPatch> builder);
+    /// <returns>A PatchClient for fluent updating.</returns>
+    IPatchClient<OrganisationPatch, Organisation> Update();
 }

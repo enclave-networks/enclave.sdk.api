@@ -53,12 +53,11 @@ public interface IEnrolledSystemsClient
     Task<EnrolledSystem> GetAsync(SystemId systemId);
 
     /// <summary>
-    /// Update an Enrolled System.
+    /// Starts an update patch request.
     /// </summary>
-    /// <param name="systemId">The Id of the Enrolled System to update.</param>
-    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
-    /// <returns>An Enrolled System.</returns>
-    Task<EnrolledSystem> UpdateAsync(SystemId systemId, PatchBuilder<EnrolledSystemPatch> builder);
+    /// <param name="systemId">The SystemId to update.</param>
+    /// <returns>A PatchClient for fluent updating.</returns>
+    IPatchClient<EnrolledSystemPatch, EnrolledSystem> Update(SystemId systemId);
 
     /// <summary>
     /// Revoke a system permanetly.

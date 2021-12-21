@@ -74,23 +74,9 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DnsZone> UpdateZoneAsync(DnsZoneId dnsZoneId, PatchBuilder<DnsZonePatch> builder)
+    public IPatchClient<DnsZonePatch, DnsZone> UpdateZone(DnsZoneId dnsZoneId)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        using var encoded = CreateJsonContent(builder.Send());
-        var result = await HttpClient.PatchAsync($"{_orgRoute}/dns/zones/{dnsZoneId}", encoded);
-
-        result.EnsureSuccessStatusCode();
-
-        var model = await DeserialiseAsync<DnsZone>(result.Content);
-
-        EnsureNotNull(model);
-
-        return model;
+        return new PatchClient<DnsZonePatch, DnsZone>(HttpClient, $"{_orgRoute}/dns/zones/{dnsZoneId}");
     }
 
     /// <inheritdoc/>
@@ -188,23 +174,9 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DnsRecord> UpdateRecordAsync(DnsRecordId dnsRecordId, PatchBuilder<DnsRecordPatch> builder)
+    public IPatchClient<DnsRecordPatch, DnsRecord> UpdateRecord(DnsRecordId dnsRecordId)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        using var encoded = CreateJsonContent(builder.Send());
-        var result = await HttpClient.PatchAsync($"{_orgRoute}/dns/records/{dnsRecordId}", encoded);
-
-        result.EnsureSuccessStatusCode();
-
-        var model = await DeserialiseAsync<DnsRecord>(result.Content);
-
-        EnsureNotNull(model);
-
-        return model;
+        return new PatchClient<DnsRecordPatch, DnsRecord>(HttpClient, $"{_orgRoute}/dns/records/{dnsRecordId}");
     }
 
     /// <inheritdoc/>

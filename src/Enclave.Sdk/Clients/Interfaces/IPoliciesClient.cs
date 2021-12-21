@@ -56,12 +56,11 @@ public interface IPoliciesClient
     Task<Policy> GetAsync(PolicyId policyId);
 
     /// <summary>
-    /// Patch request to update a Policy.
+    /// Starts an update patch request.
     /// </summary>
-    /// <param name="policyId">The Id of the Policy to update.</param>
-    /// <param cref="PatchBuilder{TModel}" name="builder">An instance of <see cref="PatchBuilder{TModel}"/> used to setup our patch request.</param>
-    /// <returns>The updated <see cref="Policy"/>.</returns>
-    Task<Policy> UpdateAsync(PolicyId policyId, PatchBuilder<PolicyPatch> builder);
+    /// <param name="policyId">The PolicyId to update.</param>
+    /// <returns>A PatchClient for fluent updating.</returns>
+    IPatchClient<PolicyPatch, Policy> Update(PolicyId policyId);
 
     /// <summary>
     /// Delete a Policy.

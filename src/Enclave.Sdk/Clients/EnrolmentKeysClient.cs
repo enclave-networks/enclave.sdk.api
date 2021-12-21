@@ -70,23 +70,9 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolmentKey> UpdateAsync(EnrolmentKeyId enrolmentKeyId, PatchBuilder<EnrolmentKeyPatchModel> builder)
+    public IPatchClient<EnrolmentKeyPatchModel, EnrolmentKey> Update(EnrolmentKeyId enrolmentKeyId)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        using var encoded = CreateJsonContent(builder.Send());
-        var result = await HttpClient.PatchAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}", encoded);
-
-        result.EnsureSuccessStatusCode();
-
-        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
-
-        EnsureNotNull(model);
-
-        return model;
+        return new PatchClient<EnrolmentKeyPatchModel, EnrolmentKey>(HttpClient, $"{_orgRoute}/enrolment-keys/{enrolmentKeyId}");
     }
 
     /// <inheritdoc/>
