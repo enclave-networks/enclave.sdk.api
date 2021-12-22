@@ -291,7 +291,7 @@ public class UnapprovedSystemsClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _unapprovedSystemsClient.Update(SystemId.FromString("newId")).Set(u => u.Description, "New System").SendAsync();
+        var result = await _unapprovedSystemsClient.Update(SystemId.FromString("newId")).Set(u => u.Description, "New System").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();

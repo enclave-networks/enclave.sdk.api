@@ -58,7 +58,7 @@ internal class PatchClient<TModel, TResponse> : ClientBase, IPatchClient<TModel,
     /// Send the request that has been setup prior.
     /// </summary>
     /// <returns>An object of type TResponse.</returns>
-    public async Task<TResponse> SendAsync()
+    public async Task<TResponse> ApplyAsync()
     {
         try
         {

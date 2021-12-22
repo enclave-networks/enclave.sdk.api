@@ -284,7 +284,7 @@ public class EnrolmentKeyClientTests
 
 
         // Act
-        var result = await _enrolmentKeysClient.Update(enrolmentKeyId).Set(e => e.Description, "New Value").SendAsync();
+        var result = await _enrolmentKeysClient.Update(enrolmentKeyId).Set(e => e.Description, "New Value").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();

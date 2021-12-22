@@ -12,7 +12,7 @@ public interface IPatchClient<TModel, TResponse>
     where TModel : IPatchModel
 {
     /// <summary>
-    /// Set a value in the global dictionary to the updated value.
+    /// Set a value to update when the change is applied.
     /// </summary>
     /// <typeparam name="TValue">The type of the value you're updating.</typeparam>
     /// <param name="propExpr">Expression tree witht he property you want to update.</param>
@@ -26,5 +26,5 @@ public interface IPatchClient<TModel, TResponse>
     /// Send the request that has been setup prior.
     /// </summary>
     /// <returns>An object of type TResponse.</returns>
-    Task<TResponse> SendAsync();
+    Task<TResponse> ApplyAsync();
 }

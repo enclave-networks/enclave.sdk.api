@@ -325,7 +325,7 @@ public class PoliciesClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _policiesClient.Update(PolicyId.FromInt(12)).Set(p => p.IsEnabled, false).SendAsync();
+        var result = await _policiesClient.Update(PolicyId.FromInt(12)).Set(p => p.IsEnabled, false).ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();

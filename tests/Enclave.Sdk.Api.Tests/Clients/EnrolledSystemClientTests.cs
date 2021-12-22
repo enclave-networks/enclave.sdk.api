@@ -331,7 +331,7 @@ public class EnrolledSystemClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _enrolledSystemsClient.Update(response.SystemId).Set(e => e.Description, "new description").SendAsync();
+        var result = await _enrolledSystemsClient.Update(response.SystemId).Set(e => e.Description, "new description").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();

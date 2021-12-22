@@ -226,7 +226,7 @@ public class DnsClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _dnsClient.UpdateZone(DnsZoneId.FromInt(123)).Set(d => d.Name, "New Name").SendAsync();
+        var result = await _dnsClient.UpdateZone(DnsZoneId.FromInt(123)).Set(d => d.Name, "New Name").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();
@@ -518,7 +518,7 @@ public class DnsClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _dnsClient.UpdateRecord(id).Set(d => d.Name, "New Name").SendAsync();
+        var result = await _dnsClient.UpdateRecord(id).Set(d => d.Name, "New Name").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();

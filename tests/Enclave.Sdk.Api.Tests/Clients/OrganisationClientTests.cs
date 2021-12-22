@@ -89,7 +89,7 @@ public class OrganisationClientTests
               .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
 
         // Act
-        var result = await _organisationClient.Update().Set(x => x.Website, "newWebsite").SendAsync();
+        var result = await _organisationClient.Update().Set(x => x.Website, "newWebsite").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();
@@ -115,7 +115,7 @@ public class OrganisationClientTests
               .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
 
         // Act
-        var result = await _organisationClient.Update().Set(x => x.Website, "newWebsite").SendAsync();
+        var result = await _organisationClient.Update().Set(x => x.Website, "newWebsite").ApplyAsync();
 
         // Assert
         _server.Should().HaveReceivedACall().AtUrl($"{_server.Urls[0]}{_orgRoute}");
