@@ -65,7 +65,7 @@ var enrolmentKey = await organisationClient.EnrolmentKeys.GetEnrolmentKeysAsync(
 ```
 
 ## Update Requests
-When updating an item, we make a call to the relevant `Update` method this then returs an instance of `IPatchClient` which has a fluent implimentation. So for example;
+When updating an item, we make a call to the relevant `Update` method this then returns an instance of `IPatchClient` which has a fluent implementation. So for example;
 ```csharp
 var dnsZoneId = DnsZoneId.FromInt(123);
 var result = await _dnsClient.UpdateZone(dnsZoneId).Set(d => d.Name, "New Name").ApplyAsync();
