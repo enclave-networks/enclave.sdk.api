@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
@@ -88,23 +89,9 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> UpdateAsync(SystemId systemId, PatchBuilder<EnrolledSystemPatch> builder)
+    public IPatchClient<EnrolledSystemPatch, EnrolledSystem> Update(SystemId systemId)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        using var encoded = CreateJsonContent(builder.Send());
-        var result = await HttpClient.PatchAsync($"{_orgRoute}/systems/{systemId}", encoded);
-
-        result.EnsureSuccessStatusCode();
-
-        var model = await DeserialiseAsync<EnrolledSystem>(result.Content);
-
-        EnsureNotNull(model);
-
-        return model;
+        return new PatchClient<EnrolledSystemPatch, EnrolledSystem>(HttpClient, $"{_orgRoute}/systems/{systemId}");
     }
 
     /// <inheritdoc/>

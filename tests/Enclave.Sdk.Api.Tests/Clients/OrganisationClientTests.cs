@@ -88,10 +88,8 @@ public class OrganisationClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
 
-        var patchModel = new PatchBuilder<OrganisationPatch>().Set(x => x.Website, "newWebsite");
-
         // Act
-        var result = await _organisationClient.UpdateAsync(patchModel);
+        var result = await _organisationClient.Update().Set(x => x.Website, "newWebsite").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();
@@ -116,10 +114,8 @@ public class OrganisationClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
 
-        var patchModel = new PatchBuilder<OrganisationPatch>().Set(x => x.Website, "newWebsite");
-
         // Act
-        var result = await _organisationClient.UpdateAsync(patchModel);
+        var result = await _organisationClient.Update().Set(x => x.Website, "newWebsite").ApplyAsync();
 
         // Assert
         _server.Should().HaveReceivedACall().AtUrl($"{_server.Urls[0]}{_orgRoute}");

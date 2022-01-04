@@ -103,23 +103,9 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> UpdateAsync(PolicyId policyId, PatchBuilder<PolicyPatch> builder)
+    public IPatchClient<PolicyPatch, Policy> Update(PolicyId policyId)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        using var encoded = CreateJsonContent(builder.Send());
-        var result = await HttpClient.PatchAsync($"{_orgRoute}/policies/{policyId}", encoded);
-
-        result.EnsureSuccessStatusCode();
-
-        var model = await DeserialiseAsync<Policy>(result.Content);
-
-        EnsureNotNull(model);
-
-        return model;
+        return new PatchClient<PolicyPatch, Policy>(HttpClient, $"{_orgRoute}/policies/{policyId}");
     }
 
     /// <inheritdoc/>

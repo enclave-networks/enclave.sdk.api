@@ -330,10 +330,8 @@ public class EnrolledSystemClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
-        var builder = new PatchBuilder<EnrolledSystemPatch>().Set(e => e.Description, "new description");
-
         // Act
-        var result = await _enrolledSystemsClient.UpdateAsync(response.SystemId, builder);
+        var result = await _enrolledSystemsClient.Update(response.SystemId).Set(e => e.Description, "new description").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();

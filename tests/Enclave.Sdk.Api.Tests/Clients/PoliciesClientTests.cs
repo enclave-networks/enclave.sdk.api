@@ -324,10 +324,8 @@ public class PoliciesClientTests
               .WithHeader("Content-Type", "application/json")
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
-        var builder = new PatchBuilder<PolicyPatch>().Set(p => p.IsEnabled, false);
-
         // Act
-        var result = await _policiesClient.UpdateAsync(PolicyId.FromInt(12), builder);
+        var result = await _policiesClient.Update(PolicyId.FromInt(12)).Set(p => p.IsEnabled, false).ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();

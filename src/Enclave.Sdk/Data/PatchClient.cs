@@ -1,27 +1,33 @@
 ﻿using System.Linq.Expressions;
+using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Data.PatchModel;
 
 namespace Enclave.Sdk.Api.Data;
 
 /// <summary>
-/// Class used to construct patch models.
+/// Class used to construct and send patch requests.
 /// </summary>
 /// <typeparam name="TModel">The Type we're updating.</typeparam>
-public class PatchBuilder<TModel>
+/// <typeparam name="TResponse">The Type we're returning.</typeparam>
+internal class PatchClient<TModel, TResponse> : ClientBase, IPatchClient<TModel, TResponse>
     where TModel : IPatchModel
 {
+    private readonly string _patchUrl;
+
     private Dictionary<string, object> _patchDictionary = new Dictionary<string, object>();
 
     /// <summary>
-    /// Set a value in the global dictionary to the updated value.
+    /// This client handles the patch requests for all models.
     /// </summary>
-    /// <typeparam name="TValue">The type of the value you're updating.</typeparam>
-    /// <param name="propExpr">Expression tree witht he property you want to update.</param>
-    /// <param name="newValue">The new value.</param>
-    /// <returns>Builder for fluent building.</returns>
-    /// <exception cref="ArgumentNullException">Throws if either propExpr or newValue are null.</exception>
-    /// <exception cref="ArgumentException">If the selected propExpr body is null.</exception>
-    public PatchBuilder<TModel> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue newValue)
+    /// <param name="httpClient">The shared httpClient instance.</param>
+    /// <param name="patchUrl">The Url for the patch request.</param>
+    public PatchClient(HttpClient httpClient, string patchUrl)
+        : base(httpClient)
+    {
+        _patchUrl = patchUrl;
+    }
+
+    public IPatchClient<TModel, TResponse> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue newValue)
     {
         if (newValue is null)
         {
@@ -49,14 +55,23 @@ public class PatchBuilder<TModel>
     }
 
     /// <summary>
-    /// Build the Dictionary and return it. then reset the dictionary so the builder can be reused.
+    /// Send the request that has been setup prior.
     /// </summary>
-    /// <returns>Dictionary built using the Set model in this class.</returns>
-    internal Dictionary<string, object> Send()
+    /// <returns>An object of type TResponse.</returns>
+    public async Task<TResponse> ApplyAsync()
     {
         try
         {
-            return _patchDictionary;
+            using var encoded = CreateJsonContent(_patchDictionary);
+            var result = await HttpClient.PatchAsync(_patchUrl, encoded);
+
+            result.EnsureSuccessStatusCode();
+
+            var model = await DeserialiseAsync<TResponse>(result.Content);
+
+            EnsureNotNull(model);
+
+            return model;
         }
         finally
         {
