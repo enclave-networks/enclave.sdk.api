@@ -19,7 +19,6 @@ public class AuthorityClientTests
 {
     private AuthorityClient _authorityClient;
     private WireMockServer _server;
-    private string _orgRoute;
     private JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -36,9 +35,8 @@ public class AuthorityClientTests
         };
 
         var organisationId = OrganisationId.New();
-        _orgRoute = $"/org/{organisationId}";
 
-        _authorityClient = new AuthorityClient(httpClient, $"org/{organisationId}");
+        _authorityClient = new AuthorityClient(httpClient);
     }
 
     [Test]
@@ -48,7 +46,7 @@ public class AuthorityClientTests
         var responseModel = new EnrolResult();
 
         _server
-          .Given(Request.Create().WithPath($"{_orgRoute}/authority/enrol").UsingPost())
+          .Given(Request.Create().WithPath($"authority/enrol").UsingPost())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)

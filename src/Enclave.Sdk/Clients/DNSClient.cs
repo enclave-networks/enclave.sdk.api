@@ -14,7 +14,7 @@ internal class DnsClient : ClientBase, IDnsClient
     private readonly string _orgRoute;
 
     /// <summary>
-    /// Constructor  which will be called by <see cref="OrganisationClient"/> when it's created.
+    /// Constructor which will be called by <see cref="OrganisationClient"/> when it's created.
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
     /// <param name="orgRoute">The organisation API route.</param>

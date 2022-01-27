@@ -1,5 +1,6 @@
 ﻿namespace Enclave.Sdk.Api.Data.Authority;
 
+[Flags]
 public enum CertificatePermittedUse : byte
 {
     None = 0x0,
