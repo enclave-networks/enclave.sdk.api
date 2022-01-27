@@ -20,7 +20,7 @@ public class PoliciesClientTests
     private PoliciesClient _policiesClient;
     private WireMockServer _server;
     private string _orgRoute;
-    private JsonSerializerOptions _serializerOptions = new()
+    private readonly JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };

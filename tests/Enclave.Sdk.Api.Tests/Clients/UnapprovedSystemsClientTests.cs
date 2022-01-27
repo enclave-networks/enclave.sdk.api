@@ -17,10 +17,10 @@ namespace Enclave.Sdk.Api.Tests.Clients;
 
 public class UnapprovedSystemsClientTests
 {
-    private UnapprovedSystemsClient _unapprovedSystemsClient;
-    private WireMockServer _server;
-    private string _orgRoute;
-    private JsonSerializerOptions _serializerOptions = new()
+    private readonly UnapprovedSystemsClient _unapprovedSystemsClient;
+    private readonly WireMockServer _server;
+    private readonly string _orgRoute;
+    private readonly JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };

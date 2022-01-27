@@ -11,6 +11,6 @@ public interface IAuthorityClient
     /// Enrol a new system.
     /// </summary>
     /// <param name="requestModel">The Request model to enrol the system.</param>
-    /// <returns>An EnrolResult model</returns>
-    Task<EnrolResult> Enrol(EnrolRequest requestModel);
+    /// <returns>An EnrolResult model.</returns>
+    Task<EnrolResult> EnrolAsync(EnrolRequest requestModel);
 }

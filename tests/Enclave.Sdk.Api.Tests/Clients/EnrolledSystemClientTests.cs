@@ -21,7 +21,7 @@ public class EnrolledSystemClientTests
     private EnrolledSystemsClient _enrolledSystemsClient;
     private WireMockServer _server;
     private string _orgRoute;
-    private JsonSerializerOptions _serializerOptions = new()
+    private readonly JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };

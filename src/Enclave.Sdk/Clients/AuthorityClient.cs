@@ -17,7 +17,7 @@ internal class AuthorityClient : ClientBase, IAuthorityClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolResult> Enrol(EnrolRequest requestModel)
+    public async Task<EnrolResult> EnrolAsync(EnrolRequest requestModel)
     {
         if (requestModel is null)
         {

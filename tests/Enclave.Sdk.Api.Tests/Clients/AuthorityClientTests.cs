@@ -19,7 +19,7 @@ public class AuthorityClientTests
 {
     private AuthorityClient _authorityClient;
     private WireMockServer _server;
-    private JsonSerializerOptions _serializerOptions = new()
+    private readonly JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
@@ -33,8 +33,6 @@ public class AuthorityClientTests
         {
             BaseAddress = new Uri(_server.Urls[0]),
         };
-
-        var organisationId = OrganisationId.New();
 
         _authorityClient = new AuthorityClient(httpClient);
     }
@@ -53,7 +51,7 @@ public class AuthorityClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        var result = await _authorityClient.Enrol(new EnrolRequest
+        var result = await _authorityClient.EnrolAsync(new EnrolRequest
         {
             EnrolmentKey = "key",
             Nonce = "nonce",
@@ -70,7 +68,7 @@ public class AuthorityClientTests
         // Arrange
 
         // Act
-        var result = await _authorityClient.Enrol(new EnrolRequest
+        var result = await _authorityClient.EnrolAsync(new EnrolRequest
         {
             EnrolmentKey = "key",
             Nonce = "nonce",
@@ -78,6 +76,6 @@ public class AuthorityClientTests
         });
 
         // Assert
-        Assert.ThrowsAsync<ArgumentNullException>(async () => await _authorityClient.Enrol(null));
+        Assert.ThrowsAsync<ArgumentNullException>(async () => await _authorityClient.EnrolAsync(null));
     }
 }
