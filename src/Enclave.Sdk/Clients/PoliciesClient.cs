@@ -15,7 +15,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     private readonly string _orgRoute;
 
     /// <summary>
-    /// Constructor  which will be called by <see cref="OrganisationClient"/> when it's created.
+    /// Constructor which will be called by <see cref="OrganisationClient"/> when it's created.
     /// It also calls the <see cref="ClientBase"/> constructor.
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
@@ -65,7 +65,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     {
         using var content = CreateJsonContent(new
         {
-            policyIds = policyIds,
+            policyIds,
         });
 
         using var request = new HttpRequestMessage
@@ -151,7 +151,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     {
         var requestModel = new
         {
-            policyIds = policyIds,
+            policyIds,
         };
 
         var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/policies/enable", requestModel, Constants.JsonSerializerOptions);
@@ -176,7 +176,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     {
         var requestModel = new
         {
-            policyIds = policyIds,
+            policyIds,
         };
 
         var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/policies/disable", requestModel, Constants.JsonSerializerOptions);
