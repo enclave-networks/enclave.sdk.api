@@ -41,8 +41,8 @@ jobs:
       run: dotnet test -c Release
 
     - name: Push Github Source Packages
-      if: github.event_name == 'push'
-      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg  --api-key ${{github.token}} -s https://nuget.pkg.github.com/enclave-networks/index.json --skip-duplicate --no-symbols true
+      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg  --api-key ${{github.token}} -s https://nuget.pkg.github.com/enclave-networks/index.json --skip-duplicate
 
     - name: Push To nuget.org
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
