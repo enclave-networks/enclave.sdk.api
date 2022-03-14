@@ -46,7 +46,7 @@ jobs:
 
     - name: Push To nuget.org
     #   if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop')
-      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols true
+      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
 
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'

@@ -9,7 +9,11 @@
         <Company>Enclave Networks Limited</Company>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageProjectUrl>https://github.com/enclave-networks/enclave.sdk.api</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/enclave-networks/enclave.sdk.api</RepositoryUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>
             Provides a NuGet package that makes it easier to consume the Enclave Management APIs.
