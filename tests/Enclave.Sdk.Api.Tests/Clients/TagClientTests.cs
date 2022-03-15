@@ -17,7 +17,7 @@ public class TagClientTests
     private TagsClient _tagClient;
     private WireMockServer _server;
     private string _orgRoute;
-    private JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+    private readonly JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
@@ -90,7 +90,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        var result = await _tagClient.GetAsync(searchTerm: searchTerm);
+        await _tagClient.GetAsync(searchTerm: searchTerm);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?search={searchTerm}");
@@ -117,7 +117,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        var result = await _tagClient.GetAsync(sortOrder: sortEnum);
+        await _tagClient.GetAsync(sortOrder: sortEnum);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?sort={sortEnum}");
@@ -144,7 +144,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        var result = await _tagClient.GetAsync(pageNumber: pageNumber);
+        await _tagClient.GetAsync(pageNumber: pageNumber);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?page={pageNumber}");
@@ -171,7 +171,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        var result = await _tagClient.GetAsync(perPage: perPage);
+        await _tagClient.GetAsync(perPage: perPage);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?per_page={perPage}");
@@ -201,7 +201,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        var result = await _tagClient.GetAsync(searchTerm: searchTerm, sortOrder: sortEnum, pageNumber: pageNumber, perPage: perPage);
+        await _tagClient.GetAsync(searchTerm: searchTerm, sortOrder: sortEnum, pageNumber: pageNumber, perPage: perPage);
 
         // Assert
         _server.Should().HaveReceivedACall()

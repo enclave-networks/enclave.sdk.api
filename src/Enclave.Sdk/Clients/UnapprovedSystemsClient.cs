@@ -48,7 +48,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     {
         using var content = CreateJsonContent(new
         {
-            systemIds = systemIds,
+            systemIds,
         });
 
         using var request = new HttpRequestMessage
@@ -118,7 +118,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     {
         var requestModel = new
         {
-            systemIds = systemIds,
+            systemIds,
         };
 
         var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/unapproved-systems/approve", requestModel, Constants.JsonSerializerOptions);

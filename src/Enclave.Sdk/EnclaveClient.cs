@@ -85,6 +85,15 @@ public class EnclaveClient
         return new OrganisationClient(_httpClient, organisation);
     }
 
+    /// <summary>
+    /// Create an <see cref="AuthorityClient"/>.
+    /// </summary>
+    /// <returns>An instance of AuthorityClient for use with enrol requests.</returns>
+    public IAuthorityClient CreateAuthorityClient()
+    {
+        return new AuthorityClient(_httpClient);
+    }
+
     private static EnclaveClientOptions? GetSettingsFile()
     {
         var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);

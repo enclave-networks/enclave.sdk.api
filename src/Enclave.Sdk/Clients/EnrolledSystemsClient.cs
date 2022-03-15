@@ -51,7 +51,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     {
         using var content = CreateJsonContent(new
         {
-            systemIds = systemIds,
+            systemIds,
         });
 
         using var request = new HttpRequestMessage
@@ -137,7 +137,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     {
         var requestModel = new
         {
-            systemIds = systemIds,
+            systemIds,
         };
 
         var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/systems/enable", requestModel, Constants.JsonSerializerOptions);
@@ -162,7 +162,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     {
         var requestModel = new
         {
-            systemIds = systemIds,
+            systemIds,
         };
 
         var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/systems/disable", requestModel, Constants.JsonSerializerOptions);

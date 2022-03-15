@@ -17,7 +17,7 @@ public class LogsClientTests
     private LogsClient _logsClient;
     private WireMockServer _server;
     private string _orgRoute;
-    private JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+    private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
