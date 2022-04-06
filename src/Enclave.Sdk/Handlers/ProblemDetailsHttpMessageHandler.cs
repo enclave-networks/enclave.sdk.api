@@ -20,7 +20,16 @@ internal sealed class ProblemDetailsHttpMessageHandler : DelegatingHandler
         if (mediaType != null && mediaType.Equals("application/problem+json", StringComparison.OrdinalIgnoreCase))
         {
             var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>(Constants.JsonSerializerOptions, ct) ?? new ProblemDetails();
-            throw new ProblemDetailsException(problemDetails, response);
+
+            string? message = null;
+            if (problemDetails is not null
+                && problemDetails.Errors.Count == 1
+                && problemDetails.Errors.First().Value.Count == 1)
+            {
+                message = problemDetails.Errors.First().Value[0].ToString();
+            }
+
+            throw new EnclaveApiException(problemDetails!, response, message);
         }
 
         return response;

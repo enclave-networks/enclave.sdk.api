@@ -3,7 +3,7 @@
 /// <summary>
 /// An Exception to display the details of an Http Problem Details.
 /// </summary>
-public class ProblemDetailsException : Exception
+public class EnclaveApiException : Exception
 {
     /// <summary>
     /// The Problem Details.
@@ -20,8 +20,8 @@ public class ProblemDetailsException : Exception
     /// </summary>
     /// <param name="problemDetails">The problem details from the HTTP response.</param>
     /// <param name="response">The HTTP Response message.</param>
-    public ProblemDetailsException(ProblemDetails problemDetails, HttpResponseMessage response)
-        : base(problemDetails?.Title)
+    public EnclaveApiException(ProblemDetails problemDetails, HttpResponseMessage response, string? message = null)
+        : base(message ?? $"{problemDetails?.Title} - Check Problem Details for more details")
     {
         ProblemDetails = problemDetails!;
         Response = response;
