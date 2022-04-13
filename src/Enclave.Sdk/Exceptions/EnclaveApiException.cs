@@ -35,6 +35,6 @@ public class EnclaveApiException : Exception
             return string.Join("\n", problemDetails.Errors.First().Value);
         }
 
-        return $"{problemDetails?.Title} - Check Problem Details for more details";
+        return $"{problemDetails?.Title} - Check {nameof(ProblemDetails)} for more details";
     }
 }
