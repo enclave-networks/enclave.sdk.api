@@ -44,6 +44,12 @@ public class ProblemDetails
     public string? Instance { get; set; }
 
     /// <summary>
+    /// A Dictionary of error items returned from the API. This will most likely contain validation errors.
+    /// </summary>
+    [JsonPropertyName("errors")]
+    public IDictionary<string, List<string>> Errors { get; set; } = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+
+    /// <summary>
     /// Gets the <see cref="IDictionary{TKey, TValue}"/> for extension members.
     /// <para>
     /// Problem type definitions MAY extend the problem details object with additional members. Extension members appear in the same namespace as
