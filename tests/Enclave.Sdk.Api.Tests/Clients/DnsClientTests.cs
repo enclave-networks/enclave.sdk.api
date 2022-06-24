@@ -344,7 +344,7 @@ public class DnsClientTests
         var hostname = "name";
 
         // Act
-        await _dnsClient.GetRecordsAsync(hostname: hostname);
+        await _dnsClient.GetRecordsAsync(searchTerm: hostname);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/dns/records?hostname={hostname}");

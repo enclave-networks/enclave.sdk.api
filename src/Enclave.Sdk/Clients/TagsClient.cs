@@ -1,7 +1,10 @@
 using System.Net.Http.Json;
 using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
+using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Pagination;
+using Enclave.Sdk.Api.Data.PatchModel;
+using Enclave.Sdk.Api.Data.Policies;
 using Enclave.Sdk.Api.Data.Tags;
 
 namespace Enclave.Sdk.Api.Clients;
@@ -23,11 +26,102 @@ internal class TagsClient : ClientBase, ITagsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<TagItem>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null)
+    public async Task<PaginatedResponseModel<BasicTag>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null)
     {
         var queryString = BuildQueryString(searchTerm, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TagItem>>($"{_orgRoute}/tags?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<BasicTag>>($"{_orgRoute}/tags?{queryString}", Constants.JsonSerializerOptions);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<DetailedTag> CreateAsync(TagCreate createModel)
+    {
+        if (createModel is null)
+        {
+            throw new ArgumentNullException(nameof(createModel));
+        }
+
+        var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/tags", createModel, Constants.JsonSerializerOptions);
+
+        var model = await DeserialiseAsync<DetailedTag>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DeleteTagsAsync(params string[] tagNamesOrRef)
+    {
+        using var content = CreateJsonContent(new
+        {
+            tags = tagNamesOrRef,
+        });
+
+        using var request = new HttpRequestMessage
+        {
+            Content = content,
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri($"{HttpClient.BaseAddress}{_orgRoute}/tags"),
+        };
+
+        var result = await HttpClient.SendAsync(request);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<BulkTagDeleteResult>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model.TagsDeleted;
+    }
+
+    /// <inheritdoc/>
+    public async Task<DetailedTag> GetAsync(TagRefId refId)
+    {
+        return await GetAsync(refId.ToString());
+    }
+
+    /// <inheritdoc/>
+    public async Task<DetailedTag> GetAsync(string tag)
+    {
+        var model = await HttpClient.GetFromJsonAsync<DetailedTag>($"{_orgRoute}/tags/{tag}", Constants.JsonSerializerOptions);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public IPatchClient<TagPatch, DetailedTag> Update(TagRefId refId)
+    {
+        return Update(refId.ToString());
+    }
+
+    /// <inheritdoc/>
+    public IPatchClient<TagPatch, DetailedTag> Update(string tag)
+    {
+        return new PatchClient<TagPatch, DetailedTag>(HttpClient, $"{_orgRoute}/policies/{tag}");
+    }
+
+    /// <inheritdoc/>
+    public async Task<DetailedTag> DeleteAsync(TagRefId refId)
+    {
+        return await DeleteAsync(refId.ToString());
+    }
+
+    /// <inheritdoc/>
+    public async Task<DetailedTag> DeleteAsync(string tag)
+    {
+        var result = await HttpClient.DeleteAsync($"{_orgRoute}/tags/{tag}");
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<DetailedTag>(result.Content);
 
         EnsureNotNull(model);
 

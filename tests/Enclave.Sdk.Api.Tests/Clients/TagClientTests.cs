@@ -43,12 +43,12 @@ public class TagClientTests
     public async Task Should_return_a_list_of_tags_in_pagination_format()
     {
         // Arrange
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>
+            Items = new List<BasicTag>
             {
-                new TagItem { Tag = "tag1", Keys = 12, DnsRecords = 1, Policies = 0, Systems = 3 },
-                new TagItem { Tag = "tag2", Keys = 13, DnsRecords = 0, Policies = 43, Systems = 0 },
+                new BasicTag { Tag = "tag1", Keys = 12, DnsRecords = 1, Policies = 0, Systems = 3 },
+                new BasicTag { Tag = "tag2", Keys = 13, DnsRecords = 0, Policies = 43, Systems = 0 },
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -75,9 +75,9 @@ public class TagClientTests
         // Arrange
         var searchTerm = "test";
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -102,9 +102,9 @@ public class TagClientTests
         // Arrange
         var sortEnum = TagQuerySortOrder.Alphabetical;
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -129,9 +129,9 @@ public class TagClientTests
         // Arrange
         var pageNumber = 1;
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -156,9 +156,9 @@ public class TagClientTests
         // Arrange
         var perPage = 1;
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -186,9 +186,9 @@ public class TagClientTests
         var perPage = 1;
         var pageNumber = 1;
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
