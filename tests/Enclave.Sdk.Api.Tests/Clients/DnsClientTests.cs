@@ -320,7 +320,7 @@ public class DnsClientTests
     }
 
     [Test]
-    public async Task Should_make_a_call_to_api_with_hostname_quertString_when_calling_GetRecordsAsync()
+    public async Task Should_make_a_call_to_api_with_search_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
         var response = new PaginatedResponseModel<DnsRecordSummary>
@@ -347,7 +347,7 @@ public class DnsClientTests
         await _dnsClient.GetRecordsAsync(searchTerm: hostname);
 
         // Assert
-        _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/dns/records?hostname={hostname}");
+        _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/dns/records?search={hostname}");
     }
 
 
