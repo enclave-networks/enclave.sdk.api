@@ -105,7 +105,7 @@ internal class TagsClient : ClientBase, ITagsClient
     /// <inheritdoc/>
     public IPatchClient<TagPatch, DetailedTag> Update(string tag)
     {
-        return new PatchClient<TagPatch, DetailedTag>(HttpClient, $"{_orgRoute}/policies/{tag}");
+        return new PatchClient<TagPatch, DetailedTag>(HttpClient, $"{_orgRoute}/tags/{tag}");
     }
 
     /// <inheritdoc/>

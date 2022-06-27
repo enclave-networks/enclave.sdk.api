@@ -1,15 +1,10 @@
-﻿using Enclave.Sdk.Api.Clients.Interfaces;
+﻿using System.Net.Http.Json;
+using System.Web;
+using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.TrustRequirements;
 using Enclave.Sdk.Api.Data.TrustRequirements.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -29,7 +24,7 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<TrustRequirement>> GetTrustRequirementsAsync(
+    public async Task<PaginatedResponseModel<TrustRequirementSummary>> GetTrustRequirementsAsync(
         string? searchTerm = null,
         TrustRequirementSortOrder? sortOrder = null,
         int? pageNumber = null,
@@ -37,7 +32,7 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
     {
         var queryString = BuildQueryString(searchTerm, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TrustRequirement>>($"{_orgRoute}/trust-requirements?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TrustRequirementSummary>>($"{_orgRoute}/trust-requirements?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
