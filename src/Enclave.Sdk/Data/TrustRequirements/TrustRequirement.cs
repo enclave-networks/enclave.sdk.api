@@ -50,5 +50,5 @@ public class TrustRequirement
     /// <summary>
     /// The trust requirement settings (varies content by <see cref="Type"/>).
     /// </summary>
-    public TrustRequirementSettingsModel Settings { get; init; } = default!;
+    public TrustRequirementSettings Settings { get; init; } = default!;
 }

@@ -3,7 +3,7 @@
 /// <summary>
 /// The variable-structure settings model used in trust requirements.
 /// </summary>
-public class TrustRequirementSettingsModel
+public class TrustRequirementSettings
 {
     /// <summary>
     /// Configuration of the trust requirement.

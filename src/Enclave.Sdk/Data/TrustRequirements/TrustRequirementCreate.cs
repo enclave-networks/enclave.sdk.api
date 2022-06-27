@@ -25,5 +25,5 @@ public class TrustRequirementCreate
     /// <summary>
     /// The settings structure (that varies content depending on the <see cref="Type"/>).
     /// </summary>
-    public TrustRequirementSettingsModel Settings { get; init; } = default!;
+    public TrustRequirementSettings Settings { get; init; } = default!;
 }

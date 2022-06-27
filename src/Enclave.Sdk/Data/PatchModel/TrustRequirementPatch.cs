@@ -20,5 +20,5 @@ public class TrustRequirementPatch : IPatchModel
     /// <summary>
     /// The trust requirement settings.
     /// </summary>
-    public TrustRequirementSettingsModel? Settings { get; init; }
+    public TrustRequirementSettings? Settings { get; init; }
 }
