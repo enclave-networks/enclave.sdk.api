@@ -4,6 +4,7 @@ using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.Organisations;
 using Enclave.Sdk.Api.Data.PatchModel;
+using Enclave.Sdk.Api.Data.TrustRequirements;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -31,6 +32,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
         EnrolledSystems = new EnrolledSystemsClient(httpClient, _orgRoute);
         Tags = new TagsClient(httpClient, _orgRoute);
         UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
+        TrustRequirements = new TrustRequirementsClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
@@ -56,6 +58,9 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
 
     /// <inheritdoc/>
     public IUnapprovedSystemsClient UnapprovedSystems { get; }
+
+    /// <inheritdoc/>
+    public ITrustRequirementsClient TrustRequirements { get; }
 
     /// <inheritdoc/>
     public async Task<Organisation?> GetAsync()

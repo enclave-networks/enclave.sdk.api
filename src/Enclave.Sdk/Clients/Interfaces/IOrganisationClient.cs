@@ -52,6 +52,11 @@ public interface IOrganisationClient
     IUnapprovedSystemsClient UnapprovedSystems { get; }
 
     /// <summary>
+    /// An instance of <see cref="TrustRequirementsClient"/> associated with the current organisaiton.
+    /// </summary>
+    ITrustRequirementsClient TrustRequirements { get; }
+
+    /// <summary>
     /// Get more detail on your current organisaiton.
     /// </summary>
     /// <returns>A detailed organisation model.</returns>
