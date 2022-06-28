@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Enclave.Sdk.Api.Data.TrustRequirements;
 
 namespace Enclave.Sdk.Api.Data.PatchModel;
 
@@ -26,5 +22,8 @@ public class TagPatch : IPatchModel
     /// </summary>
     public string? Notes { get; set; }
 
-    //public TrustRequirementId[]? TrustRequirements { get; set; }
+    /// <summary>
+    /// An array of associated Trust rRquirements.
+    /// </summary>
+    public TrustRequirementId[]? TrustRequirements { get; set; }
 }
