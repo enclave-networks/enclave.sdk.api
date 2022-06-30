@@ -1,4 +1,6 @@
-﻿namespace Enclave.Sdk.Api.Data.Tags;
+﻿using Enclave.Sdk.Api.Data.TrustRequirements;
+
+namespace Enclave.Sdk.Api.Data.Tags;
 
 /// <summary>
 /// Data required to create a new tag.
@@ -20,8 +22,8 @@ public class TagCreate
     /// </summary>
     public string? Notes { get; init; }
 
-    ///// <summary>
-    ///// Any trust requirements to apply to the tag.
-    ///// </summary>
-    //public TrustRequirementId[] TrustRequirements { get; init; } = Array.Empty<TrustRequirementId>();
+    /// <summary>
+    /// Any trust requirements to apply to the tag.
+    /// </summary>
+    public TrustRequirementId[] TrustRequirements { get; init; } = Array.Empty<TrustRequirementId>();
 }
