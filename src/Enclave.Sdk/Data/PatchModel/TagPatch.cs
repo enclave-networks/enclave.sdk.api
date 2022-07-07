@@ -23,7 +23,7 @@ public class TagPatch : IPatchModel
     public string? Notes { get; set; }
 
     /// <summary>
-    /// An array of associated Trust rRquirements.
+    /// An array of associated Trust Requirements.
     /// </summary>
     public TrustRequirementId[]? TrustRequirements { get; set; }
 }
