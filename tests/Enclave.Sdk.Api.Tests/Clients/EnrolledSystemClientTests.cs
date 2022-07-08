@@ -1,5 +1,4 @@
 ﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Data.EnrolledSystems;
 using Enclave.Sdk.Api.Data.Pagination;
 using FluentAssertions;
@@ -12,7 +11,6 @@ using WireMock.FluentAssertions;
 using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
 using Enclave.Sdk.Api.Data.Organisations;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.PatchModel;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 

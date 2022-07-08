@@ -96,11 +96,11 @@ internal class DnsClient : ClientBase, IDnsClient
     /// <inheritdoc/>
     public async Task<PaginatedResponseModel<DnsRecordSummary>> GetRecordsAsync(
         DnsZoneId? dnsZoneId = null,
-        string? hostname = null,
+        string? searchTerm = null,
         int? pageNumber = null,
         int? perPage = null)
     {
-        var queryString = BuildQueryString(dnsZoneId, hostname, pageNumber, perPage);
+        var queryString = BuildQueryString(dnsZoneId, searchTerm, pageNumber, perPage);
 
         var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsRecordSummary>>($"{_orgRoute}/dns/records?{queryString}", Constants.JsonSerializerOptions);
 
@@ -193,7 +193,7 @@ internal class DnsClient : ClientBase, IDnsClient
         return model;
     }
 
-    private static string? BuildQueryString(DnsZoneId? dnsZoneId, string? hostname, int? pageNumber, int? perPage)
+    private static string? BuildQueryString(DnsZoneId? dnsZoneId, string? searchTerm, int? pageNumber, int? perPage)
     {
         var queryString = HttpUtility.ParseQueryString(string.Empty);
         if (dnsZoneId is not null)
@@ -201,9 +201,9 @@ internal class DnsClient : ClientBase, IDnsClient
             queryString.Add("zoneId", dnsZoneId.ToString());
         }
 
-        if (hostname is not null)
+        if (searchTerm is not null)
         {
-            queryString.Add("hostname", hostname);
+            queryString.Add("search", searchTerm);
         }
 
         if (pageNumber is not null)

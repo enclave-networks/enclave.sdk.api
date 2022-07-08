@@ -7,7 +7,7 @@ using Enclave.Sdk.Api.Data.Policies.Enum;
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
 /// <summary>
-/// Provides operations to get, create, and manipulate DNS rules.
+/// Provides operations to get, create, and manipulate Policies.
 /// </summary>
 public interface IPoliciesClient
 {

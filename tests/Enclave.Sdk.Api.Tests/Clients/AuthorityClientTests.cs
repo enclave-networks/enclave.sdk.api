@@ -1,14 +1,8 @@
 ﻿using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Data.Authority;
-using Enclave.Sdk.Api.Data.Organisations;
 using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;

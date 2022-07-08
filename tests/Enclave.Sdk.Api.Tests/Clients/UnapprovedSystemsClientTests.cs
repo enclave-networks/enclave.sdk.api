@@ -9,7 +9,6 @@ using WireMock.FluentAssertions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.PatchModel;
 using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
 using Enclave.Sdk.Api.Data.Organisations;
 

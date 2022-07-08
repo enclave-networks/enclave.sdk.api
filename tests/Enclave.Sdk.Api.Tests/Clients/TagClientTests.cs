@@ -2,6 +2,7 @@
 using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Data.Organisations;
 using Enclave.Sdk.Api.Data.Pagination;
+using Enclave.Sdk.Api.Data.Policies;
 using Enclave.Sdk.Api.Data.Tags;
 using FluentAssertions;
 using NUnit.Framework;
@@ -14,7 +15,7 @@ namespace Enclave.Sdk.Api.Tests.Clients;
 
 public class TagClientTests
 {
-    private TagsClient _tagClient;
+    private TagsClient _tagsClient;
     private WireMockServer _server;
     private string _orgRoute;
     private readonly JsonSerializerOptions _serializerOptions = new()
@@ -36,19 +37,19 @@ public class TagClientTests
         _orgRoute = $"/org/{organisationId}";
 
 
-        _tagClient = new TagsClient(httpClient, $"org/{organisationId}");
+        _tagsClient = new TagsClient(httpClient, $"org/{organisationId}");
     }
 
     [Test]
     public async Task Should_return_a_list_of_tags_in_pagination_format()
     {
         // Arrange
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>
+            Items = new List<BasicTag>
             {
-                new TagItem { Tag = "tag1", Keys = 12, DnsRecords = 1, Policies = 0, Systems = 3 },
-                new TagItem { Tag = "tag2", Keys = 13, DnsRecords = 0, Policies = 43, Systems = 0 },
+                new BasicTag { Tag = "tag1", Keys = 12, DnsRecords = 1, Policies = 0, Systems = 3 },
+                new BasicTag { Tag = "tag2", Keys = 13, DnsRecords = 0, Policies = 43, Systems = 0 },
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -62,7 +63,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        var result = await _tagClient.GetAsync();
+        var result = await _tagsClient.GetAsync();
 
         // Assert
         result.Should().NotBeNull();
@@ -75,9 +76,9 @@ public class TagClientTests
         // Arrange
         var searchTerm = "test";
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -90,7 +91,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        await _tagClient.GetAsync(searchTerm: searchTerm);
+        await _tagsClient.GetAsync(searchTerm: searchTerm);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?search={searchTerm}");
@@ -102,9 +103,9 @@ public class TagClientTests
         // Arrange
         var sortEnum = TagQuerySortOrder.Alphabetical;
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -117,7 +118,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        await _tagClient.GetAsync(sortOrder: sortEnum);
+        await _tagsClient.GetAsync(sortOrder: sortEnum);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?sort={sortEnum}");
@@ -129,9 +130,9 @@ public class TagClientTests
         // Arrange
         var pageNumber = 1;
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -144,7 +145,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        await _tagClient.GetAsync(pageNumber: pageNumber);
+        await _tagsClient.GetAsync(pageNumber: pageNumber);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?page={pageNumber}");
@@ -156,9 +157,9 @@ public class TagClientTests
         // Arrange
         var perPage = 1;
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -171,7 +172,7 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        await _tagClient.GetAsync(perPage: perPage);
+        await _tagsClient.GetAsync(perPage: perPage);
 
         // Assert
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?per_page={perPage}");
@@ -186,9 +187,9 @@ public class TagClientTests
         var perPage = 1;
         var pageNumber = 1;
 
-        var responseModel = new PaginatedResponseModel<TagItem>
+        var responseModel = new PaginatedResponseModel<BasicTag>
         {
-            Items = new List<TagItem>(),
+            Items = new List<BasicTag>(),
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
         };
@@ -201,10 +202,133 @@ public class TagClientTests
               .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
 
         // Act
-        await _tagClient.GetAsync(searchTerm: searchTerm, sortOrder: sortEnum, pageNumber: pageNumber, perPage: perPage);
+        await _tagsClient.GetAsync(searchTerm: searchTerm, sortOrder: sortEnum, pageNumber: pageNumber, perPage: perPage);
 
         // Assert
         _server.Should().HaveReceivedACall()
             .AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/tags?search={searchTerm}&sort={sortEnum}&page={pageNumber}&per_page={perPage}");
+    }
+
+    [Test]
+    public async Task Should_return_a_detailed_tag_model_when_calling_CreateAsync()
+    {
+        // Arrange
+        var response = new DetailedTag();
+
+        var createModel = new TagCreate();
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingPost())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+
+
+        // Act
+        var result = await _tagsClient.CreateAsync(createModel);
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task Should_return_a_detailed_tag_model_when_calling_GetAsync()
+    {
+        // Arrange
+        var response = new DetailedTag();
+
+        var tagRefId = TagRefId.FromString("tagref");
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/tags/{tagRefId}").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+
+
+        // Act
+        var result = await _tagsClient.GetAsync(tagRefId);
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task Should_return_a_detailed_tag_model_when_calling_UpdateAsync()
+    {
+        // Arrange
+        var response = new DetailedTag();
+
+        var tagRefId = TagRefId.FromString("tagref");
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/tags/{tagRefId}").UsingPatch())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+
+        // Act
+        var result = await _tagsClient.Update(tagRefId).Set(e => e.Notes, "New Value").ApplyAsync();
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task Should_return_a_detailed_tag_model_when_calling_DeleteAsync()
+    {
+        // Arrange
+        var response = new DetailedTag();
+
+        var tagRefId = TagRefId.FromString("tagref");
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/tags/{tagRefId}").UsingDelete())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        // Act
+        var result = await _tagsClient.DeleteAsync(tagRefId);
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task Should_return_number_of_keys_modified_when_calling_DeleteTagsAsync()
+    {
+        // Arrange
+        var response = new BulkTagDeleteResult()
+        {
+            TagsDeleted = 2,
+        };
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingDelete())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+
+        var tagRefs = new string[] { "tagref1", "tagref2" };
+
+        // Act
+        var result = await _tagsClient.DeleteTagsAsync(tagRefs);
+
+        // Assert
+        result.Should().Be(tagRefs.Length);
     }
 }

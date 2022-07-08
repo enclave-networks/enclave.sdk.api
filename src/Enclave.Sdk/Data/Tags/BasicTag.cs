@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a single tag.
 /// </summary>
-public class TagItem
+public class BasicTag
 {
     /// <summary>
     /// The tag name.
@@ -11,9 +11,19 @@ public class TagItem
     public string Tag { get; init; } = default!;
 
     /// <summary>
+    /// The tag reference and unique ID, that persists between renames of the tag.
+    /// </summary>
+    public TagRefId Ref { get; init; }
+
+    /// <summary>
+    /// The configured custom colour for the tag.
+    /// </summary>
+    public string? Colour { get; init; }
+
+    /// <summary>
     /// The last time this tag was last referenced.
     /// </summary>
-    public DateTime LastReferenced { get; init; }
+    public DateTime? LastReferenced { get; init; }
 
     /// <summary>
     /// The number of systems that reference this tag.
