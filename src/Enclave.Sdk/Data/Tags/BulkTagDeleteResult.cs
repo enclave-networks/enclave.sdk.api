@@ -1,4 +1,4 @@
-﻿namespace Enclave.Sdk.Api.Data.Policies;
+﻿namespace Enclave.Sdk.Api.Data.Tags;
 
 /// <summary>
 /// Model for the result of a tag bulk delete operation.

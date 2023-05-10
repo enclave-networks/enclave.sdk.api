@@ -1,4 +1,5 @@
 ﻿using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.AutoExpiry;
 using Enclave.Sdk.Api.Data.EnrolmentKeys;
 using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
 using Enclave.Sdk.Api.Data.Pagination;
@@ -84,4 +85,14 @@ public interface IEnrolmentKeysClient
     /// <param name="enrolmentKeys">An IEnumerable of Enrolment Key Ids to disable.</param>
     /// <returns>The number of keys modified.</returns>
     Task<int> BulkDisableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys);
+
+    /// <summary>
+    /// Enable this Enrolment Key for a specific period of time.
+    /// </summary>
+    /// <param name="enrolmentKeyId">The Id of the Enrolment Key to enable until.</param>
+    /// <param name="expiryDateTime">A <see cref="DateTimeOffset"/> specifying the time when the <see cref="EnrolmentKey"/> should be enabled until.</param>
+    /// <param name="expiryAction">What should happen when the expiry date elapses.</param>
+    /// <param name="timeZonedId">An IANA or Windows time zone ID. If this isn't null, expiryDateTime will be updated if the specified time zone's rules change.</param>
+    /// <returns>A detailed Enrolment Key.</returns>
+    Task<EnrolmentKey> EnableUntilAsync(EnrolmentKeyId enrolmentKeyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
 }

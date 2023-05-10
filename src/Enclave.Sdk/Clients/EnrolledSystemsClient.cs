@@ -2,8 +2,10 @@ using System.Net.Http.Json;
 using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.AutoExpiry;
 using Enclave.Sdk.Api.Data.EnrolledSystems;
 using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
+using Enclave.Sdk.Api.Data.EnrolmentKeys;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.PatchModel;
 
@@ -178,6 +180,27 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     public async Task<int> BulkDisableAsync(IEnumerable<SystemId> systemIds)
     {
         return await BulkDisableAsync(systemIds.ToArray());
+    }
+
+    /// <inheritdoc/>
+    public async Task<EnrolledSystem> EnableUntilAsync(SystemId systemId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
+    {
+        var requestModel = new AutoExpire
+        {
+            ExpiryDateTime = expiryDateTime.ToString("o"),
+            ExpiryAction = expiryAction,
+            TimeZoneId = timeZonedId,
+        };
+
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/systems/{systemId}/enable-until", requestModel, Constants.JsonSerializerOptions);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<EnrolledSystem>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
     }
 
     private static string? BuildQueryString(

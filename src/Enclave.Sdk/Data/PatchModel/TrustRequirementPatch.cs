@@ -1,6 +1,6 @@
-﻿using Enclave.Sdk.Api.Data.PatchModel;
+﻿using Enclave.Sdk.Api.Data.TrustRequirements;
 
-namespace Enclave.Sdk.Api.Data.TrustRequirements;
+namespace Enclave.Sdk.Api.Data.PatchModel;
 
 /// <summary>
 /// Defines the modifiable properties of a trust requirement.

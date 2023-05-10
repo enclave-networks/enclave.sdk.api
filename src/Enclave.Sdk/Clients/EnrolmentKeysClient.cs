@@ -1,7 +1,9 @@
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.AutoExpiry;
 using Enclave.Sdk.Api.Data.EnrolmentKeys;
 using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
 using Enclave.Sdk.Api.Data.Pagination;
@@ -147,6 +149,27 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     public async Task<int> BulkDisableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys)
     {
         return await BulkDisableAsync(enrolmentKeys.ToArray());
+    }
+
+    /// <inheritdoc/>
+    public async Task<EnrolmentKey> EnableUntilAsync(EnrolmentKeyId enrolmentKeyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
+    {
+        var requestModel = new AutoExpire
+        {
+            ExpiryDateTime = expiryDateTime.ToString("o"),
+            ExpiryAction = expiryAction,
+            TimeZoneId = timeZonedId,
+        };
+
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable-until", requestModel, Constants.JsonSerializerOptions);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
     }
 
     private static string? BuildQueryString(string? searchTerm, bool? includeDisabled, EnrolmentKeySortOrder? sortOrder, int? pageNumber, int? perPage)

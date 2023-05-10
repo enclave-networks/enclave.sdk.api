@@ -1,4 +1,6 @@
 ﻿using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.AutoExpiry;
+using Enclave.Sdk.Api.Data.EnrolledSystems;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.PatchModel;
 using Enclave.Sdk.Api.Data.Policies;
@@ -110,4 +112,14 @@ public interface IPoliciesClient
     /// <param name="policyIds">The ids of the Policies you want to disable.</param>
     /// <returns>The number of disabled Policies.</returns>
     Task<int> DisablePoliciesAsync(IEnumerable<PolicyId> policyIds);
+
+    /// <summary>
+    /// Enable this policy for a specific period of time.
+    /// </summary>
+    /// <param name="policyId">The Id of the policy to enable until.</param>
+    /// <param name="expiryDateTime">A <see cref="DateTimeOffset"/> specifying the time when the <see cref="Policy"/> should be enabled until.</param>
+    /// <param name="expiryAction">What should happen when the expiry date elapses.</param>
+    /// <param name="timeZonedId">An IANA or Windows time zone ID. If this isn't null, expiryDateTime will be updated if the specified time zone's rules change.</param>
+    /// <returns>A detailed <see cref="Policy"/>.</returns>
+    Task<Policy> EnableUntilAsync(PolicyId policyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
 }

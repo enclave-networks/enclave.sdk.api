@@ -2,6 +2,8 @@
 using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.AutoExpiry;
+using Enclave.Sdk.Api.Data.EnrolmentKeys;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.PatchModel;
 using Enclave.Sdk.Api.Data.Policies;
@@ -194,6 +196,27 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     public async Task<int> DisablePoliciesAsync(IEnumerable<PolicyId> policyIds)
     {
         return await DisablePoliciesAsync(policyIds.ToArray());
+    }
+
+    /// <inheritdoc/>
+    public async Task<Policy> EnableUntilAsync(PolicyId policyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
+    {
+        var requestModel = new AutoExpire
+        {
+            ExpiryDateTime = expiryDateTime.ToString("o"),
+            ExpiryAction = expiryAction,
+            TimeZoneId = timeZonedId,
+        };
+
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/policies/{policyId}/enable-until", requestModel, Constants.JsonSerializerOptions);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<Policy>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
     }
 
     private static string? BuildQueryString(string? searchTerm, bool? includeDisabled, PolicySortOrder? sortOrder, int? pageNumber, int? perPage)

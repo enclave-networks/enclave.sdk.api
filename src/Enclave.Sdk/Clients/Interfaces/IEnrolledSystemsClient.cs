@@ -1,6 +1,8 @@
 ﻿using Enclave.Sdk.Api.Data;
+using Enclave.Sdk.Api.Data.AutoExpiry;
 using Enclave.Sdk.Api.Data.EnrolledSystems;
 using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
+using Enclave.Sdk.Api.Data.EnrolmentKeys;
 using Enclave.Sdk.Api.Data.Pagination;
 using Enclave.Sdk.Api.Data.PatchModel;
 
@@ -70,14 +72,14 @@ public interface IEnrolledSystemsClient
     /// Enable an Enrolled System.
     /// </summary>
     /// <param name="systemId">The Id of the Enrolled System to enable.</param>
-    /// <returns>A detailed Enrolment Key.</returns>
+    /// <returns>A detailed Enrolled System.</returns>
     Task<EnrolledSystem> EnableAsync(SystemId systemId);
 
     /// <summary>
     /// Disable an Enrolled System.
     /// </summary>
     /// <param name="systemId">The Id of the Enrolled System to disable.</param>
-    /// <returns>A detailed Enrolment Key.</returns>
+    /// <returns>A detailed Enrolled System.</returns>
     Task<EnrolledSystem> DisableAsync(SystemId systemId);
 
     /// <summary>
@@ -107,4 +109,14 @@ public interface IEnrolledSystemsClient
     /// <param name="systemIds">An array of Enrolled System Ids to disable.</param>
     /// <returns>The number of keys modified.</returns>
     Task<int> BulkDisableAsync(IEnumerable<SystemId> systemIds);
+
+    /// <summary>
+    /// Enable this System for a specific period of time.
+    /// </summary>
+    /// <param name="systemId">The Id of the system to enable until.</param>
+    /// <param name="expiryDateTime">A <see cref="DateTimeOffset"/> specifying the time when the <see cref="EnrolledSystem"/> should be enabled until.</param>
+    /// <param name="expiryAction">What should happen when the expiry date elapses.</param>
+    /// <param name="timeZonedId">An IANA or Windows time zone ID. If this isn't null, expiryDateTime will be updated if the specified time zone's rules change.</param>
+    /// <returns>A detailed Enrolled System.</returns>
+    Task<EnrolledSystem> EnableUntilAsync(SystemId systemId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
 }

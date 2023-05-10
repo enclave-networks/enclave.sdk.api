@@ -3,6 +3,7 @@ using System.Web;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
 using Enclave.Sdk.Api.Data.Pagination;
+using Enclave.Sdk.Api.Data.PatchModel;
 using Enclave.Sdk.Api.Data.TrustRequirements;
 using Enclave.Sdk.Api.Data.TrustRequirements.Enum;
 
