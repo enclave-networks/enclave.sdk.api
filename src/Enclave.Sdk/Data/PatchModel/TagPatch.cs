@@ -1,29 +1,10 @@
-﻿using Enclave.Sdk.Api.Data.TrustRequirements;
+﻿using Enclave.Api.Modules.SystemManagement.Tags.Models;
 
 namespace Enclave.Sdk.Api.Data.PatchModel;
 
 /// <summary>
 /// Defines the modifiable properties of a tag.
 /// </summary>
-public class TagPatch : IPatchModel
+public class TagPatch : TagPatchModel, IPatchModel
 {
-    /// <summary>
-    /// The tag name.
-    /// </summary>
-    public string? Tag { get; set; }
-
-    /// <summary>
-    /// An optional custom tag colour.
-    /// </summary>
-    public string? Colour { get; set; }
-
-    /// <summary>
-    /// Any notes or additional info for this tag.
-    /// </summary>
-    public string? Notes { get; set; }
-
-    /// <summary>
-    /// An array of associated Trust Requirements.
-    /// </summary>
-    public TrustRequirementId[]? TrustRequirements { get; set; }
 }

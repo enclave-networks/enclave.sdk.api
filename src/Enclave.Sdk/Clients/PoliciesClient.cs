@@ -1,13 +1,13 @@
 ﻿using System.Net.Http.Json;
 using System.Web;
+using Enclave.Api.Modules.SystemManagement.Common.Models;
+using Enclave.Api.Modules.SystemManagement.Policies.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Enums;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Configuration.Data.Modules.Policies.Enums;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.AutoExpiry;
-using Enclave.Sdk.Api.Data.EnrolmentKeys;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.Policies;
-using Enclave.Sdk.Api.Data.Policies.Enum;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -29,7 +29,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<Policy>> GetPoliciesAsync(
+    public async Task<PaginatedResponseModel<PolicyModel>> GetPoliciesAsync(
         string? searchTerm = null,
         bool? includeDisabled = null,
         PolicySortOrder? sortOrder = null,
@@ -38,7 +38,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     {
         var queryString = BuildQueryString(searchTerm, includeDisabled, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<Policy>>($"{_orgRoute}/policies?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<PolicyModel>>($"{_orgRoute}/policies?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -46,7 +46,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> CreateAsync(PolicyCreate createModel)
+    public async Task<PolicyModel> CreateAsync(PolicyCreateModel createModel)
     {
         if (createModel is null)
         {
@@ -55,7 +55,7 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/policies", createModel, Constants.JsonSerializerOptions);
 
-        var model = await DeserialiseAsync<Policy>(result.Content);
+        var model = await DeserialiseAsync<PolicyModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -95,9 +95,9 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> GetAsync(PolicyId policyId)
+    public async Task<PolicyModel> GetAsync(PolicyId policyId)
     {
-        var model = await HttpClient.GetFromJsonAsync<Policy>($"{_orgRoute}/policies/{policyId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PolicyModel>($"{_orgRoute}/policies/{policyId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -105,19 +105,19 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<PolicyPatch, Policy> Update(PolicyId policyId)
+    public IPatchClient<PolicyPatchModel, PolicyModel> Update(PolicyId policyId)
     {
-        return new PatchClient<PolicyPatch, Policy>(HttpClient, $"{_orgRoute}/policies/{policyId}");
+        return new PatchClient<PolicyPatchModel, PolicyModel>(HttpClient, $"{_orgRoute}/policies/{policyId}");
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> DeleteAsync(PolicyId policyId)
+    public async Task<PolicyModel> DeleteAsync(PolicyId policyId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/policies/{policyId}");
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<Policy>(result.Content);
+        var model = await DeserialiseAsync<PolicyModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -125,11 +125,11 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> EnableAsync(PolicyId policyId)
+    public async Task<PolicyModel> EnableAsync(PolicyId policyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/policies/{policyId}/enable", null);
 
-        var model = await DeserialiseAsync<Policy>(result.Content);
+        var model = await DeserialiseAsync<PolicyModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -137,11 +137,11 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> DisableAsync(PolicyId policyId)
+    public async Task<PolicyModel> DisableAsync(PolicyId policyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/policies/{policyId}/disable", null);
 
-        var model = await DeserialiseAsync<Policy>(result.Content);
+        var model = await DeserialiseAsync<PolicyModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -199,20 +199,15 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     }
 
     /// <inheritdoc/>
-    public async Task<Policy> EnableUntilAsync(PolicyId policyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
+    public async Task<PolicyModel> EnableUntilAsync(PolicyId policyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
     {
-        var requestModel = new AutoExpire
-        {
-            ExpiryDateTime = expiryDateTime.ToString("o"),
-            ExpiryAction = expiryAction,
-            TimeZoneId = timeZonedId,
-        };
+        var requestModel = new AutoExpireModel(timeZonedId, expiryDateTime.ToString("o"), expiryAction);
 
         var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/policies/{policyId}/enable-until", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<Policy>(result.Content);
+        var model = await DeserialiseAsync<PolicyModel>(result.Content);
 
         EnsureNotNull(model);
 

@@ -1,11 +1,9 @@
 using System.Net.Http.Json;
 using System.Web;
+using Enclave.Api.Modules.SystemManagement.UnapprovedSystems.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.UnaprrovedSystems;
-using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -27,7 +25,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<UnapprovedSystemSummary>> GetSystemsAsync(
+    public async Task<PaginatedResponseModel<UnapprovedSystemSummaryModel>> GetSystemsAsync(
         int? enrolmentKeyId = null,
         string? searchTerm = null,
         UnapprovedSystemQuerySortMode? sortOrder = null,
@@ -36,7 +34,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     {
         var queryString = BuildQueryString(enrolmentKeyId, searchTerm, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<UnapprovedSystemSummary>>($"{_orgRoute}/unapproved-systems?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<UnapprovedSystemSummaryModel>>($"{_orgRoute}/unapproved-systems?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -44,7 +42,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> DeclineSystems(params SystemId[] systemIds)
+    public async Task<int> DeclineSystems(params string[] systemIds)
     {
         using var content = CreateJsonContent(new
         {
@@ -70,15 +68,15 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> DeclineSystems(IEnumerable<SystemId> systemIds)
+    public async Task<int> DeclineSystems(IEnumerable<string> systemIds)
     {
         return await DeclineSystems(systemIds.ToArray());
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystem> GetAsync(SystemId systemId)
+    public async Task<UnapprovedSystemModel> GetAsync(string systemId)
     {
-        var model = await HttpClient.GetFromJsonAsync<UnapprovedSystem>($"{_orgRoute}/unapproved-systems/{systemId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<UnapprovedSystemModel>($"{_orgRoute}/unapproved-systems/{systemId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -86,19 +84,19 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<UnapprovedSystemPatch, UnapprovedSystem> Update(SystemId systemId)
+    public IPatchClient<UnapprovedSystemPatchModel, UnapprovedSystemModel> Update(string systemId)
     {
-        return new PatchClient<UnapprovedSystemPatch, UnapprovedSystem>(HttpClient, $"{_orgRoute}/unapproved-systems/{systemId}");
+        return new PatchClient<UnapprovedSystemPatchModel, UnapprovedSystemModel>(HttpClient, $"{_orgRoute}/unapproved-systems/{systemId}");
     }
 
     /// <inheritdoc/>
-    public async Task<UnapprovedSystem> DeclineAsync(SystemId systemId)
+    public async Task<UnapprovedSystemModel> DeclineAsync(string systemId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/unapproved-systems/{systemId}");
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<UnapprovedSystem>(result.Content);
+        var model = await DeserialiseAsync<UnapprovedSystemModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -106,7 +104,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task ApproveAsync(SystemId systemId)
+    public async Task ApproveAsync(string systemId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/unapproved-systems/{systemId}/approve", null);
 
@@ -114,7 +112,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> ApproveSystemsAsync(params SystemId[] systemIds)
+    public async Task<int> ApproveSystemsAsync(params string[] systemIds)
     {
         var requestModel = new
         {
@@ -133,7 +131,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> ApproveSystemsAsync(IEnumerable<SystemId> systemIds)
+    public async Task<int> ApproveSystemsAsync(IEnumerable<string> systemIds)
     {
         return await ApproveSystemsAsync(systemIds.ToArray());
     }

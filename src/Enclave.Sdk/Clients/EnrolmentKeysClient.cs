@@ -1,13 +1,13 @@
 using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
 using System.Web;
+using Enclave.Api.Modules.SystemManagement.Common.Models;
+using Enclave.Api.Modules.SystemManagement.EnrolmentKeys.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Enums;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Configuration.Data.Modules.EnrolmentKeys.Enums;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.AutoExpiry;
-using Enclave.Sdk.Api.Data.EnrolmentKeys;
-using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -28,7 +28,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<EnrolmentKeySummary>> GetEnrolmentKeysAsync(
+    public async Task<PaginatedResponseModel<EnrolmentKeySummaryModel>> GetEnrolmentKeysAsync(
         string? searchTerm = null,
         bool? includeDisabled = null,
         EnrolmentKeySortOrder? sortOrder = null,
@@ -37,7 +37,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     {
         var queryString = BuildQueryString(searchTerm, includeDisabled, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<EnrolmentKeySummary>>($"{_orgRoute}/enrolment-keys?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<EnrolmentKeySummaryModel>>($"{_orgRoute}/enrolment-keys?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -45,7 +45,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolmentKey> CreateAsync(EnrolmentKeyCreate createModel)
+    public async Task<EnrolmentKeyModel> CreateAsync(EnrolmentKeyCreateModel createModel)
     {
         if (createModel is null)
         {
@@ -54,7 +54,7 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/enrolment-keys", createModel, Constants.JsonSerializerOptions);
 
-        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
+        var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -62,9 +62,9 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolmentKey> GetAsync(EnrolmentKeyId enrolmentKeyId)
+    public async Task<EnrolmentKeyModel> GetAsync(EnrolmentKeyId enrolmentKeyId)
     {
-        var model = await HttpClient.GetFromJsonAsync<EnrolmentKey>($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<EnrolmentKeyModel>($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -72,17 +72,17 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<EnrolmentKeyPatchModel, EnrolmentKey> Update(EnrolmentKeyId enrolmentKeyId)
+    public IPatchClient<EnrolmentKeyPatchModel, EnrolmentKeyModel> Update(EnrolmentKeyId enrolmentKeyId)
     {
-        return new PatchClient<EnrolmentKeyPatchModel, EnrolmentKey>(HttpClient, $"{_orgRoute}/enrolment-keys/{enrolmentKeyId}");
+        return new PatchClient<EnrolmentKeyPatchModel, EnrolmentKeyModel>(HttpClient, $"{_orgRoute}/enrolment-keys/{enrolmentKeyId}");
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolmentKey> EnableAsync(EnrolmentKeyId enrolmentKeyId)
+    public async Task<EnrolmentKeyModel> EnableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable", null);
 
-        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
+        var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -90,11 +90,11 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolmentKey> DisableAsync(EnrolmentKeyId enrolmentKeyId)
+    public async Task<EnrolmentKeyModel> DisableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/disable", null);
 
-        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
+        var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -152,20 +152,15 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolmentKey> EnableUntilAsync(EnrolmentKeyId enrolmentKeyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
+    public async Task<EnrolmentKeyModel> EnableUntilAsync(EnrolmentKeyId enrolmentKeyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
     {
-        var requestModel = new AutoExpire
-        {
-            ExpiryDateTime = expiryDateTime.ToString("o"),
-            ExpiryAction = expiryAction,
-            TimeZoneId = timeZonedId,
-        };
+        var requestModel = new AutoExpireModel(timeZonedId, expiryDateTime.ToString("o"), expiryAction);
 
         var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable-until", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<EnrolmentKey>(result.Content);
+        var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
 
         EnsureNotNull(model);
 

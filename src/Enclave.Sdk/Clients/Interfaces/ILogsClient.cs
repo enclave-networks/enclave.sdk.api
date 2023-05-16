@@ -1,5 +1,5 @@
-﻿using Enclave.Sdk.Api.Data.Logging;
-using Enclave.Sdk.Api.Data.Pagination;
+﻿using Enclave.Api.Modules.ActivityLogs.Logs.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
@@ -14,5 +14,5 @@ public interface ILogsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<LogEntry>> GetLogsAsync(int? pageNumber = null, int? perPage = null);
+    Task<PaginatedResponseModel<LogEntryModel>> GetLogsAsync(int? pageNumber = null, int? perPage = null);
 }

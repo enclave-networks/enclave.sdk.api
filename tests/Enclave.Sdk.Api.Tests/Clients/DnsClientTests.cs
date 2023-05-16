@@ -1,7 +1,5 @@
-﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Dns;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data.Pagination;
+﻿using Enclave.Configuration.Data.Identifiers;
+using Enclave.Sdk.Api.Clients;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text.Json;
@@ -32,7 +30,7 @@ public class DnsClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var organisationId = OrganisationId.New();
+        var organisationId = OrganisationGuid.New();
         _orgRoute = $"/org/{organisationId}";
 
         _dnsClient = new DnsClient(httpClient, $"org/{organisationId}");

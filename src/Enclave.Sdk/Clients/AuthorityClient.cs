@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
+using Enclave.Api.Modules.SystemManagement.Authority;
+using Enclave.Configuration;
 using Enclave.Sdk.Api.Clients.Interfaces;
-using Enclave.Sdk.Api.Data.Authority;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -17,7 +18,7 @@ internal class AuthorityClient : ClientBase, IAuthorityClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolResult> EnrolAsync(EnrolRequest requestModel)
+    public async Task<EnrolResult> EnrolAsync(EnrolRequestModel requestModel)
     {
         if (requestModel is null)
         {

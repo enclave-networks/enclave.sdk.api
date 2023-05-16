@@ -1,6 +1,4 @@
 ﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.EnrolledSystems;
-using Enclave.Sdk.Api.Data.Pagination;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text.Json;
@@ -8,15 +6,16 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.FluentAssertions;
-using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Api.Modules.SystemManagement.Systems.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Modules.Systems.Enums;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
 public class EnrolledSystemClientTests
 {
-    private EnrolledSystemsClient _enrolledSystemsClient;
+    private SystemsClient _enrolledSystemsClient;
     private WireMockServer _server;
     private string _orgRoute;
     private readonly JsonSerializerOptions _serializerOptions = new()
@@ -34,25 +33,24 @@ public class EnrolledSystemClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var organisationId = OrganisationId.New();
+        var organisationId = OrganisationGuid.New();
         _orgRoute = $"/org/{organisationId}";
 
-        _enrolledSystemsClient = new EnrolledSystemsClient(httpClient, $"org/{organisationId}");
+        _enrolledSystemsClient = new SystemsClient(httpClient, $"org/{organisationId}");
     }
 
     [Test]
     public async Task Should_return_a_paginated_response_model_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<EnrolledSystemSummary>
-        {
-            Items = new List<EnrolledSystemSummary>
+        var response = new PaginatedResponseModel<SystemSummaryModel>(
+            new(),
+            new(),
+            new List<SystemSummaryModel>
             {
-                new EnrolledSystemSummary { Description = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
+                new SystemSummaryModel(description: "test")
+            }
+            );
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
@@ -73,11 +71,11 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_enrolment_key_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<EnrolledSystemSummary>
+        var response = new PaginatedResponseModel<SystemSummaryModel>
         {
-            Items = new List<EnrolledSystemSummary>
+            Items = new List<SystemSummaryModel>
             {
-                new EnrolledSystemSummary { Description = "test"}
+                new SystemSummaryModel { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -104,11 +102,11 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_search_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<EnrolledSystemSummary>
+        var response = new PaginatedResponseModel<SystemSummaryModel>
         {
-            Items = new List<EnrolledSystemSummary>
+            Items = new List<SystemSummaryModel>
             {
-                new EnrolledSystemSummary { Description = "test"}
+                new SystemSummaryModel { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -135,11 +133,11 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_include_disabled_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<EnrolledSystemSummary>
+        var response = new PaginatedResponseModel<SystemSummaryModel>
         {
-            Items = new List<EnrolledSystemSummary>
+            Items = new List<SystemSummaryModel>
             {
-                new EnrolledSystemSummary { Description = "test"}
+                new SystemSummaryModel { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -166,11 +164,11 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_sort_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<EnrolledSystemSummary>
+        var response = new PaginatedResponseModel<SystemSummaryModel>
         {
-            Items = new List<EnrolledSystemSummary>
+            Items = new List<SystemSummaryModel>
             {
-                new EnrolledSystemSummary { Description = "test"}
+                new SystemSummaryModel { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -197,11 +195,11 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_dns_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<EnrolledSystemSummary>
+        var response = new PaginatedResponseModel<SystemSummaryModel>
         {
-            Items = new List<EnrolledSystemSummary>
+            Items = new List<SystemSummaryModel>
             {
-                new EnrolledSystemSummary { Description = "test"}
+                new SystemSummaryModel { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -228,11 +226,11 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_page_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<EnrolledSystemSummary>
+        var response = new PaginatedResponseModel<SystemSummaryModel>
         {
-            Items = new List<EnrolledSystemSummary>
+            Items = new List<SystemSummaryModel>
             {
-                new EnrolledSystemSummary { Description = "test"}
+                new SystemSummaryModel { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -259,11 +257,11 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_per_page_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<EnrolledSystemSummary>
+        var response = new PaginatedResponseModel<SystemSummaryModel>
         {
-            Items = new List<EnrolledSystemSummary>
+            Items = new List<SystemSummaryModel>
             {
-                new EnrolledSystemSummary { Description = "test"}
+                new SystemSummaryModel { Description = "test"}
             },
             Links = new PaginationLinks(),
             Metadata = new PaginationMetadata(),
@@ -304,7 +302,7 @@ public class EnrolledSystemClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _enrolledSystemsClient.RevokeSystemsAsync(SystemId.FromString("asdf"), SystemId.FromString("asdf3"));
+        var result = await _enrolledSystemsClient.RevokeSystemsAsync("asdf", "asdf3");
 
         // Assert
         result.Should().Be(2);
@@ -316,7 +314,7 @@ public class EnrolledSystemClientTests
         // Arrange
         var response = new EnrolledSystem
         {
-            SystemId = SystemId.FromString("system1"),
+            SystemId = "system1",
             Description = "new description",
         };
 
@@ -342,7 +340,7 @@ public class EnrolledSystemClientTests
         // Arrange
         var response = new EnrolledSystem
         {
-            SystemId = SystemId.FromString("system1"),
+            SystemId = "system1",
             Description = "description",
         };
 
@@ -368,7 +366,7 @@ public class EnrolledSystemClientTests
         // Arrange
         var response = new EnrolledSystem
         {
-            SystemId = SystemId.FromString("system1"),
+            SystemId = "system1",
             Description = "description",
         };
 
@@ -394,7 +392,7 @@ public class EnrolledSystemClientTests
         // Arrange
         var response = new EnrolledSystem
         {
-            SystemId = SystemId.FromString("system1"),
+            SystemId = "system1",
             Description = "description",
         };
 
@@ -432,7 +430,7 @@ public class EnrolledSystemClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _enrolledSystemsClient.BulkEnableAsync(SystemId.FromString("asdf"), SystemId.FromString("asdf3"));
+        var result = await _enrolledSystemsClient.BulkEnableAsync("asdf", "asdf3");
 
         // Assert
         result.Should().Be(2);
@@ -456,11 +454,9 @@ public class EnrolledSystemClientTests
               .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
 
         // Act
-        var result = await _enrolledSystemsClient.BulkDisableAsync(SystemId.FromString("asdf"), SystemId.FromString("asdf3"));
+        var result = await _enrolledSystemsClient.BulkDisableAsync("asdf", "asdf3");
 
         // Assert
         result.Should().Be(2);
     }
-
-
 }

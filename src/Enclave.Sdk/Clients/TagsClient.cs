@@ -1,10 +1,11 @@
 using System.Net.Http.Json;
 using System.Web;
+using Enclave.Api.Modules.SystemManagement.Tags.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Configuration.Data.Modules.Tags.Enums;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.Tags;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -25,11 +26,11 @@ internal class TagsClient : ClientBase, ITagsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<BasicTag>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null)
+    public async Task<PaginatedResponseModel<TagSummaryModel>> GetAsync(string? searchTerm = null, TagQuerySortOrder? sortOrder = null, int? pageNumber = null, int? perPage = null)
     {
         var queryString = BuildQueryString(searchTerm, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<BasicTag>>($"{_orgRoute}/tags?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TagSummaryModel>>($"{_orgRoute}/tags?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -37,7 +38,7 @@ internal class TagsClient : ClientBase, ITagsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DetailedTag> CreateAsync(TagCreate createModel)
+    public async Task<TagModel> CreateAsync(TagCreateModel createModel)
     {
         if (createModel is null)
         {
@@ -46,7 +47,7 @@ internal class TagsClient : ClientBase, ITagsClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/tags", createModel, Constants.JsonSerializerOptions);
 
-        var model = await DeserialiseAsync<DetailedTag>(result.Content);
+        var model = await DeserialiseAsync<TagModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -80,15 +81,15 @@ internal class TagsClient : ClientBase, ITagsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DetailedTag> GetAsync(TagRefId refId)
+    public async Task<TagModel> GetAsync(TagRefId refId)
     {
         return await GetAsync(refId.ToString());
     }
 
     /// <inheritdoc/>
-    public async Task<DetailedTag> GetAsync(string tag)
+    public async Task<TagModel> GetAsync(string tag)
     {
-        var model = await HttpClient.GetFromJsonAsync<DetailedTag>($"{_orgRoute}/tags/{tag}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<TagModel>($"{_orgRoute}/tags/{tag}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -96,31 +97,31 @@ internal class TagsClient : ClientBase, ITagsClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<TagPatch, DetailedTag> Update(TagRefId refId)
+    public IPatchClient<TagPatchModel, TagModel> Update(TagRefId refId)
     {
         return Update(refId.ToString());
     }
 
     /// <inheritdoc/>
-    public IPatchClient<TagPatch, DetailedTag> Update(string tag)
+    public IPatchClient<TagPatchModel, TagModel> Update(string tag)
     {
-        return new PatchClient<TagPatch, DetailedTag>(HttpClient, $"{_orgRoute}/tags/{tag}");
+        return new PatchClient<TagPatchModel, TagModel>(HttpClient, $"{_orgRoute}/tags/{tag}");
     }
 
     /// <inheritdoc/>
-    public async Task<DetailedTag> DeleteAsync(TagRefId refId)
+    public async Task<TagModel> DeleteAsync(TagRefId refId)
     {
         return await DeleteAsync(refId.ToString());
     }
 
     /// <inheritdoc/>
-    public async Task<DetailedTag> DeleteAsync(string tag)
+    public async Task<TagModel> DeleteAsync(string tag)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/tags/{tag}");
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<DetailedTag>(result.Content);
+        var model = await DeserialiseAsync<TagModel>(result.Content);
 
         EnsureNotNull(model);
 

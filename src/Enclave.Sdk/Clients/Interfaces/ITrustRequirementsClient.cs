@@ -1,8 +1,8 @@
-﻿using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.TrustRequirements;
-using Enclave.Sdk.Api.Data.TrustRequirements.Enum;
+﻿using Enclave.Api.Modules.SystemManagement.TrustRequirements.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Configuration.Data.Modules.TrustRequirements.Enums;
+using Enclave.Sdk.Api.Data;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
@@ -19,18 +19,18 @@ public interface ITrustRequirementsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<TrustRequirementSummary>> GetTrustRequirementsAsync(
+    Task<PaginatedResponseModel<TrustRequirementSummaryModel>> GetTrustRequirementsAsync(
         string? searchTerm = null,
         TrustRequirementSortOrder? sortOrder = null,
         int? pageNumber = null,
         int? perPage = null);
 
     /// <summary>
-    /// Creates a Trust Requirement using a <see cref="TrustRequirementCreate"/> Model.
+    /// Creates a Trust Requirement using a <see cref="TrustRequirementCreateModel"/> Model.
     /// </summary>
     /// <param name="createModel">The model needed to create a Trust Requirement.</param>
-    /// <returns>The created <see cref="TrustRequirement"/>.</returns>
-    Task<TrustRequirement> CreateAsync(TrustRequirementCreate createModel);
+    /// <returns>The created <see cref="TrustRequirementModel"/>.</returns>
+    Task<TrustRequirementModel> CreateAsync(TrustRequirementCreateModel createModel);
 
     /// <summary>
     /// Delete multiple Trust Requirements.
@@ -43,20 +43,20 @@ public interface ITrustRequirementsClient
     /// Get a specific Trust Requirement.
     /// </summary>
     /// <param name="requirementId">The Id of the Trust Requirement to get.</param>
-    /// <returns>The <see cref="TrustRequirement"/>.</returns>
-    Task<TrustRequirement> GetAsync(TrustRequirementId requirementId);
+    /// <returns>The <see cref="TrustRequirementModel"/>.</returns>
+    Task<TrustRequirementModel> GetAsync(TrustRequirementId requirementId);
 
     /// <summary>
     /// Starts an update patch request.
     /// </summary>
     /// <param name="requirementId">The TrustRequirementId to update.</param>
     /// <returns>A PatchClient for fluent updating.</returns>
-    IPatchClient<TrustRequirementPatch, TrustRequirement> Update(TrustRequirementId requirementId);
+    IPatchClient<TrustRequirementPatchModel, TrustRequirementModel> Update(TrustRequirementId requirementId);
 
     /// <summary>
     /// Delete a Trust Requirement.
     /// </summary>
     /// <param name="requirementId">The Id of the Trust Requirement to delete.</param>
-    /// <returns>The deleted <see cref="TrustRequirement"/>.</returns>
-    Task<TrustRequirement> DeleteAsync(TrustRequirementId requirementId);
+    /// <returns>The deleted <see cref="TrustRequirementModel"/>.</returns>
+    Task<TrustRequirementModel> DeleteAsync(TrustRequirementId requirementId);
 }

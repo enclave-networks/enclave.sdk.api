@@ -1,4 +1,5 @@
-﻿using Enclave.Sdk.Api.Data.Authority;
+﻿using Enclave.Api.Modules.SystemManagement.Authority;
+using Enclave.Configuration;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
@@ -12,5 +13,5 @@ public interface IAuthorityClient
     /// </summary>
     /// <param name="requestModel">The Request model to enrol the system.</param>
     /// <returns>An EnrolResult model.</returns>
-    Task<EnrolResult> EnrolAsync(EnrolRequest requestModel);
+    Task<EnrolResult> EnrolAsync(EnrolRequestModel requestModel);
 }

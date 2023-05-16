@@ -1,9 +1,5 @@
 ﻿using System.Text.Json;
 using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.Policies;
-using Enclave.Sdk.Api.Data.Tags;
 using FluentAssertions;
 using NUnit.Framework;
 using WireMock.FluentAssertions;
@@ -33,7 +29,7 @@ public class TagClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var organisationId = OrganisationId.New();
+        var organisationId = OrganisationGuid.New();
         _orgRoute = $"/org/{organisationId}";
 
 

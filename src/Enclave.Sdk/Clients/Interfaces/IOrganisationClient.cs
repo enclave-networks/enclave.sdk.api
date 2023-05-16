@@ -1,7 +1,7 @@
-﻿using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Account;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data.PatchModel;
+﻿using Enclave.Api.Modules.AccountManagement.PublicAccount.Models;
+using Enclave.Api.Modules.OrganisationManagement;
+using Enclave.Api.Modules.OrganisationManagement.Organisation.Models;
+using Enclave.Sdk.Api.Data;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
@@ -14,7 +14,7 @@ public interface IOrganisationClient
     /// <summary>
     /// The organisation selected and the one used to create this client.
     /// </summary>
-    AccountOrganisation Organisation { get; }
+    AccountOrganisationModel Organisation { get; }
 
     /// <summary>
     /// An instance of <see cref="DnsClient"/> associated with the current organisaiton.
@@ -37,9 +37,9 @@ public interface IOrganisationClient
     IPoliciesClient Policies { get; }
 
     /// <summary>
-    /// An instance of <see cref="EnrolledSystemsClient"/> associated with the current organisaiton.
+    /// An instance of <see cref="SystemsClient"/> associated with the current organisaiton.
     /// </summary>
-    IEnrolledSystemsClient EnrolledSystems { get; }
+    ISystemsClient EnrolledSystems { get; }
 
     /// <summary>
     /// An instance of <see cref="TagsClient"/> associated with the current organisaiton.
@@ -60,7 +60,7 @@ public interface IOrganisationClient
     /// Get more detail on your current organisaiton.
     /// </summary>
     /// <returns>A detailed organisation model.</returns>
-    Task<Organisation?> GetAsync();
+    Task<OrganisationPropertiesModel?> GetAsync();
 
     /// <summary>
     /// Gets the users that have access to the current organisaiton.
@@ -72,7 +72,7 @@ public interface IOrganisationClient
     /// Get a list of invites that haven't been accepted.
     /// </summary>
     /// <returns>ReadOnlyList of pending invites.</returns>
-    Task<IReadOnlyList<OrganisationInvite>> GetPendingInvitesAsync();
+    Task<IReadOnlyList<OrganisationInviteModel>> GetPendingInvitesAsync();
 
     /// <summary>
     /// Invite a user provided they haven't already been invited.
@@ -96,5 +96,5 @@ public interface IOrganisationClient
     /// Starts an update patch request.
     /// </summary>
     /// <returns>A PatchClient for fluent updating.</returns>
-    IPatchClient<OrganisationPatch, Organisation> Update();
+    IPatchClient<OrganisationPatchModel, OrganisationPropertiesModel> Update();
 }

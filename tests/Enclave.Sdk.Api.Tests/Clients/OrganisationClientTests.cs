@@ -1,7 +1,5 @@
 ﻿using System.Text.Json;
 using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Account;
-using Enclave.Sdk.Api.Data.Organisations;
 using FluentAssertions;
 using NUnit.Framework;
 using WireMock.FluentAssertions;
@@ -33,7 +31,7 @@ public class OrganisationClientTests
 
         var currentOrganisation = new AccountOrganisation
         {
-            OrgId = OrganisationId.New(),
+            OrgId = OrganisationGuid.New(),
             OrgName = "TestName",
             Role = UserOrganisationRole.Admin,
         };
@@ -49,7 +47,7 @@ public class OrganisationClientTests
         // Arrange
         var org = new Organisation
         {
-            Id = OrganisationId.New(),
+            Id = OrganisationGuid.New(),
         };
 
         _server
@@ -74,7 +72,7 @@ public class OrganisationClientTests
         // Arrange
         var org = new Organisation
         {
-            Id = OrganisationId.New(),
+            Id = OrganisationGuid.New(),
             Website = "newWebsite",
         };
 
@@ -100,7 +98,7 @@ public class OrganisationClientTests
         // Arrange
         var org = new Organisation
         {
-            Id = OrganisationId.New(),
+            Id = OrganisationGuid.New(),
             Website = "newWebsite",
         };
 

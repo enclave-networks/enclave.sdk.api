@@ -21,12 +21,63 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="TypedIds" Version="1.1.2">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+      <Compile Remove="Data\Account\**" />
+      <Compile Remove="Data\Authority\**" />
+      <Compile Remove="Data\AutoExpiry\**" />
+      <Compile Remove="Data\Dns\**" />
+      <Compile Remove="Data\EnrolledSystems\**" />
+      <Compile Remove="Data\EnrolmentKeys\**" />
+      <Compile Remove="Data\Logging\**" />
+      <Compile Remove="Data\Organisations\**" />
+      <Compile Remove="Data\Pagination\**" />
+      <Compile Remove="Data\Policies\**" />
+      <Compile Remove="Data\SystemManagement\**" />
+      <Compile Remove="Data\Tags\**" />
+      <Compile Remove="Data\TrustRequirements\**" />
+      <Compile Remove="Data\UnaprrovedSystems\**" />
+      <EmbeddedResource Remove="Data\Account\**" />
+      <EmbeddedResource Remove="Data\Authority\**" />
+      <EmbeddedResource Remove="Data\AutoExpiry\**" />
+      <EmbeddedResource Remove="Data\Dns\**" />
+      <EmbeddedResource Remove="Data\EnrolledSystems\**" />
+      <EmbeddedResource Remove="Data\EnrolmentKeys\**" />
+      <EmbeddedResource Remove="Data\Logging\**" />
+      <EmbeddedResource Remove="Data\Organisations\**" />
+      <EmbeddedResource Remove="Data\Pagination\**" />
+      <EmbeddedResource Remove="Data\Policies\**" />
+      <EmbeddedResource Remove="Data\SystemManagement\**" />
+      <EmbeddedResource Remove="Data\Tags\**" />
+      <EmbeddedResource Remove="Data\TrustRequirements\**" />
+      <EmbeddedResource Remove="Data\UnaprrovedSystems\**" />
+      <None Remove="Data\Account\**" />
+      <None Remove="Data\Authority\**" />
+      <None Remove="Data\AutoExpiry\**" />
+      <None Remove="Data\Dns\**" />
+      <None Remove="Data\EnrolledSystems\**" />
+      <None Remove="Data\EnrolmentKeys\**" />
+      <None Remove="Data\Logging\**" />
+      <None Remove="Data\Organisations\**" />
+      <None Remove="Data\Pagination\**" />
+      <None Remove="Data\Policies\**" />
+      <None Remove="Data\SystemManagement\**" />
+      <None Remove="Data\Tags\**" />
+      <None Remove="Data\TrustRequirements\**" />
+      <None Remove="Data\UnaprrovedSystems\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Data\SystemId.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="..\..\README.md" Pack="true" PackagePath="\" />
         <InternalsVisibleTo Include="Enclave.Sdk.Api.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Enclave.Api.Data">
+        <HintPath>..\..\..\portal\src\Enclave.Api.Data\bin\Debug\net6.0\Enclave.Api.Data.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

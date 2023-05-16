@@ -1,10 +1,9 @@
 ﻿using System.Net.Http.Json;
+using Enclave.Api.Modules.AccountManagement.PublicAccount.Models;
+using Enclave.Api.Modules.OrganisationManagement;
+using Enclave.Api.Modules.OrganisationManagement.Organisation.Models;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Account;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.TrustRequirements;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -19,7 +18,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
     /// <param name="currentOrganisation">The current organisaiton used for routing the API calls.</param>
-    public OrganisationClient(HttpClient httpClient, AccountOrganisation currentOrganisation)
+    public OrganisationClient(HttpClient httpClient, AccountOrganisationModel currentOrganisation)
         : base(httpClient)
     {
         Organisation = currentOrganisation;
@@ -29,14 +28,14 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
         EnrolmentKeys = new EnrolmentKeysClient(httpClient, _orgRoute);
         Logs = new LogsClient(httpClient, _orgRoute);
         Policies = new PoliciesClient(httpClient, _orgRoute);
-        EnrolledSystems = new EnrolledSystemsClient(httpClient, _orgRoute);
+        EnrolledSystems = new SystemsClient(httpClient, _orgRoute);
         Tags = new TagsClient(httpClient, _orgRoute);
         UnapprovedSystems = new UnapprovedSystemsClient(httpClient, _orgRoute);
         TrustRequirements = new TrustRequirementsClient(httpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
-    public AccountOrganisation Organisation { get; }
+    public AccountOrganisationModel Organisation { get; }
 
     /// <inheritdoc/>
     public IDnsClient Dns { get; }
@@ -51,7 +50,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     public IPoliciesClient Policies { get; }
 
     /// <inheritdoc/>
-    public IEnrolledSystemsClient EnrolledSystems { get; }
+    public ISystemsClient EnrolledSystems { get; }
 
     /// <inheritdoc/>
     public ITagsClient Tags { get; }
@@ -63,9 +62,9 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     public ITrustRequirementsClient TrustRequirements { get; }
 
     /// <inheritdoc/>
-    public async Task<Organisation?> GetAsync()
+    public async Task<OrganisationPropertiesModel?> GetAsync()
     {
-        var model = await HttpClient.GetFromJsonAsync<Organisation>(_orgRoute, Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<OrganisationPropertiesModel>(_orgRoute, Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -73,15 +72,15 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<OrganisationPatch, Organisation> Update()
+    public IPatchClient<OrganisationPatchModel, OrganisationPropertiesModel> Update()
     {
-        return new PatchClient<OrganisationPatch, Organisation>(HttpClient, _orgRoute);
+        return new PatchClient<OrganisationPatchModel, OrganisationPropertiesModel>(HttpClient, _orgRoute);
     }
 
     /// <inheritdoc/>
     public async Task<IReadOnlyList<OrganisationUser>> GetOrganisationUsersAsync()
     {
-        var model = await HttpClient.GetFromJsonAsync<OrganisationUsersTopLevel>($"{_orgRoute}/users", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<OrganisationUsersModel>($"{_orgRoute}/users", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -95,19 +94,19 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     }
 
     /// <inheritdoc/>
-    public async Task<IReadOnlyList<OrganisationInvite>> GetPendingInvitesAsync()
+    public async Task<IReadOnlyList<OrganisationInviteModel>> GetPendingInvitesAsync()
     {
-        var model = await HttpClient.GetFromJsonAsync<OrganisationPendingInvites>($"{_orgRoute}/invites", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<OrganisationPendingInvitesModel>($"{_orgRoute}/invites", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
-        return model.Invites ?? Array.Empty<OrganisationInvite>();
+        return model.Invites ?? Array.Empty<OrganisationInviteModel>();
     }
 
     /// <inheritdoc/>
     public async Task InviteUserAsync(string emailAddress)
     {
-        using var encoded = CreateJsonContent(new OrganisationInvite
+        using var encoded = CreateJsonContent(new OrganisationInviteModel
         {
             EmailAddress = emailAddress,
         });
@@ -118,7 +117,7 @@ internal class OrganisationClient : ClientBase, IOrganisationClient
     /// <inheritdoc/>
     public async Task CancelInviteAync(string emailAddress)
     {
-        using var encoded = CreateJsonContent(new OrganisationInvite
+        using var encoded = CreateJsonContent(new OrganisationInviteModel
         {
             EmailAddress = emailAddress,
         });

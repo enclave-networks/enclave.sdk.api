@@ -1,7 +1,4 @@
 ﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Logging;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data.Pagination;
 using NUnit.Framework;
 using System.Text.Json;
 using WireMock.RequestBuilders;
@@ -32,7 +29,7 @@ public class LogsClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var organisationId = OrganisationId.New();
+        var organisationId = OrganisationGuid.New();
         _orgRoute = $"/org/{organisationId}";
 
 

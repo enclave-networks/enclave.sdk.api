@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
 using System.Web;
+using Enclave.Api.Modules.ActivityLogs.Logs.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
 using Enclave.Sdk.Api.Clients.Interfaces;
-using Enclave.Sdk.Api.Data.Logging;
-using Enclave.Sdk.Api.Data.Pagination;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -23,11 +23,11 @@ internal class LogsClient : ClientBase, ILogsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<LogEntry>> GetLogsAsync(int? pageNumber = null, int? perPage = null)
+    public async Task<PaginatedResponseModel<LogEntryModel>> GetLogsAsync(int? pageNumber = null, int? perPage = null)
     {
         var queryString = BuildQueryString(pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<LogEntry>>($"{_orgRoute}/logs?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<LogEntryModel>>($"{_orgRoute}/logs?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

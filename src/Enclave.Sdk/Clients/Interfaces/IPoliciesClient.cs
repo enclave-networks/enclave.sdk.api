@@ -1,10 +1,9 @@
-﻿using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.AutoExpiry;
-using Enclave.Sdk.Api.Data.EnrolledSystems;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.Policies;
-using Enclave.Sdk.Api.Data.Policies.Enum;
+﻿using Enclave.Api.Modules.SystemManagement.Policies.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Enums;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Configuration.Data.Modules.Policies.Enums;
+using Enclave.Sdk.Api.Data;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
@@ -22,7 +21,7 @@ public interface IPoliciesClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<Policy>> GetPoliciesAsync(
+    Task<PaginatedResponseModel<PolicyModel>> GetPoliciesAsync(
         string? searchTerm = null,
         bool? includeDisabled = null,
         PolicySortOrder? sortOrder = null,
@@ -30,11 +29,11 @@ public interface IPoliciesClient
         int? perPage = null);
 
     /// <summary>
-    /// Creates a Policy using a <see cref="PolicyCreate"/> Model.
+    /// Creates a Policy using a <see cref="PolicyCreateModel"/> Model.
     /// </summary>
     /// <param name="createModel">The model needed to create a Policy.</param>
-    /// <returns>The created <see cref="Policy"/>.</returns>
-    Task<Policy> CreateAsync(PolicyCreate createModel);
+    /// <returns>The created <see cref="PolicyModel"/>.</returns>
+    Task<PolicyModel> CreateAsync(PolicyCreateModel createModel);
 
     /// <summary>
     /// Delete multiple Policies.
@@ -54,36 +53,36 @@ public interface IPoliciesClient
     /// Get a specific Policy.
     /// </summary>
     /// <param name="policyId">The Id of the Policy to get.</param>
-    /// <returns>The <see cref="Policy"/>.</returns>
-    Task<Policy> GetAsync(PolicyId policyId);
+    /// <returns>The <see cref="PolicyModel"/>.</returns>
+    Task<PolicyModel> GetAsync(PolicyId policyId);
 
     /// <summary>
     /// Starts an update patch request.
     /// </summary>
     /// <param name="policyId">The PolicyId to update.</param>
     /// <returns>A PatchClient for fluent updating.</returns>
-    IPatchClient<PolicyPatch, Policy> Update(PolicyId policyId);
+    IPatchClient<PolicyPatchModel, PolicyModel> Update(PolicyId policyId);
 
     /// <summary>
     /// Delete a Policy.
     /// </summary>
     /// <param name="policyId">The Id of the Policy to delete.</param>
-    /// <returns>The deleted <see cref="Policy"/>.</returns>
-    Task<Policy> DeleteAsync(PolicyId policyId);
+    /// <returns>The deleted <see cref="PolicyModel"/>.</returns>
+    Task<PolicyModel> DeleteAsync(PolicyId policyId);
 
     /// <summary>
     /// Enable a Policy.
     /// </summary>
     /// <param name="policyId">The Id of the Policy to enable.</param>
-    /// <returns>The enabled <see cref="Policy"/>.</returns>
-    Task<Policy> EnableAsync(PolicyId policyId);
+    /// <returns>The enabled <see cref="PolicyModel"/>.</returns>
+    Task<PolicyModel> EnableAsync(PolicyId policyId);
 
     /// <summary>
     /// Disable a Policy.
     /// </summary>
     /// <param name="policyId">The Id of the Policy to disable.</param>
-    /// <returns>The disabled <see cref="Policy"/>.</returns>
-    Task<Policy> DisableAsync(PolicyId policyId);
+    /// <returns>The disabled <see cref="PolicyModel"/>.</returns>
+    Task<PolicyModel> DisableAsync(PolicyId policyId);
 
     /// <summary>
     /// Enable multiple Policies.
@@ -117,9 +116,9 @@ public interface IPoliciesClient
     /// Enable this policy for a specific period of time.
     /// </summary>
     /// <param name="policyId">The Id of the policy to enable until.</param>
-    /// <param name="expiryDateTime">A <see cref="DateTimeOffset"/> specifying the time when the <see cref="Policy"/> should be enabled until.</param>
+    /// <param name="expiryDateTime">A <see cref="DateTimeOffset"/> specifying the time when the <see cref="PolicyModel"/> should be enabled until.</param>
     /// <param name="expiryAction">What should happen when the expiry date elapses.</param>
     /// <param name="timeZonedId">An IANA or Windows time zone ID. If this isn't null, expiryDateTime will be updated if the specified time zone's rules change.</param>
-    /// <returns>A detailed <see cref="Policy"/>.</returns>
-    Task<Policy> EnableUntilAsync(PolicyId policyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
+    /// <returns>A detailed <see cref="PolicyModel"/>.</returns>
+    Task<PolicyModel> EnableUntilAsync(PolicyId policyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
 }

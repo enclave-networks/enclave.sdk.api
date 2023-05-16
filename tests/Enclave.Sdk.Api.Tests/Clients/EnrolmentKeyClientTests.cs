@@ -1,8 +1,4 @@
 ﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.EnrolmentKeys;
-using Enclave.Sdk.Api.Data.EnrolmentKeys.Enum;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data.Pagination;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text.Json;
@@ -34,7 +30,7 @@ public class EnrolmentKeyClientTests
         };
 
 
-        var organisationId = OrganisationId.New();
+        var organisationId = OrganisationGuid.New();
         _orgRoute = $"/org/{organisationId}";
 
         _enrolmentKeysClient = new EnrolmentKeysClient(httpClient, $"org/{organisationId}");

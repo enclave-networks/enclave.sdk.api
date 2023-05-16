@@ -1,6 +1,4 @@
 ﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.UnaprrovedSystems;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text.Json;
@@ -8,9 +6,6 @@ using WireMock.Server;
 using WireMock.FluentAssertions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
-using Enclave.Sdk.Api.Data.Organisations;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
@@ -33,7 +28,7 @@ public class UnapprovedSystemsClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var organisationId = OrganisationId.New();
+        var organisationId = OrganisationGuid.New();
         _orgRoute = $"/org/{organisationId}";
 
         _unapprovedSystemsClient = new UnapprovedSystemsClient(httpClient, $"org/{organisationId}");

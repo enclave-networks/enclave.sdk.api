@@ -1,7 +1,7 @@
-﻿using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Dns;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
+﻿using Enclave.Api.Modules.SystemManagement.Dns.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Sdk.Api.Data;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
@@ -14,7 +14,7 @@ public interface IDnsClient
     /// Gets a summary of DNS properties.
     /// </summary>
     /// <returns>A summary of DNS properties.</returns>
-    Task<DnsSummary> GetPropertiesSummaryAsync();
+    Task<DnsSummaryModel> GetPropertiesSummaryAsync();
 
     /// <summary>
     /// Gets a paginated list of DNS zones.
@@ -22,35 +22,35 @@ public interface IDnsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many items per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<DnsZoneSummary>> GetZonesAsync(int? pageNumber = null, int? perPage = null);
+    Task<PaginatedResponseModel<DnsZoneSummaryModel>> GetZonesAsync(int? pageNumber = null, int? perPage = null);
 
     /// <summary>
-    /// Creates a DNS Zone using a <see cref="DnsZoneCreate"/> Model.
+    /// Creates a DNS Zone using a <see cref="DnsZoneCreateModel"/> Model.
     /// </summary>
     /// <param name="createModel">The model needed to create a DNS Zone.</param>
     /// <returns>The created DNS Zone as a <see cref="DnsZone"/>.</returns>
-    Task<DnsZone> CreateZoneAsync(DnsZoneCreate createModel);
+    Task<DnsZoneModel> CreateZoneAsync(DnsZoneCreateModel createModel);
 
     /// <summary>
     /// Gets the details of a specific DNS Zone.
     /// </summary>
     /// <param name="dnsZoneId">The DNS Zone ID that you want to get.</param>
     /// <returns>A full DNS Zone object.</returns>
-    Task<DnsZone> GetZoneAsync(DnsZoneId dnsZoneId);
+    Task<DnsZoneModel> GetZoneAsync(DnsZoneId dnsZoneId);
 
     /// <summary>
     /// Starts an update patch request.
     /// </summary>
     /// <param name="dnsZoneId">The DnsZoneId to update.</param>
     /// <returns>A PatchClient for fluent updating.</returns>
-    IPatchClient<DnsZonePatch, DnsZone> UpdateZone(DnsZoneId dnsZoneId);
+    IPatchClient<DnsZonePatchModel, DnsZoneModel> UpdateZone(DnsZoneId dnsZoneId);
 
     /// <summary>
     /// Delete a DNS Zone and it's associated record. This is irriversable.
     /// </summary>
     /// <param name="dnsZoneId">The DNS Zone ID that you want to update.</param>
     /// <returns>The deleted DNS Zone object.</returns>
-    Task<DnsZone> DeleteZoneAsync(DnsZoneId dnsZoneId);
+    Task<DnsZoneModel> DeleteZoneAsync(DnsZoneId dnsZoneId);
 
     /// <summary>
     /// Gets a paginated list of DNS records.
@@ -60,18 +60,18 @@ public interface IDnsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many items per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<DnsRecordSummary>> GetRecordsAsync(
+    Task<PaginatedResponseModel<DnsRecordSummaryModel>> GetRecordsAsync(
         DnsZoneId? dnsZoneId = null,
         string? hostname = null,
         int? pageNumber = null,
         int? perPage = null);
 
     /// <summary>
-    /// Create a DNS Record using a <see cref="DnsRecordCreate"/> model.
+    /// Create a DNS Record using a <see cref="DnsRecordCreateModel"/> model.
     /// </summary>
     /// <param name="createModel">The model needed to create a DNS Record.</param>
-    /// <returns>The created DNS Record as <see cref="DnsRecordCreate"/>.</returns>
-    Task<DnsRecord> CreateRecordAsync(DnsRecordCreate createModel);
+    /// <returns>The created DNS Record as <see cref="DnsRecordCreateModel"/>.</returns>
+    Task<DnsRecordModel> CreateRecordAsync(DnsRecordCreateModel createModel);
 
     /// <summary>
     /// Delete multiple DNS Records.
@@ -92,19 +92,19 @@ public interface IDnsClient
     /// </summary>
     /// <param name="dnsRecordId">The id of the DNS Record you want to get.</param>
     /// <returns>A detailed DNS Record object.</returns>
-    Task<DnsRecord> GetRecordAsync(DnsRecordId dnsRecordId);
+    Task<DnsRecordModel> GetRecordAsync(DnsRecordId dnsRecordId);
 
     /// <summary>
     /// Starts an update patch request.
     /// </summary>
     /// <param name="dnsRecordId">The DnsRecordId to update.</param>
     /// <returns>A PatchClient for fluent updating.</returns>
-    IPatchClient<DnsRecordPatch, DnsRecord> UpdateRecord(DnsRecordId dnsRecordId);
+    IPatchClient<DnsRecordPatchModel, DnsRecordModel> UpdateRecord(DnsRecordId dnsRecordId);
 
     /// <summary>
     /// Delete a single DNS Record.
     /// </summary>
     /// <param name="dnsRecordId">The DNS Record ID that you want to delete.</param>
     /// <returns>The deleted DNS Record object.</returns>
-    Task<DnsRecord> DeleteRecordAsync(DnsRecordId dnsRecordId);
+    Task<DnsRecordModel> DeleteRecordAsync(DnsRecordId dnsRecordId);
 }

@@ -1,17 +1,15 @@
-﻿using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.AutoExpiry;
-using Enclave.Sdk.Api.Data.EnrolledSystems;
-using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
-using Enclave.Sdk.Api.Data.EnrolmentKeys;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
+﻿using Enclave.Api.Modules.SystemManagement.Systems.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Enums;
+using Enclave.Configuration.Data.Modules.Systems.Enums;
+using Enclave.Sdk.Api.Data;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
 /// <summary>
 /// Provides operations to get, create, and manipulate Enrolled Systems.
 /// </summary>
-public interface IEnrolledSystemsClient
+public interface ISystemsClient
 {
     /// <summary>
     /// Gets a paginated list of Systems which can be searched and iterated upon.
@@ -24,7 +22,7 @@ public interface IEnrolledSystemsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<EnrolledSystemSummary>> GetSystemsAsync(
+    Task<PaginatedResponseModel<SystemSummaryModel>> GetSystemsAsync(
         int? enrolmentKeyId = null,
         string? searchTerm = null,
         bool? includeDisabled = null,
@@ -38,85 +36,85 @@ public interface IEnrolledSystemsClient
     /// </summary>
     /// <param name="systemIds">The System Ids to revoke.</param>
     /// <returns>The number of systems revoked.</returns>
-    Task<int> RevokeSystemsAsync(params SystemId[] systemIds);
+    Task<int> RevokeSystemsAsync(params string[] systemIds);
 
     /// <summary>
     /// Permanetly revoke multiple systems.
     /// </summary>
     /// <param name="systemIds">The System Ids to revoke.</param>
     /// <returns>The number of systems revoked.</returns>
-    Task<int> RevokeSystemsAsync(IEnumerable<SystemId> systemIds);
+    Task<int> RevokeSystemsAsync(IEnumerable<string> systemIds);
 
     /// <summary>
     /// Retrieve a Detailed System model.
     /// </summary>
     /// <param name="systemId">The SystemId to Get.</param>
     /// <returns>A Full System Model.</returns>
-    Task<EnrolledSystem> GetAsync(SystemId systemId);
+    Task<SystemModel> GetAsync(string systemId);
 
     /// <summary>
     /// Starts an update patch request.
     /// </summary>
     /// <param name="systemId">The SystemId to update.</param>
     /// <returns>A PatchClient for fluent updating.</returns>
-    IPatchClient<EnrolledSystemPatch, EnrolledSystem> Update(SystemId systemId);
+    IPatchClient<SystemPatchModel, SystemModel> Update(string systemId);
 
     /// <summary>
     /// Revoke a system permanetly.
     /// </summary>
     /// <param name="systemId">The id of the Enrolled System to revoke.</param>
     /// <returns>The revoked Enrolled System.</returns>
-    Task<EnrolledSystem> RevokeAsync(SystemId systemId);
+    Task<SystemModel> RevokeAsync(string systemId);
 
     /// <summary>
     /// Enable an Enrolled System.
     /// </summary>
     /// <param name="systemId">The Id of the Enrolled System to enable.</param>
     /// <returns>A detailed Enrolled System.</returns>
-    Task<EnrolledSystem> EnableAsync(SystemId systemId);
+    Task<SystemModel> EnableAsync(string systemId);
 
     /// <summary>
     /// Disable an Enrolled System.
     /// </summary>
     /// <param name="systemId">The Id of the Enrolled System to disable.</param>
     /// <returns>A detailed Enrolled System.</returns>
-    Task<EnrolledSystem> DisableAsync(SystemId systemId);
+    Task<SystemModel> DisableAsync(string systemId);
 
     /// <summary>
     /// Bulk enable mutliple Enrolled System.
     /// </summary>
     /// <param name="systemIds">An array of Enrolled System Ids to enable.</param>
     /// <returns>The number of keys modified.</returns>
-    Task<int> BulkEnableAsync(params SystemId[] systemIds);
+    Task<int> BulkEnableAsync(params string[] systemIds);
 
     /// <summary>
     /// Bulk enable mutliple Enrolled System.
     /// </summary>
     /// <param name="systemIds">An array of Enrolled System Ids to enable.</param>
     /// <returns>The number of keys modified.</returns>
-    Task<int> BulkEnableAsync(IEnumerable<SystemId> systemIds);
+    Task<int> BulkEnableAsync(IEnumerable<string> systemIds);
 
     /// <summary>
     /// Bulk disable mutliple Enrolled System.
     /// </summary>
     /// <param name="systemIds">An array of Enrolled System Ids to disable.</param>
     /// <returns>The number of keys modified.</returns>
-    Task<int> BulkDisableAsync(params SystemId[] systemIds);
+    Task<int> BulkDisableAsync(params string[] systemIds);
 
     /// <summary>
     /// Bulk disable mutliple Enrolled System.
     /// </summary>
     /// <param name="systemIds">An array of Enrolled System Ids to disable.</param>
     /// <returns>The number of keys modified.</returns>
-    Task<int> BulkDisableAsync(IEnumerable<SystemId> systemIds);
+    Task<int> BulkDisableAsync(IEnumerable<string> systemIds);
 
     /// <summary>
     /// Enable this System for a specific period of time.
     /// </summary>
     /// <param name="systemId">The Id of the system to enable until.</param>
-    /// <param name="expiryDateTime">A <see cref="DateTimeOffset"/> specifying the time when the <see cref="EnrolledSystem"/> should be enabled until.</param>
+    /// <param name="expiryDateTime">A <see cref="DateTimeOffset"/> specifying the time when the <see cref="SystemModel"/> should be enabled until.</param>
     /// <param name="expiryAction">What should happen when the expiry date elapses.</param>
     /// <param name="timeZonedId">An IANA or Windows time zone ID. If this isn't null, expiryDateTime will be updated if the specified time zone's rules change.</param>
     /// <returns>A detailed Enrolled System.</returns>
-    Task<EnrolledSystem> EnableUntilAsync(SystemId systemId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
+    Task<SystemModel> EnableUntilAsync(string systemId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
 }

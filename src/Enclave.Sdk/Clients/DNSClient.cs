@@ -1,10 +1,10 @@
 using System.Net.Http.Json;
 using System.Web;
+using Enclave.Api.Modules.SystemManagement.Dns.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Identifiers;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Dns;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -25,9 +25,9 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DnsSummary> GetPropertiesSummaryAsync()
+    public async Task<DnsSummaryModel> GetPropertiesSummaryAsync()
     {
-        var model = await HttpClient.GetFromJsonAsync<DnsSummary>($"{_orgRoute}/dns", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<DnsSummaryModel>($"{_orgRoute}/dns", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -35,11 +35,11 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<DnsZoneSummary>> GetZonesAsync(int? pageNumber = null, int? perPage = null)
+    public async Task<PaginatedResponseModel<DnsZoneSummaryModel>> GetZonesAsync(int? pageNumber = null, int? perPage = null)
     {
         var queryString = BuildQueryString(null, null, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsZoneSummary>>($"{_orgRoute}/dns/zones?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsZoneSummaryModel>>($"{_orgRoute}/dns/zones?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -47,7 +47,7 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DnsZone> CreateZoneAsync(DnsZoneCreate createModel)
+    public async Task<DnsZoneModel> CreateZoneAsync(DnsZoneCreateModel createModel)
     {
         if (createModel is null)
         {
@@ -56,7 +56,7 @@ internal class DnsClient : ClientBase, IDnsClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/dns/zones", createModel, Constants.JsonSerializerOptions);
 
-        var model = await DeserialiseAsync<DnsZone>(result.Content);
+        var model = await DeserialiseAsync<DnsZoneModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -64,9 +64,9 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DnsZone> GetZoneAsync(DnsZoneId dnsZoneId)
+    public async Task<DnsZoneModel> GetZoneAsync(DnsZoneId dnsZoneId)
     {
-        var model = await HttpClient.GetFromJsonAsync<DnsZone>($"{_orgRoute}/dns/zones/{dnsZoneId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<DnsZoneModel>($"{_orgRoute}/dns/zones/{dnsZoneId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -74,19 +74,19 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<DnsZonePatch, DnsZone> UpdateZone(DnsZoneId dnsZoneId)
+    public IPatchClient<DnsZonePatchModel, DnsZoneModel> UpdateZone(DnsZoneId dnsZoneId)
     {
-        return new PatchClient<DnsZonePatch, DnsZone>(HttpClient, $"{_orgRoute}/dns/zones/{dnsZoneId}");
+        return new PatchClient<DnsZonePatchModel, DnsZoneModel>(HttpClient, $"{_orgRoute}/dns/zones/{dnsZoneId}");
     }
 
     /// <inheritdoc/>
-    public async Task<DnsZone> DeleteZoneAsync(DnsZoneId dnsZoneId)
+    public async Task<DnsZoneModel> DeleteZoneAsync(DnsZoneId dnsZoneId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/dns/zones/{dnsZoneId}");
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<DnsZone>(result.Content);
+        var model = await DeserialiseAsync<DnsZoneModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -94,7 +94,7 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<DnsRecordSummary>> GetRecordsAsync(
+    public async Task<PaginatedResponseModel<DnsRecordSummaryModel>> GetRecordsAsync(
         DnsZoneId? dnsZoneId = null,
         string? searchTerm = null,
         int? pageNumber = null,
@@ -102,7 +102,7 @@ internal class DnsClient : ClientBase, IDnsClient
     {
         var queryString = BuildQueryString(dnsZoneId, searchTerm, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsRecordSummary>>($"{_orgRoute}/dns/records?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<DnsRecordSummaryModel>>($"{_orgRoute}/dns/records?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -110,7 +110,7 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DnsRecord> CreateRecordAsync(DnsRecordCreate createModel)
+    public async Task<DnsRecordModel> CreateRecordAsync(DnsRecordCreateModel createModel)
     {
         if (createModel is null)
         {
@@ -119,7 +119,7 @@ internal class DnsClient : ClientBase, IDnsClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/dns/records", createModel, Constants.JsonSerializerOptions);
 
-        var model = await DeserialiseAsync<DnsRecord>(result.Content);
+        var model = await DeserialiseAsync<DnsRecordModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -164,9 +164,9 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public async Task<DnsRecord> GetRecordAsync(DnsRecordId dnsRecordId)
+    public async Task<DnsRecordModel> GetRecordAsync(DnsRecordId dnsRecordId)
     {
-        var model = await HttpClient.GetFromJsonAsync<DnsRecord>($"{_orgRoute}/dns/records/{dnsRecordId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<DnsRecordModel>($"{_orgRoute}/dns/records/{dnsRecordId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -174,19 +174,19 @@ internal class DnsClient : ClientBase, IDnsClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<DnsRecordPatch, DnsRecord> UpdateRecord(DnsRecordId dnsRecordId)
+    public IPatchClient<DnsRecordPatchModel, DnsRecordModel> UpdateRecord(DnsRecordId dnsRecordId)
     {
-        return new PatchClient<DnsRecordPatch, DnsRecord>(HttpClient, $"{_orgRoute}/dns/records/{dnsRecordId}");
+        return new PatchClient<DnsRecordPatchModel, DnsRecordModel>(HttpClient, $"{_orgRoute}/dns/records/{dnsRecordId}");
     }
 
     /// <inheritdoc/>
-    public async Task<DnsRecord> DeleteRecordAsync(DnsRecordId dnsRecordId)
+    public async Task<DnsRecordModel> DeleteRecordAsync(DnsRecordId dnsRecordId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/dns/records/{dnsRecordId}");
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<DnsRecord>(result.Content);
+        var model = await DeserialiseAsync<DnsRecordModel>(result.Content);
 
         EnsureNotNull(model);
 

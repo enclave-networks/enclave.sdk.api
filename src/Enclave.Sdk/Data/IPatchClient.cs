@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
-using Enclave.Sdk.Api.Data.PatchModel;
+using Enclave.Api.Scaffolding.Models;
+
 
 namespace Enclave.Sdk.Api.Data;
 
@@ -9,7 +10,7 @@ namespace Enclave.Sdk.Api.Data;
 /// <typeparam name="TModel">The Type we're updating.</typeparam>
 /// <typeparam name="TResponse">The Type we're returning.</typeparam>
 public interface IPatchClient<TModel, TResponse>
-    where TModel : IPatchModel
+    where TModel : PatchModel
 {
     /// <summary>
     /// Set a value to update when the change is applied.

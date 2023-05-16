@@ -1,6 +1,4 @@
 ﻿using System.Text.Json;
-using Enclave.Sdk.Api.Data.Account;
-using Enclave.Sdk.Api.Data.Organisations;
 using FluentAssertions;
 using NUnit.Framework;
 using WireMock.RequestBuilders;
@@ -42,7 +40,7 @@ public class EnclaveClientTests
             {
                 new AccountOrganisation
                 {
-                    OrgId = OrganisationId.New(),
+                    OrgId = OrganisationGuid.New(),
                     OrgName = "TestName",
                     Role = UserOrganisationRole.Admin,
                 },

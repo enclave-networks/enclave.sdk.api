@@ -1,8 +1,6 @@
-﻿using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.UnaprrovedSystems;
-using Enclave.Sdk.Api.Data.UnaprrovedSystems.Enum;
+﻿using Enclave.Api.Modules.SystemManagement.UnapprovedSystems.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Sdk.Api.Data;
 
 namespace Enclave.Sdk.Api.Clients.Interfaces;
 
@@ -20,7 +18,7 @@ public interface IUnapprovedSystemsClient
     /// <param name="pageNumber">Which page number do you want to return.</param>
     /// <param name="perPage">How many per page.</param>
     /// <returns>A paginated response model with links to get the previous, next, first and last pages.</returns>
-    Task<PaginatedResponseModel<UnapprovedSystemSummary>> GetSystemsAsync(
+    Task<PaginatedResponseModel<UnapprovedSystemSummaryModel>> GetSystemsAsync(
         int? enrolmentKeyId = null,
         string? searchTerm = null,
         UnapprovedSystemQuerySortMode? sortOrder = null,
@@ -32,53 +30,53 @@ public interface IUnapprovedSystemsClient
     /// </summary>
     /// <param name="systemIds">System Ids to decline.</param>
     /// <returns>The number of systesm declined.</returns>
-    Task<int> DeclineSystems(params SystemId[] systemIds);
+    Task<int> DeclineSystems(params string[] systemIds);
 
     /// <summary>
     /// Permanetly decline multiple Unapproved Systems.
     /// </summary>
     /// <param name="systemIds">System Ids to decline.</param>
     /// <returns>The number of systesm declined.</returns>
-    Task<int> DeclineSystems(IEnumerable<SystemId> systemIds);
+    Task<int> DeclineSystems(IEnumerable<string> systemIds);
 
     /// <summary>
     /// Get the details of an Unapproved System.
     /// </summary>
     /// <param name="systemId">The system Id you want to get.</param>
     /// <returns>A Detailed Unapproved System Model.</returns>
-    Task<UnapprovedSystem> GetAsync(SystemId systemId);
+    Task<UnapprovedSystemModel> GetAsync(string systemId);
 
     /// <summary>
     /// Starts an update patch request.
     /// </summary>
     /// <param name="systemId">The SystemId to update.</param>
     /// <returns>A PatchClient for fluent updating.</returns>
-    IPatchClient<UnapprovedSystemPatch, UnapprovedSystem> Update(SystemId systemId);
+    IPatchClient<UnapprovedSystemPatchModel, UnapprovedSystemModel> Update(string systemId);
 
     /// <summary>
     /// Decline an Unapproved System.
     /// </summary>
     /// <param name="systemId">The system Id you want to decline.</param>
     /// <returns>The declined System.</returns>
-    Task<UnapprovedSystem> DeclineAsync(SystemId systemId);
+    Task<UnapprovedSystemModel> DeclineAsync(string systemId);
 
     /// <summary>
     /// Approve a System.
     /// </summary>
     /// <param name="systemId">The system Id you want to approve.</param>
-    Task ApproveAsync(SystemId systemId);
+    Task ApproveAsync(string systemId);
 
     /// <summary>
     /// Approve multiple Unapproved Systems.
     /// </summary>
     /// <param name="systemIds">System Ids to approve.</param>
     /// <returns>The number of systesm approved.</returns>
-    Task<int> ApproveSystemsAsync(params SystemId[] systemIds);
+    Task<int> ApproveSystemsAsync(params string[] systemIds);
 
     /// <summary>
     /// Approve multiple Unapproved Systems.
     /// </summary>
     /// <param name="systemIds">System Ids to approve.</param>
     /// <returns>The number of systesm approved.</returns>
-    Task<int> ApproveSystemsAsync(IEnumerable<SystemId> systemIds);
+    Task<int> ApproveSystemsAsync(IEnumerable<string> systemIds);
 }

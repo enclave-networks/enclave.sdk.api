@@ -2,9 +2,9 @@
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Text.Json;
+using Enclave.Api.Modules.AccountManagement.PublicAccount.Models;
 using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Clients.Interfaces;
-using Enclave.Sdk.Api.Data.Account;
 using Enclave.Sdk.Api.Handlers;
 
 namespace Enclave.Sdk.Api;
@@ -59,13 +59,13 @@ public class EnclaveClient
     }
 
     /// <summary>
-    /// Gets a list of <see cref="AccountOrganisation"/> associated to the authorised user.
+    /// Gets a list of <see cref="AccountOrganisationModel"/> associated to the authorised user.
     /// </summary>
     /// <returns>List of organisation containing the OrgId and Name and the users role in that organisation.</returns>
     /// <exception cref="InvalidOperationException">throws when the Api returns a null response.</exception>
-    public async Task<IReadOnlyList<AccountOrganisation>> GetOrganisationsAsync()
+    public async Task<IReadOnlyList<AccountOrganisationModel>> GetOrganisationsAsync()
     {
-        var organisations = await _httpClient.GetFromJsonAsync<AccountOrganisationTopLevel>("/account/orgs", Constants.JsonSerializerOptions);
+        var organisations = await _httpClient.GetFromJsonAsync<QueryAccountOrgsResponseModel>("/account/orgs", Constants.JsonSerializerOptions);
 
         if (organisations is null)
         {
@@ -76,11 +76,11 @@ public class EnclaveClient
     }
 
     /// <summary>
-    /// Create an <see cref="OrganisationClient"/> from an <see cref="AccountOrganisation"/>.
+    /// Create an <see cref="OrganisationClient"/> from an <see cref="AccountOrganisationModel"/>.
     /// </summary>
-    /// <param name="organisation">the <see cref="AccountOrganisation"/> from <see cref="GetOrganisationsAsync"/>.</param>
+    /// <param name="organisation">the <see cref="AccountOrganisationModel"/> from <see cref="GetOrganisationsAsync"/>.</param>
     /// <returns>OrganisationClient that can be used for all following Api Calls related to an organisation.</returns>
-    public IOrganisationClient CreateOrganisationClient(AccountOrganisation organisation)
+    public IOrganisationClient CreateOrganisationClient(AccountOrganisationModel organisation)
     {
         return new OrganisationClient(_httpClient, organisation);
     }

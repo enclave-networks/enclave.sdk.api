@@ -1,18 +1,17 @@
 using System.Net.Http.Json;
 using System.Web;
+using Enclave.Api.Modules.SystemManagement.Common.Models;
+using Enclave.Api.Modules.SystemManagement.Systems.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Enums;
+using Enclave.Configuration.Data.Modules.Systems.Enums;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.AutoExpiry;
-using Enclave.Sdk.Api.Data.EnrolledSystems;
-using Enclave.Sdk.Api.Data.EnrolledSystems.Enum;
-using Enclave.Sdk.Api.Data.EnrolmentKeys;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
 
 namespace Enclave.Sdk.Api.Clients;
 
-/// <inheritdoc cref="IEnrolledSystemsClient" />
-internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
+/// <inheritdoc cref="ISystemsClient" />
+internal class SystemsClient : ClientBase, ISystemsClient
 {
     private readonly string _orgRoute;
 
@@ -21,14 +20,14 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     /// </summary>
     /// <param name="httpClient">an instance of httpClient with a baseURL referencing the API.</param>
     /// <param name="orgRoute">The organisation API route.</param>
-    public EnrolledSystemsClient(HttpClient httpClient, string orgRoute)
+    public SystemsClient(HttpClient httpClient, string orgRoute)
     : base(httpClient)
     {
         _orgRoute = orgRoute;
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<EnrolledSystemSummary>> GetSystemsAsync(
+    public async Task<PaginatedResponseModel<SystemSummaryModel>> GetSystemsAsync(
         int? enrolmentKeyId = null,
         string? searchTerm = null,
         bool? includeDisabled = null,
@@ -39,7 +38,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     {
         var queryString = BuildQueryString(enrolmentKeyId, searchTerm, includeDisabled, sortOrder, dnsName, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<EnrolledSystemSummary>>($"{_orgRoute}/systems?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<SystemSummaryModel>>($"{_orgRoute}/systems?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -47,7 +46,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> RevokeSystemsAsync(params SystemId[] systemIds)
+    public async Task<int> RevokeSystemsAsync(params string[] systemIds)
     {
         using var content = CreateJsonContent(new
         {
@@ -73,15 +72,15 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> RevokeSystemsAsync(IEnumerable<SystemId> systemIds)
+    public async Task<int> RevokeSystemsAsync(IEnumerable<string> systemIds)
     {
         return await RevokeSystemsAsync(systemIds.ToArray());
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> GetAsync(SystemId systemId)
+    public async Task<SystemModel> GetAsync(string systemId)
     {
-        var model = await HttpClient.GetFromJsonAsync<EnrolledSystem>($"{_orgRoute}/systems/{systemId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<SystemModel>($"{_orgRoute}/systems/{systemId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -89,19 +88,19 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<EnrolledSystemPatch, EnrolledSystem> Update(SystemId systemId)
+    public IPatchClient<SystemPatchModel, SystemModel> Update(string systemId)
     {
-        return new PatchClient<EnrolledSystemPatch, EnrolledSystem>(HttpClient, $"{_orgRoute}/systems/{systemId}");
+        return new PatchClient<SystemPatchModel, SystemModel>(HttpClient, $"{_orgRoute}/systems/{systemId}");
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> RevokeAsync(SystemId systemId)
+    public async Task<SystemModel> RevokeAsync(string systemId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/systems/{systemId}");
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<EnrolledSystem>(result.Content);
+        var model = await DeserialiseAsync<SystemModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -109,11 +108,11 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> EnableAsync(SystemId systemId)
+    public async Task<SystemModel> EnableAsync(string systemId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/systems/{systemId}/enable", null);
 
-        var model = await DeserialiseAsync<EnrolledSystem>(result.Content);
+        var model = await DeserialiseAsync<SystemModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -121,11 +120,11 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> DisableAsync(SystemId systemId)
+    public async Task<SystemModel> DisableAsync(string systemId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/systems/{systemId}/disable", null);
 
-        var model = await DeserialiseAsync<EnrolledSystem>(result.Content);
+        var model = await DeserialiseAsync<SystemModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -133,7 +132,7 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkEnableAsync(params SystemId[] systemIds)
+    public async Task<int> BulkEnableAsync(params string[] systemIds)
     {
         var requestModel = new
         {
@@ -152,13 +151,13 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkEnableAsync(IEnumerable<SystemId> systemIds)
+    public async Task<int> BulkEnableAsync(IEnumerable<string> systemIds)
     {
         return await BulkEnableAsync(systemIds.ToArray());
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkDisableAsync(params SystemId[] systemIds)
+    public async Task<int> BulkDisableAsync(params string[] systemIds)
     {
         var requestModel = new
         {
@@ -177,26 +176,21 @@ internal class EnrolledSystemsClient : ClientBase, IEnrolledSystemsClient
     }
 
     /// <inheritdoc/>
-    public async Task<int> BulkDisableAsync(IEnumerable<SystemId> systemIds)
+    public async Task<int> BulkDisableAsync(IEnumerable<string> systemIds)
     {
         return await BulkDisableAsync(systemIds.ToArray());
     }
 
     /// <inheritdoc/>
-    public async Task<EnrolledSystem> EnableUntilAsync(SystemId systemId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
+    public async Task<SystemModel> EnableUntilAsync(string systemId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
     {
-        var requestModel = new AutoExpire
-        {
-            ExpiryDateTime = expiryDateTime.ToString("o"),
-            ExpiryAction = expiryAction,
-            TimeZoneId = timeZonedId,
-        };
+        var requestModel = new AutoExpireModel(timeZonedId, expiryDateTime.ToString("o"), expiryAction);
 
         var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/systems/{systemId}/enable-until", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<EnrolledSystem>(result.Content);
+        var model = await DeserialiseAsync<SystemModel>(result.Content);
 
         EnsureNotNull(model);
 

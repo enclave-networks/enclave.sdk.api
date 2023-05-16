@@ -1,11 +1,11 @@
 ﻿using System.Net.Http.Json;
 using System.Web;
+using Enclave.Api.Modules.SystemManagement.TrustRequirements.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Configuration.Data.Modules.TrustRequirements.Enums;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
-using Enclave.Sdk.Api.Data.TrustRequirements;
-using Enclave.Sdk.Api.Data.TrustRequirements.Enum;
 
 namespace Enclave.Sdk.Api.Clients;
 
@@ -25,7 +25,7 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
     }
 
     /// <inheritdoc/>
-    public async Task<PaginatedResponseModel<TrustRequirementSummary>> GetTrustRequirementsAsync(
+    public async Task<PaginatedResponseModel<TrustRequirementSummaryModel>> GetTrustRequirementsAsync(
         string? searchTerm = null,
         TrustRequirementSortOrder? sortOrder = null,
         int? pageNumber = null,
@@ -33,7 +33,7 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
     {
         var queryString = BuildQueryString(searchTerm, sortOrder, pageNumber, perPage);
 
-        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TrustRequirementSummary>>($"{_orgRoute}/trust-requirements?{queryString}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<PaginatedResponseModel<TrustRequirementSummaryModel>>($"{_orgRoute}/trust-requirements?{queryString}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -41,7 +41,7 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
     }
 
     /// <inheritdoc/>
-    public async Task<TrustRequirement> CreateAsync(TrustRequirementCreate createModel)
+    public async Task<TrustRequirementModel> CreateAsync(TrustRequirementCreateModel createModel)
     {
         if (createModel is null)
         {
@@ -50,7 +50,7 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/trust-requirements", createModel, Constants.JsonSerializerOptions);
 
-        var model = await DeserialiseAsync<TrustRequirement>(result.Content);
+        var model = await DeserialiseAsync<TrustRequirementModel>(result.Content);
 
         EnsureNotNull(model);
 
@@ -84,9 +84,9 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
     }
 
     /// <inheritdoc/>
-    public async Task<TrustRequirement> GetAsync(TrustRequirementId requirementId)
+    public async Task<TrustRequirementModel> GetAsync(TrustRequirementId requirementId)
     {
-        var model = await HttpClient.GetFromJsonAsync<TrustRequirement>($"{_orgRoute}/trust-requirements/{requirementId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<TrustRequirementModel>($"{_orgRoute}/trust-requirements/{requirementId}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -94,19 +94,19 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
     }
 
     /// <inheritdoc/>
-    public IPatchClient<TrustRequirementPatch, TrustRequirement> Update(TrustRequirementId requirementId)
+    public IPatchClient<TrustRequirementPatchModel, TrustRequirementModel> Update(TrustRequirementId requirementId)
     {
-        return new PatchClient<TrustRequirementPatch, TrustRequirement>(HttpClient, $"{_orgRoute}/trust-requirements/{requirementId}");
+        return new PatchClient<TrustRequirementPatchModel, TrustRequirementModel>(HttpClient, $"{_orgRoute}/trust-requirements/{requirementId}");
     }
 
     /// <inheritdoc/>
-    public async Task<TrustRequirement> DeleteAsync(TrustRequirementId requirementId)
+    public async Task<TrustRequirementModel> DeleteAsync(TrustRequirementId requirementId)
     {
         var result = await HttpClient.DeleteAsync($"{_orgRoute}/trust-requirements/{requirementId}");
 
         result.EnsureSuccessStatusCode();
 
-        var model = await DeserialiseAsync<TrustRequirement>(result.Content);
+        var model = await DeserialiseAsync<TrustRequirementModel>(result.Content);
 
         EnsureNotNull(model);
 
