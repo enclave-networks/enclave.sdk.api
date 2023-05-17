@@ -6,6 +6,12 @@ using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.FluentAssertions;
 using FluentAssertions;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Api.Modules.ActivityLogs.Logs.Models;
+using Enclave.Api.Modules.SystemManagement.EnrolmentKeys.Models;
+using Enclave.Api.Modules.SystemManagement.Tags.Models;
+using Enclave.Configuration.Data.Modules.EnrolmentKeys.Enums;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
@@ -18,6 +24,8 @@ public class LogsClientTests
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
+
+    private PaginatedResponseModel<LogEntryModel> _paginatedResponse;
 
     [SetUp]
     public void Setup()
@@ -34,29 +42,26 @@ public class LogsClientTests
 
 
         _logsClient = new LogsClient(httpClient, $"org/{organisationId}");
+
+        _paginatedResponse = new(
+                new(0, 0, 0, 0, 0),
+                new(new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io")),
+                new List<LogEntryModel>
+                {
+                    new LogEntryModel(),
+                }.ToAsyncEnumerable());
     }
 
     [Test]
     public async Task Should_return_a_list_of_logs_in_pagination_format()
     {
         // Arrange
-        var responseModel = new PaginatedResponseModel<LogEntry>
-        {
-            Items = new List<LogEntry>
-            {
-                new LogEntry { },
-                new LogEntry { },
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/logs").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _logsClient.GetLogsAsync();
@@ -72,19 +77,12 @@ public class LogsClientTests
         // Arrange
         var pageNumber = 1;
 
-        var responseModel = new PaginatedResponseModel<LogEntry>
-        {
-            Items = new List<LogEntry>(),
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/logs").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _logsClient.GetLogsAsync(pageNumber: pageNumber);
@@ -99,19 +97,12 @@ public class LogsClientTests
         // Arrange
         var perPage = 1;
 
-        var responseModel = new PaginatedResponseModel<LogEntry>
-        {
-            Items = new List<LogEntry>(),
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/logs").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _logsClient.GetLogsAsync(perPage: perPage);

@@ -1,4 +1,11 @@
 ﻿using System.Text.Json;
+using Enclave.Api.Modules.SystemManagement.Systems.Models;
+using Enclave.Api.Modules.SystemManagement.Tags.Models;
+using Enclave.Api.Modules.SystemManagement.TrustRequirements.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Configuration.Data.Modules.Systems.Enums;
+using Enclave.Configuration.Data.Modules.Tags.Enums;
 using Enclave.Sdk.Api.Clients;
 using FluentAssertions;
 using NUnit.Framework;
@@ -19,6 +26,9 @@ public class TagClientTests
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
+    private PaginatedResponseModel<TagSummaryModel> _paginatedResponse;
+    private TagModel _tagResponse;
+
     [SetUp]
     public void Setup()
     {
@@ -34,29 +44,41 @@ public class TagClientTests
 
 
         _tagsClient = new TagsClient(httpClient, $"org/{organisationId}");
+
+        _paginatedResponse = new(
+                new(0, 0, 0, 0, 0),
+                new(new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io")),
+                new List<TagSummaryModel>
+                {
+                    new("tag1", TagRefId.FromString("tag1"), null, null, 0, 0, 0, 0),
+                    new("tag2", TagRefId.FromString("tag2"), null, null, 0, 0, 0, 0),
+                }.ToAsyncEnumerable());
+
+        _tagResponse = new(
+            "tag1",
+            TagRefId.FromString("tag1"),
+            null,
+            DateTime.Now,
+            DateTime.Now,
+            null,
+            0,
+            0,
+            0,
+            0,
+            null,
+            Array.Empty<IUsedTrustRequirementModel>());
     }
 
     [Test]
     public async Task Should_return_a_list_of_tags_in_pagination_format()
     {
         // Arrange
-        var responseModel = new PaginatedResponseModel<BasicTag>
-        {
-            Items = new List<BasicTag>
-            {
-                new BasicTag { Tag = "tag1", Keys = 12, DnsRecords = 1, Policies = 0, Systems = 3 },
-                new BasicTag { Tag = "tag2", Keys = 13, DnsRecords = 0, Policies = 43, Systems = 0 },
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _tagsClient.GetAsync();
@@ -72,19 +94,12 @@ public class TagClientTests
         // Arrange
         var searchTerm = "test";
 
-        var responseModel = new PaginatedResponseModel<BasicTag>
-        {
-            Items = new List<BasicTag>(),
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         await _tagsClient.GetAsync(searchTerm: searchTerm);
@@ -99,19 +114,12 @@ public class TagClientTests
         // Arrange
         var sortEnum = TagQuerySortOrder.Alphabetical;
 
-        var responseModel = new PaginatedResponseModel<BasicTag>
-        {
-            Items = new List<BasicTag>(),
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         await _tagsClient.GetAsync(sortOrder: sortEnum);
@@ -126,19 +134,12 @@ public class TagClientTests
         // Arrange
         var pageNumber = 1;
 
-        var responseModel = new PaginatedResponseModel<BasicTag>
-        {
-            Items = new List<BasicTag>(),
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         await _tagsClient.GetAsync(pageNumber: pageNumber);
@@ -153,19 +154,12 @@ public class TagClientTests
         // Arrange
         var perPage = 1;
 
-        var responseModel = new PaginatedResponseModel<BasicTag>
-        {
-            Items = new List<BasicTag>(),
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         await _tagsClient.GetAsync(perPage: perPage);
@@ -183,19 +177,12 @@ public class TagClientTests
         var perPage = 1;
         var pageNumber = 1;
 
-        var responseModel = new PaginatedResponseModel<BasicTag>
-        {
-            Items = new List<BasicTag>(),
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingGet())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         await _tagsClient.GetAsync(searchTerm: searchTerm, sortOrder: sortEnum, pageNumber: pageNumber, perPage: perPage);
@@ -209,9 +196,7 @@ public class TagClientTests
     public async Task Should_return_a_detailed_tag_model_when_calling_CreateAsync()
     {
         // Arrange
-        var response = new DetailedTag();
-
-        var createModel = new TagCreate();
+        var createModel = new TagCreateModel();
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingPost())
@@ -219,7 +204,7 @@ public class TagClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _tagResponse.ToJsonAsync(_serializerOptions)));
 
 
 
@@ -234,8 +219,6 @@ public class TagClientTests
     public async Task Should_return_a_detailed_tag_model_when_calling_GetAsync()
     {
         // Arrange
-        var response = new DetailedTag();
-
         var tagRefId = TagRefId.FromString("tagref");
 
         _server
@@ -244,7 +227,7 @@ public class TagClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _tagResponse.ToJsonAsync(_serializerOptions)));
 
 
 
@@ -259,8 +242,6 @@ public class TagClientTests
     public async Task Should_return_a_detailed_tag_model_when_calling_UpdateAsync()
     {
         // Arrange
-        var response = new DetailedTag();
-
         var tagRefId = TagRefId.FromString("tagref");
 
         _server
@@ -269,7 +250,7 @@ public class TagClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _tagResponse.ToJsonAsync(_serializerOptions)));
 
 
         // Act
@@ -283,8 +264,6 @@ public class TagClientTests
     public async Task Should_return_a_detailed_tag_model_when_calling_DeleteAsync()
     {
         // Arrange
-        var response = new DetailedTag();
-
         var tagRefId = TagRefId.FromString("tagref");
 
         _server
@@ -293,7 +272,7 @@ public class TagClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _tagResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _tagsClient.DeleteAsync(tagRefId);
@@ -306,10 +285,7 @@ public class TagClientTests
     public async Task Should_return_number_of_keys_modified_when_calling_DeleteTagsAsync()
     {
         // Arrange
-        var response = new BulkTagDeleteResult()
-        {
-            TagsDeleted = 2,
-        };
+        var response = new BulkTagDeleteResult(2);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/tags").UsingDelete())
@@ -317,7 +293,7 @@ public class TagClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await response.ToJsonAsync(_serializerOptions)));
 
         var tagRefs = new string[] { "tagref1", "tagref2" };
 

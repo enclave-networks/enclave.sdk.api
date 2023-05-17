@@ -10,10 +10,12 @@ using Enclave.Configuration.Data.Identifiers;
 using Enclave.Api.Modules.SystemManagement.Systems.Models;
 using Enclave.Api.Scaffolding.Pagination.Models;
 using Enclave.Configuration.Data.Modules.Systems.Enums;
+using Enclave.Api.Modules.SystemManagement.Dns.Models;
+using Enclave.Api.Modules.SystemManagement.Tags.Models;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
-public class EnrolledSystemClientTests
+public class SystemClientTests
 {
     private SystemsClient _enrolledSystemsClient;
     private WireMockServer _server;
@@ -22,6 +24,9 @@ public class EnrolledSystemClientTests
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
+
+    private PaginatedResponseModel<SystemSummaryModel> _paginatedResponse;
+    private SystemModel _systemResponse;
 
     [SetUp]
     public void Setup()
@@ -37,28 +42,59 @@ public class EnrolledSystemClientTests
         _orgRoute = $"/org/{organisationId}";
 
         _enrolledSystemsClient = new SystemsClient(httpClient, $"org/{organisationId}");
+
+        _paginatedResponse = new(
+                new(0, 0, 0, 0, 0),
+                new(new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io")),
+                new List<SystemSummaryModel>
+                {
+                    new("1",
+                        DateTimeOffset.Now,
+                        null,
+                        SystemType.GeneralPurpose,
+                        SystemState.Connected,
+                        DateTimeOffset.Now,
+                        DateTimeOffset.Now,
+                        EnrolmentKeyId.FromInt(1),
+                        string.Empty,
+                        true,
+                        null,
+                        Array.Empty<SystemGatewayRouteModel>(),
+                        Array.Empty<IUsedTagModel>(),
+                        null)
+                }.ToAsyncEnumerable());
+
+        _systemResponse = new SystemModel("1",
+                        DateTimeOffset.Now,
+                        "new description",
+                        SystemType.GeneralPurpose,
+                        SystemState.Connected,
+                        DateTimeOffset.Now,
+                        DateTimeOffset.Now,
+                        EnrolmentKeyId.FromInt(1),
+                        string.Empty,
+                        false,
+                        true,
+                        null,
+                        Array.Empty<SystemGatewayRouteModel>(),
+                        Array.Empty<IUsedTagModel>(),
+                        Array.Empty<SystemDnsEntry>(),
+                        Array.Empty<string>(),
+                        null,
+                        null);
     }
 
     [Test]
     public async Task Should_return_a_paginated_response_model_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SystemSummaryModel>(
-            new(),
-            new(),
-            new List<SystemSummaryModel>
-            {
-                new SystemSummaryModel(description: "test")
-            }
-            );
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _enrolledSystemsClient.GetSystemsAsync();
@@ -71,23 +107,13 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_enrolment_key_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SystemSummaryModel>
-        {
-            Items = new List<SystemSummaryModel>
-            {
-                new SystemSummaryModel { Description = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var enrolmentKeyId = 123;
 
@@ -102,23 +128,13 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_search_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SystemSummaryModel>
-        {
-            Items = new List<SystemSummaryModel>
-            {
-                new SystemSummaryModel { Description = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var searchTerm = "term";
 
@@ -133,23 +149,13 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_include_disabled_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SystemSummaryModel>
-        {
-            Items = new List<SystemSummaryModel>
-            {
-                new SystemSummaryModel { Description = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var includeDisabled = true;
 
@@ -164,23 +170,13 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_sort_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SystemSummaryModel>
-        {
-            Items = new List<SystemSummaryModel>
-            {
-                new SystemSummaryModel { Description = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var sortOrder = SystemQuerySortMode.RecentlyConnected;
 
@@ -195,23 +191,13 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_dns_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SystemSummaryModel>
-        {
-            Items = new List<SystemSummaryModel>
-            {
-                new SystemSummaryModel { Description = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var dnsName = "test.dns";
 
@@ -226,23 +212,13 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_page_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SystemSummaryModel>
-        {
-            Items = new List<SystemSummaryModel>
-            {
-                new SystemSummaryModel { Description = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var page = 12;
 
@@ -257,23 +233,13 @@ public class EnrolledSystemClientTests
     public async Task Should_make_a_call_to_api_with_per_page_quertString_when_calling_GetSystemsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<SystemSummaryModel>
-        {
-            Items = new List<SystemSummaryModel>
-            {
-                new SystemSummaryModel { Description = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var page = 12;
 
@@ -288,10 +254,7 @@ public class EnrolledSystemClientTests
     public async Task Should_return_number_of_revoked_systems_when_calling_RevokeSystemsAsync()
     {
         // Arrange
-        var response = new BulkSystemRevokedResult
-        {
-            SystemsRevoked = 2,
-        };
+        var response = new BulkSystemRevokedResult(2);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingDelete())
@@ -299,7 +262,7 @@ public class EnrolledSystemClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await response.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _enrolledSystemsClient.RevokeSystemsAsync("asdf", "asdf3");
@@ -312,114 +275,87 @@ public class EnrolledSystemClientTests
     public async Task Should_return_the_updated_system_when_calling_UpdateAsync()
     {
         // Arrange
-        var response = new EnrolledSystem
-        {
-            SystemId = "system1",
-            Description = "new description",
-        };
-
         _server
-          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{response.SystemId}").UsingPatch())
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{_systemResponse.SystemId}").UsingPatch())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _systemResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
-        var result = await _enrolledSystemsClient.Update(response.SystemId).Set(e => e.Description, "new description").ApplyAsync();
+        var result = await _enrolledSystemsClient.Update(_systemResponse.SystemId).Set(e => e.Description, "new description").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();
-        result.Description.Should().Be(response.Description);
+        result.Description.Should().Be(_systemResponse.Description);
     }
 
     [Test]
     public async Task Should_return_the_revoked_system_when_calling_RevokeAsync()
     {
         // Arrange
-        var response = new EnrolledSystem
-        {
-            SystemId = "system1",
-            Description = "description",
-        };
-
         _server
-          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{response.SystemId}").UsingDelete())
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{_systemResponse.SystemId}").UsingDelete())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _systemResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
-        var result = await _enrolledSystemsClient.RevokeAsync(response.SystemId);
+        var result = await _enrolledSystemsClient.RevokeAsync(_systemResponse.SystemId);
 
         // Assert
         result.Should().NotBeNull();
-        result.SystemId.Should().Be(response.SystemId);
+        result.SystemId.Should().Be(_systemResponse.SystemId);
     }
 
     [Test]
     public async Task Should_return_the_enabled_system_when_calling_EnableAsync()
     {
         // Arrange
-        var response = new EnrolledSystem
-        {
-            SystemId = "system1",
-            Description = "description",
-        };
-
         _server
-          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{response.SystemId}/enable").UsingPut())
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{_systemResponse.SystemId}/enable").UsingPut())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _systemResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
-        var result = await _enrolledSystemsClient.EnableAsync(response.SystemId);
+        var result = await _enrolledSystemsClient.EnableAsync(_systemResponse.SystemId);
 
         // Assert
         result.Should().NotBeNull();
-        result.SystemId.Should().Be(response.SystemId);
+        result.SystemId.Should().Be(_systemResponse.SystemId);
     }
 
     [Test]
     public async Task Should_return_the_disabled_system_when_calling_DisableAsync()
     {
         // Arrange
-        var response = new EnrolledSystem
-        {
-            SystemId = "system1",
-            Description = "description",
-        };
-
         _server
-          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{response.SystemId}/disable").UsingPut())
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/{_systemResponse.SystemId}/disable").UsingPut())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _systemResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
-        var result = await _enrolledSystemsClient.DisableAsync(response.SystemId);
+        var result = await _enrolledSystemsClient.DisableAsync(_systemResponse.SystemId);
 
         // Assert
         result.Should().NotBeNull();
-        result.SystemId.Should().Be(response.SystemId);
+        result.SystemId.Should().Be(_systemResponse.SystemId);
     }
 
     [Test]
     public async Task Should_return_number_of_enabled_systems_when_calling_BulkEnableAsync()
     {
         // Arrange
-        var response = new BulkSystemUpdateResult
-        {
-            SystemsUpdated = 2,
-        };
+        var response = new BulkSystemUpdateResult(2);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems/enable").UsingPut())
@@ -427,7 +363,7 @@ public class EnrolledSystemClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await response.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _enrolledSystemsClient.BulkEnableAsync("asdf", "asdf3");
@@ -440,10 +376,7 @@ public class EnrolledSystemClientTests
     public async Task Should_return_number_of_disabled_systems_when_calling_BulkDisableAsync()
     {
         // Arrange
-        var response = new BulkSystemUpdateResult
-        {
-            SystemsUpdated = 2,
-        };
+        var response = new BulkSystemUpdateResult(2);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/systems/disable").UsingPut())
@@ -451,7 +384,7 @@ public class EnrolledSystemClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await response.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _enrolledSystemsClient.BulkDisableAsync("asdf", "asdf3");

@@ -1,4 +1,6 @@
-﻿using Enclave.Sdk.Api.Clients;
+﻿using Enclave.Api.Modules.SystemManagement.Authority;
+using Enclave.Configuration;
+using Enclave.Sdk.Api.Clients;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text.Json;
@@ -34,17 +36,17 @@ public class AuthorityClientTests
     public async Task Should_return_a_enrol_result_when_sending_a_valid_request()
     {
         // Arrange
-        var responseModel = new EnrolResult();
+        var responseModel = EnrolResult.Success(null);
 
         _server
           .Given(Request.Create().WithPath($"authority/enrol").UsingPost())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
-              .WithBody(JsonSerializer.Serialize(responseModel, _serializerOptions)));
+              .WithBody(await responseModel.ToJsonAsync(_serializerOptions)));
 
         // Act
-        var result = await _authorityClient.EnrolAsync(new EnrolRequest
+        var result = await _authorityClient.EnrolAsync(new EnrolRequestModel
         {
             EnrolmentKey = "key",
             Nonce = "nonce",
@@ -61,7 +63,7 @@ public class AuthorityClientTests
         // Arrange
 
         // Act
-        var result = await _authorityClient.EnrolAsync(new EnrolRequest
+        var result = await _authorityClient.EnrolAsync(new EnrolRequestModel
         {
             EnrolmentKey = "key",
             Nonce = "nonce",
