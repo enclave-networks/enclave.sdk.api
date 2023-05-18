@@ -48,7 +48,7 @@ public class TrustRequirementsClientTests
             new(new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io")),
             new List<TrustRequirementSummaryModel>
             {
-                new(TrustRequirementId.FromInt(1),
+                new(TrustRequirementId.FromInt(12),
                     "trust",
                     DateTime.Now,
                     DateTime.Now,
@@ -58,7 +58,7 @@ public class TrustRequirementsClientTests
                     "summary"),
             }.ToAsyncEnumerable());
 
-        _trustRequirementResponse = new(TrustRequirementId.FromInt(1),
+        _trustRequirementResponse = new(TrustRequirementId.FromInt(12),
                     "trust",
                     DateTime.Now,
                     DateTime.Now,

@@ -48,7 +48,7 @@ public class UnapprovedSystemsClientTests
                 new(new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io")),
                 new List<UnapprovedSystemSummaryModel>
                 {
-                    new("1",
+                    new("newId",
                         SystemType.GeneralPurpose,
                         "system",
                         string.Empty,
@@ -58,7 +58,7 @@ public class UnapprovedSystemsClientTests
                         Array.Empty<IUsedTagModel>())
                 }.ToAsyncEnumerable());
 
-        _unapprovedSystemResponse = new UnapprovedSystemModel("1",
+        _unapprovedSystemResponse = new UnapprovedSystemModel("newId",
                         SystemType.GeneralPurpose,
                         "system",
                         string.Empty,

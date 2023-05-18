@@ -68,7 +68,7 @@ public class PoliciesClientTests
                     null),
         }.ToAsyncEnumerable());
 
-        _policyResponse = new PolicyModel(PolicyId.FromInt(1),
+        _policyResponse = new PolicyModel(PolicyId.FromInt(12),
                     DateTime.Now,
                     PolicyType.General,
                     "policy",
@@ -354,7 +354,7 @@ public class PoliciesClientTests
 
         // Assert
         result.Should().NotBeNull();
-        result.IsEnabled.Should().Be(false);
+        result.IsEnabled.Should().Be(_policyResponse.IsEnabled);
     }
 
     [Test]
