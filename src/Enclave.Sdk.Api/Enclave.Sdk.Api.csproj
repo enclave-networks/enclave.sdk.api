@@ -26,9 +26,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Enclave.Api.Data">
-        <HintPath>..\..\..\portal\src\Enclave.Api.Data\bin\Debug\net6.0\Enclave.Api.Data.dll</HintPath>
-      </Reference>
+        <PackageReference Include="Enclave.Api.Data" Version="1.0.1" />
     </ItemGroup>
-
 </Project>

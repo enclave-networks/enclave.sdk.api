@@ -46,7 +46,15 @@ jobs:
 
     - name: Push To nuget.org
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg -k ${{ secrets.PUBLIC_NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+
+    - name: Get Sdk.Api.Data Version
+      id: version
+      working-directory: src/Enclave.Sdk
+      run: |
+        PACKAGE_VERSION=$(dotnet list package | grep -P -o "Enclave\.Sdk\.Api\.Data\s+[^\s]+\s+\K.+")
+        echo "packageVersion=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+
 
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -56,4 +64,6 @@ jobs:
       with:
         tag_name: v${{ steps.gitversion.outputs.SemVer }}
         release_name: Release v${{ steps.gitversion.outputs.SemVer }}
-        body: Latest SDK API Release
+        body: |
+         Latest SDK API Release
+         Enclave.Sdk.Api.Data Version: ${{ steps.version.outputs.packageVersion }}

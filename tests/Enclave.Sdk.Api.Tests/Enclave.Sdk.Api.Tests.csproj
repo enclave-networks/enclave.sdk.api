@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <LangVersion>10.0</LangVersion>
-	  <TargetFramework>net6.0</TargetFramework>
+	<LangVersion>10.0</LangVersion>
+	<TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <UserSecretsId>0c261991-ae7a-4598-9650-7f05d2939f98</UserSecretsId>
@@ -19,13 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Enclave.Sdk\Enclave.Sdk.Api.csproj" />
+    <ProjectReference Include="..\..\src\Enclave.Sdk.Api\Enclave.Sdk.Api.csproj" />
   </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="Enclave.Api.Data">
-            <HintPath>..\..\..\portal\src\Enclave.Api.Data\bin\Debug\net6.0\Enclave.Api.Data.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-
 </Project>
