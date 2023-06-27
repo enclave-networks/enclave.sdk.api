@@ -16,7 +16,6 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
     <PackageReference Include="WireMock.Net" Version="1.4.27" />
     <PackageReference Include="WireMock.Net.FluentAssertions" Version="1.4.27" />
-    <PackageReference Include="Enclave.Sdk.Api.Data" Version="304.2.0" />
   </ItemGroup>
 
   <ItemGroup>
