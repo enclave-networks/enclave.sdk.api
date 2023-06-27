@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enclave.Sdk.Api", "src\Enclave.Sdk\Enclave.Sdk.Api.csproj", "{AE9A2DA2-DBA1-4A0F-AE39-26E777C2CDF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enclave.Sdk.Api", "src\Enclave.Sdk.Api\Enclave.Sdk.Api.csproj", "{AE9A2DA2-DBA1-4A0F-AE39-26E777C2CDF4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enclave.Sdk.Api.Tests", "tests\Enclave.Sdk.Api.Tests\Enclave.Sdk.Api.Tests.csproj", "{AC896965-74E9-405F-BA4E-E9D7336B906B}"
 EndProject

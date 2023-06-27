@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
-using Enclave.Sdk.Api.Data.Account;
-using Enclave.Sdk.Api.Data.Organisations;
+using Enclave.Api.Modules.AccountManagement.PublicAccount.Models;
+using Enclave.Configuration.Data.Enums;
+using Enclave.Configuration.Data.Identifiers;
 using FluentAssertions;
 using NUnit.Framework;
 using WireMock.RequestBuilders;
@@ -36,18 +37,10 @@ public class EnclaveClientTests
     public async Task Should_return_list_of_orgs_when_calling_GetOrganisationsAsync()
     {
         // Arrange
-        var accountOrg = new AccountOrganisationTopLevel
+        var accountOrg = new QueryAccountOrgsResponseModel(new List<AccountOrganisationModel>
         {
-            Orgs = new List<AccountOrganisation>
-            {
-                new AccountOrganisation
-                {
-                    OrgId = OrganisationId.New(),
-                    OrgName = "TestName",
-                    Role = UserOrganisationRole.Admin,
-                },
-            },
-        };
+            new AccountOrganisationModel(OrganisationGuid.New(), "org1", UserOrganisationRole.Owner, false)
+        });
 
         _server
           .Given(Request.Create().WithPath("/account/orgs").UsingGet())

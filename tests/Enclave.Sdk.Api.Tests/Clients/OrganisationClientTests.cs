@@ -1,9 +1,11 @@
 ﻿using System.Text.Json;
+using Enclave.Api.Modules.AccountManagement.PublicAccount.Models;
+using Enclave.Api.Modules.OrganisationManagement;
+using Enclave.Api.Modules.OrganisationManagement.Organisation.Models;
+using Enclave.Configuration.Data.Enums;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Configuration.Data.Modules.Organisation.Models;
 using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Account;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data.PatchModel;
 using FluentAssertions;
 using NUnit.Framework;
 using WireMock.FluentAssertions;
@@ -23,6 +25,10 @@ public class OrganisationClientTests
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
+
+    private OrganisationPropertiesModel _organisationResponse;
+    private OrganisationUsersModel _organisationUsersResponse;
+
     [SetUp]
     public void Setup()
     {
@@ -33,86 +39,88 @@ public class OrganisationClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var currentOrganisation = new AccountOrganisation
-        {
-            OrgId = OrganisationId.New(),
-            OrgName = "TestName",
-            Role = UserOrganisationRole.Admin,
-        };
+        var currentOrganisation = new AccountOrganisationModel(OrganisationGuid.New(), "TestName", UserOrganisationRole.Owner, false);
 
         _orgRoute = $"/org/{currentOrganisation.OrgId}";
 
         _organisationClient = new OrganisationClient(httpClient, currentOrganisation);
+
+        _organisationResponse = new(OrganisationGuid.New(),
+            DateTime.Now,
+            "Org1",
+            OrganisationPlan.External,
+            string.Empty,
+            string.Empty,
+            int.MaxValue,
+            int.MaxValue,
+            0,
+            Array.Empty<OrganisationFeature>(),
+            null,
+            null,
+            null,
+            null,
+            TrialState.None,
+            false,
+            null);
+
+        _organisationUsersResponse = new(new List<OrganisationUser>
+        {
+            new OrganisationUser(AccountGuid.New(), "test1@gmail.com", "test1", DateTime.Now, UserOrganisationRole.Admin),
+            new OrganisationUser(AccountGuid.New(), "test2@gmail.com", "test2", DateTime.Now, UserOrganisationRole.Admin),
+        });
     }
 
     [Test]
     public async Task Should_return_a_detailed_organisation_model_when_calling_GetAsync()
     {
         // Arrange
-        var org = new Organisation
-        {
-            Id = OrganisationId.New(),
-        };
-
         _server
           .Given(Request.Create().WithPath(_orgRoute).UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
+              .WithBody(JsonSerializer.Serialize(_organisationResponse, _serializerOptions)));
 
         // Act
         var result = await _organisationClient.GetAsync();
 
         // Assert
         result.Should().NotBeNull();
-        result.Id.Should().Be(org.Id);
+        result.Id.Should().Be(_organisationResponse.Id);
     }
 
     [Test]
     public async Task Should_return_a_detailed_organisation_model_when_updating_with_UpdateAsync()
     {
         // Arrange
-        var org = new Organisation
-        {
-            Id = OrganisationId.New(),
-            Website = "newWebsite",
-        };
-
         _server
           .Given(Request.Create().WithPath(_orgRoute).UsingPatch())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
+              .WithBody(JsonSerializer.Serialize(_organisationResponse, _serializerOptions)));
 
         // Act
         var result = await _organisationClient.Update().Set(x => x.Website, "newWebsite").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();
-        result.Website.Should().Be(org.Website);
+        result.Website.Should().Be(_organisationResponse.Website);
     }
 
     [Test]
     public async Task Should_make_a_call_to_api_when_updating_with_UpdateAsync()
     {
         // Arrange
-        var org = new Organisation
-        {
-            Id = OrganisationId.New(),
-            Website = "newWebsite",
-        };
-
         _server
           .Given(Request.Create().WithPath(_orgRoute).UsingPatch())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(org, _serializerOptions)));
+              .WithBody(JsonSerializer.Serialize(_organisationResponse, _serializerOptions)));
 
         // Act
         var result = await _organisationClient.Update().Set(x => x.Website, "newWebsite").ApplyAsync();
@@ -125,32 +133,13 @@ public class OrganisationClientTests
     public async Task Should_return_a_list_of_organisation_users_when_calling_GetOrganisationUsersAsync()
     {
         // Arrange
-        var orgUsers = new OrganisationUsersTopLevel
-        {
-            Users = new List<OrganisationUser>()
-            {
-                new OrganisationUser
-                {
-                    Id = AccountId.New(),
-                    FirstName = "testUser1",
-                    LastName = "lastName1",
-                },
-                new OrganisationUser
-                {
-                    Id = AccountId.New(),
-                    FirstName = "testUser2",
-                    LastName = "lastName2",
-                },
-            },
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/users").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(orgUsers, _serializerOptions)));
+              .WithBody(JsonSerializer.Serialize(_organisationUsersResponse, _serializerOptions)));
 
         // Act
         var result = await _organisationClient.GetOrganisationUsersAsync();
@@ -163,18 +152,13 @@ public class OrganisationClientTests
     public async Task Should_make_a_call_to_api_when_calling_GetOrganisationUsersAsync()
     {
         // Arrange
-        var orgUsers = new OrganisationUsersTopLevel
-        {
-            Users = new List<OrganisationUser>(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/users").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(orgUsers, _serializerOptions)));
+              .WithBody(JsonSerializer.Serialize(_organisationUsersResponse, _serializerOptions)));
 
         // Act
         var result = await _organisationClient.GetOrganisationUsersAsync();
@@ -205,14 +189,17 @@ public class OrganisationClientTests
     public async Task Should_return_list_of_pending_invites_when_calling_GetPendingInvitesAsync()
     {
         // Arrange
-        var invites = new OrganisationPendingInvites()
+        var invites = new OrganisationPendingInvitesModel(new List<OrganisationInviteModel>
         {
-            Invites = new List<OrganisationInvite>
+            new OrganisationInviteModel
             {
-                new OrganisationInvite { EmailAddress = "testEmail1" },
-                new OrganisationInvite { EmailAddress = "testEmail2" },
+                EmailAddress = "testEmail1",
             },
-        };
+            new OrganisationInviteModel
+            {
+                EmailAddress = "testEmail2",
+            },
+        });
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/invites").UsingGet())
@@ -234,10 +221,10 @@ public class OrganisationClientTests
     public async Task Should_make_a_call_to_api_when_calling_GetPendingInvitesAsync()
     {
         // Arrange
-        var invites = new OrganisationPendingInvites()
+        var invites = new OrganisationPendingInvitesModel(new List<OrganisationInviteModel>
         {
-            Invites = new List<OrganisationInvite>(),
-        };
+            new OrganisationInviteModel()
+        });
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/invites").UsingGet())

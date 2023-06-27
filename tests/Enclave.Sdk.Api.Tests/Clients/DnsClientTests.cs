@@ -1,9 +1,9 @@
-﻿using Enclave.Sdk.Api.Clients;
-using Enclave.Sdk.Api.Data;
-using Enclave.Sdk.Api.Data.Dns;
-using Enclave.Sdk.Api.Data.Organisations;
-using Enclave.Sdk.Api.Data.Pagination;
-using Enclave.Sdk.Api.Data.PatchModel;
+﻿using Enclave.Api.Modules.SystemManagement.Dns.Models;
+using Enclave.Api.Modules.SystemManagement.Systems.Models;
+using Enclave.Api.Modules.SystemManagement.Tags.Models;
+using Enclave.Api.Scaffolding.Pagination.Models;
+using Enclave.Configuration.Data.Identifiers;
+using Enclave.Sdk.Api.Clients;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text.Json;
@@ -24,6 +24,10 @@ public class DnsClientTests
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
+    private PaginatedResponseModel<DnsZoneSummaryModel> _paginatedResponse;
+    private DnsZoneModel _dnsZoneResponse;
+    private DnsRecordModel _dnsRecordResponse;
+
     [SetUp]
     public void Setup()
     {
@@ -34,20 +38,44 @@ public class DnsClientTests
             BaseAddress = new Uri(_server.Urls[0]),
         };
 
-        var organisationId = OrganisationId.New();
+        var organisationId = OrganisationGuid.New();
         _orgRoute = $"/org/{organisationId}";
 
         _dnsClient = new DnsClient(httpClient, $"org/{organisationId}");
+
+        _paginatedResponse = new(
+                new(0, 0, 0, 0, 0),
+                new(new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io")),
+                new List<DnsZoneSummaryModel>
+                {
+                    new DnsZoneSummaryModel(DnsZoneId.FromInt(1), "Test", DateTime.Now, 1, new Dictionary<string, int>()),
+                }.ToAsyncEnumerable());
+
+        _dnsZoneResponse = new(
+            DnsZoneId.FromInt(123),
+            "Test",
+            DateTime.Now,
+            1,
+            new Dictionary<string, int>(),
+            null);
+
+        _dnsRecordResponse = new(
+            DnsRecordId.FromInt(1),
+            "Test",
+            string.Empty,
+            DnsZoneId.FromInt(123),
+            "Zone1",
+            "test.com",
+            Array.Empty<IUsedTagModel>(),
+            Array.Empty<ISystemReferenceModel>().ToAsyncEnumerable(),
+            null);
     }
 
     [Test]
     public async Task Should_return_a_Dns_summary_when_calling_GetPropertiesSummaryAsync()
     {
         // Arrange
-        var response = new DnsSummary
-        {
-            TotalRecordCount = 12,
-        };
+        var response = new DnsSummaryModel(0, 12);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns").UsingGet())
@@ -55,7 +83,7 @@ public class DnsClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await response.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.GetPropertiesSummaryAsync();
@@ -68,23 +96,13 @@ public class DnsClientTests
     public async Task Should_return_a_paginated_response_model_when_calling_GetZonesAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<DnsZoneSummary>
-        {
-            Items = new List<DnsZoneSummary>
-            {
-                new DnsZoneSummary { Name = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/zones").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.GetZonesAsync();
@@ -97,23 +115,13 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_page_quertString_when_calling_GetZonesAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<DnsZoneSummary>
-        {
-            Items = new List<DnsZoneSummary>
-            {
-                new DnsZoneSummary { Name = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/zones").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var page = 12;
 
@@ -128,23 +136,13 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_per_page_quertString_when_calling_GetZonesAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<DnsZoneSummary>
-        {
-            Items = new List<DnsZoneSummary>
-            {
-                new DnsZoneSummary { Name = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/zones").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var page = 12;
 
@@ -159,127 +157,93 @@ public class DnsClientTests
     public async Task Should_return_a_full_dns_zone_when_calling_CreateZoneAsync()
     {
         // Arrange
-        var response = new DnsZone
-        {
-            Id = DnsZoneId.FromInt(123),
-            Name = "test",
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/zones").UsingPost())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _dnsZoneResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
-        var result = await _dnsClient.CreateZoneAsync(new DnsZoneCreate());
+        var result = await _dnsClient.CreateZoneAsync(new DnsZoneCreateModel());
 
         // Assert
         result.Should().NotBeNull();
-        result.Name.Should().Be(response.Name);
+        result.Name.Should().Be(_dnsZoneResponse.Name);
     }
 
     [Test]
     public async Task Should_return_a_full_dns_zone_when_calling_GetZoneAsync()
     {
         // Arrange
-        var response = new DnsZone
-        {
-            Id = DnsZoneId.FromInt(123),
-            Name = "test",
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/zones/{123}").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _dnsZoneResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.GetZoneAsync(DnsZoneId.FromInt(123));
 
         // Assert
         result.Should().NotBeNull();
-        result.Name.Should().Be(response.Name);
+        result.Name.Should().Be(_dnsZoneResponse.Name);
     }
 
     [Test]
     public async Task Should_return_a_full_dns_zone_when_calling_UpdateZoneAsync()
     {
         // Arrange
-        var response = new DnsZone
-        {
-            Id = DnsZoneId.FromInt(123),
-            Name = "New Name",
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/zones/{123}").UsingPatch())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _dnsZoneResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.UpdateZone(DnsZoneId.FromInt(123)).Set(d => d.Name, "New Name").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();
-        result.Name.Should().Be(response.Name);
+        result.Name.Should().Be(_dnsZoneResponse.Name);
     }
 
     [Test]
     public async Task Should_return_a_full_dns_zone_when_calling_DeleteZoneAsync()
     {
         // Arrange
-        var response = new DnsZone
-        {
-            Id = DnsZoneId.FromInt(123),
-            Name = "New Name",
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/zones/{123}").UsingDelete())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _dnsZoneResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.DeleteZoneAsync(DnsZoneId.FromInt(123));
 
         // Assert
         result.Should().NotBeNull();
-        result.Name.Should().Be(response.Name);
+        result.Name.Should().Be(_dnsZoneResponse.Name);
     }
 
     [Test]
     public async Task Should_return_a_paginated_response_model_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<DnsRecordSummary>
-        {
-            Items = new List<DnsRecordSummary>
-            {
-                new DnsRecordSummary { Name = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.GetRecordsAsync();
@@ -292,23 +256,13 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_zoneId_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<DnsRecordSummary>
-        {
-            Items = new List<DnsRecordSummary>
-            {
-                new DnsRecordSummary { Name = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var zonedId = DnsZoneId.FromInt(12);
 
@@ -320,34 +274,24 @@ public class DnsClientTests
     }
 
     [Test]
-    public async Task Should_make_a_call_to_api_with_hostname_quertString_when_calling_GetRecordsAsync()
+    public async Task Should_make_a_call_to_api_with_search_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<DnsRecordSummary>
-        {
-            Items = new List<DnsRecordSummary>
-            {
-                new DnsRecordSummary { Name = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var hostname = "name";
 
         // Act
-        await _dnsClient.GetRecordsAsync(hostname: hostname);
+        await _dnsClient.GetRecordsAsync(searchTerm: hostname);
 
         // Assert
-        _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/dns/records?hostname={hostname}");
+        _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/dns/records?search={hostname}");
     }
 
 
@@ -355,23 +299,13 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_page_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<DnsRecordSummary>
-        {
-            Items = new List<DnsRecordSummary>
-            {
-                new DnsRecordSummary { Name = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var page = 12;
 
@@ -386,23 +320,13 @@ public class DnsClientTests
     public async Task Should_make_a_call_to_api_with_per_page_quertString_when_calling_GetRecordsAsync()
     {
         // Arrange
-        var response = new PaginatedResponseModel<DnsRecordSummary>
-        {
-            Items = new List<DnsRecordSummary>
-            {
-                new DnsRecordSummary { Name = "test"}
-            },
-            Links = new PaginationLinks(),
-            Metadata = new PaginationMetadata(),
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingGet())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
 
         var page = 12;
 
@@ -417,21 +341,15 @@ public class DnsClientTests
     public async Task Should_return_a_full_dns_record_model_when_calling_CreateRecordAsync()
     {
         // Arrange
-        var response = new DnsRecord
-        {
-            Id = DnsRecordId.FromInt(123),
-            Name = "Name",
-        };
-
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingPost())
           .RespondWith(
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _dnsRecordResponse.ToJsonAsync(_serializerOptions)));
 
-        var createModel = new DnsRecordCreate
+        var createModel = new DnsRecordCreateModel
         {
             Name = "Name",
         };
@@ -441,17 +359,14 @@ public class DnsClientTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Id.Should().Be(response.Id);
+        result.Id.Should().Be(_dnsRecordResponse.Id);
     }
 
     [Test]
     public async Task Should_return_number_of_deleted_records_when_calling_DeleteRecordsAsync()
     {
         // Arrange
-        var response = new BulkDnsRecordDeleteResult
-        {
-             DnsRecordsDeleted = 3,
-        };
+        var response = new BulkDnsRecordDeleteResult(3);
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records").UsingDelete())
@@ -459,7 +374,7 @@ public class DnsClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await response.ToJsonAsync(_serializerOptions)));
 
         var records = new DnsRecordId[] { DnsRecordId.FromInt(1), DnsRecordId.FromInt(2), DnsRecordId.FromInt(3) };
 
@@ -475,12 +390,7 @@ public class DnsClientTests
     public async Task Should_return_full_dns_record_when_calling_GetRecordAsync()
     {
         // Arrange
-        var id = DnsRecordId.FromInt(123);
-        var response = new DnsRecord
-        {
-            Id = id,
-            Name = "Name",
-        };
+        var id = _dnsRecordResponse.Id;
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records/{id}").UsingGet())
@@ -488,7 +398,7 @@ public class DnsClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _dnsRecordResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.GetRecordAsync(id);
@@ -502,12 +412,7 @@ public class DnsClientTests
     public async Task Should_return_full_dns_record_when_calling_UpdateRecordAsync()
     {
         // Arrange
-        var id = DnsRecordId.FromInt(123);
-        var response = new DnsRecord
-        {
-            Id = id,
-            Name = "New Name",
-        };
+        var id = _dnsRecordResponse.Id;
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records/{id}").UsingPatch())
@@ -515,14 +420,14 @@ public class DnsClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _dnsRecordResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.UpdateRecord(id).Set(d => d.Name, "New Name").ApplyAsync();
 
         // Assert
         result.Should().NotBeNull();
-        result.Name.Should().Be(response.Name);
+        result.Name.Should().Be(_dnsRecordResponse.Name);
     }
 
 
@@ -530,12 +435,7 @@ public class DnsClientTests
     public async Task Should_return_full_dns_record_when_calling_DeleteRecord()
     {
         // Arrange
-        var id = DnsRecordId.FromInt(123);
-        var response = new DnsRecord
-        {
-            Id = id,
-            Name = "Name",
-        };
+        var id = _dnsRecordResponse.Id;
 
         _server
           .Given(Request.Create().WithPath($"{_orgRoute}/dns/records/{id}").UsingDelete())
@@ -543,7 +443,7 @@ public class DnsClientTests
             Response.Create()
               .WithSuccess()
               .WithHeader("Content-Type", "application/json")
-              .WithBody(JsonSerializer.Serialize(response, _serializerOptions)));
+              .WithBody(await _dnsRecordResponse.ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _dnsClient.DeleteRecordAsync(id);

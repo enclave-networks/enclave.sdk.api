@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <LangVersion>10.0</LangVersion>
+        <TargetFramework>net6.0</TargetFramework>
+        <OutputType>Library</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Company>Enclave Networks Limited</Company>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageProjectUrl>https://github.com/enclave-networks/enclave.sdk.api</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/enclave-networks/enclave.sdk.api</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Description>
+            Provides a NuGet package that makes it easier to consume the Enclave Management APIs.
+        </Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+        <InternalsVisibleTo Include="Enclave.Sdk.Api.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Enclave.Sdk.Api.Data" Version="304.2.0" />
+    </ItemGroup>
+</Project>
