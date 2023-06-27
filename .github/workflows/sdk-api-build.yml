@@ -50,12 +50,11 @@ jobs:
 
     - name: Get Sdk.Api.Data Version
       id: version
-      working-directory: src/Enclave.Sdk
+      working-directory: src/Enclave.Sdk.Api
       run: |
         PACKAGE_VERSION=$(dotnet list package | grep -P -o "Enclave\.Sdk\.Api\.Data\s+[^\s]+\s+\K.+")
         echo "packageVersion=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
-
-
+        
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: actions/create-release@v1

@@ -26,6 +26,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Enclave.Sdk.Api.Data" Version="304.2.0" />
+        <PackageReference Include="Enclave.Sdk.Api.Data" Version="304.5.0" />
     </ItemGroup>
 </Project>
