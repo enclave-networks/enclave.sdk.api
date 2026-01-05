@@ -57,6 +57,7 @@ public class DnsClientTests
             DateTime.Now,
             1,
             new Dictionary<string, int>(),
+            Array.Empty<IUsedTagModel>(),
             null);
 
         _dnsRecordResponse = new(
@@ -68,6 +69,7 @@ public class DnsClientTests
             "test.com",
             Array.Empty<IUsedTagModel>(),
             Array.Empty<ISystemReferenceModel>().ToAsyncEnumerable(),
+            false,
             null);
     }
 

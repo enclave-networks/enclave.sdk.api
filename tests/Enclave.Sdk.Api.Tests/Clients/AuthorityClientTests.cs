@@ -39,7 +39,7 @@ public class AuthorityClientTests
         var responseModel = EnrolResult.Success(null);
 
         _server
-          .Given(Request.Create().WithPath($"authority/enrol").UsingPost())
+          .Given(Request.Create().WithPath("/authority/enrol").UsingPost())
           .RespondWith(
             Response.Create()
               .WithStatusCode(200)
