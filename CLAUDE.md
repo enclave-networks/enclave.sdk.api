@@ -21,7 +21,7 @@ dotnet test tests/Enclave.Sdk.Api.Tests --filter "FullyQualifiedName~DnsClientTe
 
 ## Architecture Overview
 
-This is a .NET 6 SDK for consuming the Enclave Management APIs. The SDK is published as a NuGet package.
+This is a .NET 10 SDK for consuming the Enclave Management APIs. The SDK is published as a NuGet package.
 
 ### Client Hierarchy
 
@@ -59,3 +59,10 @@ Tests use NUnit with WireMock.Net for HTTP mocking. Each client has a correspond
 - Private fields prefixed with underscore (`_fieldName`)
 - StyleCop analyzers enabled
 - Nullable reference types enabled
+
+## Versioning and Releases
+
+Versioning is handled by **GitVersion** (see `GitVersion.yml`). Merging to main triggers a release - no manual tagging required.
+
+- **GitHub Packages**: All builds (alpha/beta/stable) - for internal Enclave consumers
+- **nuget.org**: Stable releases only - for external third-party consumers
