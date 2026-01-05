@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(cat:*)",
+      "Bash(dotnet list:*)",
+      "Bash(dotnet nuget search:*)",
+      "Bash(dotnet package search:*)",
+      "WebFetch(domain:www.nuget.org)",
+      "WebFetch(domain:github.com)",
+      "Bash(dotnet nuget why:*)"
+    ]
+  }
+}

@@ -50,8 +50,8 @@ public class TagClientTests
                 new(new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io"), new Uri("http://enclave.io")),
                 new List<TagSummaryModel>
                 {
-                    new("tag1", TagRefId.FromString("tag1"), null, null, 0, 0, 0, 0),
-                    new("tag2", TagRefId.FromString("tag2"), null, null, 0, 0, 0, 0),
+                    new("tag1", TagRefId.FromString("tag1"), null, null, 0, 0, 0, 0, 0),
+                    new("tag2", TagRefId.FromString("tag2"), null, null, 0, 0, 0, 0, 0),
                 }.ToAsyncEnumerable());
 
         _tagResponse = new(
@@ -61,6 +61,7 @@ public class TagClientTests
             DateTime.Now,
             DateTime.Now,
             null,
+            0,
             0,
             0,
             0,
