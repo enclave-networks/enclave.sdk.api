@@ -40,11 +40,19 @@ jobs:
       working-directory: tests/Enclave.Sdk.Api.Tests
       run: dotnet test -c Release
 
-    - name: Push Github Source Packages
-      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg  --api-key ${{github.token}} -s https://nuget.pkg.github.com/enclave-networks/index.json --skip-duplicate
+    - name: Push to GitHub Packages (PR - alpha)
+      if: github.event_name == 'pull_request'
+      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg --api-key ${{github.token}} -s https://nuget.pkg.github.com/enclave-networks/index.json --skip-duplicate
 
-    - name: Push To nuget.org
+    - name: Push to GitHub Packages (develop - beta)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg --api-key ${{github.token}} -s https://nuget.pkg.github.com/enclave-networks/index.json --skip-duplicate
+
+    - name: Push to GitHub Packages (main - stable)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg --api-key ${{github.token}} -s https://nuget.pkg.github.com/enclave-networks/index.json --skip-duplicate
+
+    - name: Push to nuget.org (main - stable)
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: dotnet nuget push src/**/*${{ steps.gitversion.outputs.SemVer }}.nupkg -k ${{ secrets.PUBLIC_NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
 
