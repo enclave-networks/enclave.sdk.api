@@ -61,6 +61,12 @@ public class AuthorityClientTests
     public async Task Should_throw_an_error_when_sending_a_null_request()
     {
         // Arrange
+        _server
+          .Given(Request.Create().WithPath("/authority/enrol").UsingPost())
+          .RespondWith(
+            Response.Create()
+              .WithStatusCode(200)
+              .WithBody(await EnrolResult.Success(null).ToJsonAsync(_serializerOptions)));
 
         // Act
         var result = await _authorityClient.EnrolAsync(new EnrolRequestModel

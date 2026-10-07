@@ -19,6 +19,8 @@ public class EnclaveClient
 
     private readonly HttpClient _httpClient;
 
+    private readonly HttpClient? _partnerHttpClient;
+
     /// <summary>
     /// Create an <see cref="EnclaveClient"/> using settings found in the .enclave/credentials.json file in your user directory.
     /// </summary>
@@ -28,8 +30,10 @@ public class EnclaveClient
     {
         var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var location = Path.Combine(userProfile, ".enclave", "credentials.json");
+        var options = ReadCredentialsFile(location);
 
-        _httpClient = SetupHttpClient(ReadCredentialsFile(location));
+        _httpClient = SetupHttpClient(options.BaseUrl, options);
+        _partnerHttpClient = SetupPartnerHttpClient(options);
     }
 
     /// <summary>
@@ -40,7 +44,8 @@ public class EnclaveClient
     {
         var options = new EnclaveClientOptions { PersonalAccessToken = personalAccessToken };
 
-        _httpClient = SetupHttpClient(options);
+        _httpClient = SetupHttpClient(options.BaseUrl, options);
+        _partnerHttpClient = SetupPartnerHttpClient(options);
     }
 
     /// <summary>
@@ -55,7 +60,8 @@ public class EnclaveClient
             throw new ArgumentNullException(nameof(options));
         }
 
-        _httpClient = SetupHttpClient(options);
+        _httpClient = SetupHttpClient(options.BaseUrl, options);
+        _partnerHttpClient = SetupPartnerHttpClient(options);
     }
 
     /// <summary>
@@ -105,6 +111,29 @@ public class EnclaveClient
     }
 
     /// <summary>
+    /// Create a client for the Enclave Partner API, for one partner.
+    /// </summary>
+    /// <param name="partnerId">The ID of the partner. The partner portal shows it.</param>
+    /// <returns>A client that sends every call for that partner to <see cref="EnclaveClientOptions.PartnerApiBaseUrl"/>.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="partnerId"/> is empty.</exception>
+    /// <exception cref="InvalidOperationException">Throws if <see cref="EnclaveClientOptions.PartnerApiBaseUrl"/> was set to null or blank.</exception>
+    public IPartnerClient CreatePartnerClient(PartnerId partnerId)
+    {
+        if (partnerId.Equals(default(PartnerId)))
+        {
+            throw new ArgumentException("The partner ID is empty.", nameof(partnerId));
+        }
+
+        if (_partnerHttpClient is null)
+        {
+            throw new InvalidOperationException(
+                "No partner API base URL is set. Set PartnerApiBaseUrl in the EnclaveClientOptions, or partnerApiBaseUrl in the credentials file, to the URL of the Enclave Partner API.");
+        }
+
+        return new PartnerClient(_partnerHttpClient, partnerId);
+    }
+
+    /// <summary>
     /// Create an <see cref="AuthorityClient"/>.
     /// </summary>
     /// <returns>An instance of AuthorityClient for use with enrol requests.</returns>
@@ -150,12 +179,39 @@ public class EnclaveClient
         return options ?? throw new InvalidOperationException($"The Enclave credentials file at {location} holds no credentials. It should contain {expectedContent}.");
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Needed for lifecycle of consumer")]
-    private static HttpClient SetupHttpClient(EnclaveClientOptions options)
+    private static HttpClient? SetupPartnerHttpClient(EnclaveClientOptions options)
     {
-        var httpClient = new HttpClient(new ProblemDetailsHttpMessageHandler())
+        // The partner API is a separate service on its own host (portal src/Enclave.Partner.Api), and
+        // PartnerApiBaseUrl defaults to production's, https://partner-api.enclave.io. A caller that sets it to
+        // null or blank has asked for no partner API. Falling back to BaseUrl would send partner calls to the
+        // main API, which has no partner routes, so there is then no partner HttpClient, and
+        // CreatePartnerClient says what to set.
+        //
+        // The partner HttpClient is built once, like the main one, from the same options: the same token,
+        // User-Agent and handlers. A caller's handler becomes the inner handler of both problem details
+        // handlers. That is safe because an HttpClient already sends concurrent requests through one handler,
+        // and neither HttpClient is disposed, so neither disposes the caller's handler.
+        if (string.IsNullOrWhiteSpace(options.PartnerApiBaseUrl))
         {
-            BaseAddress = new Uri(options.BaseUrl),
+            return null;
+        }
+
+        return SetupHttpClient(options.PartnerApiBaseUrl, options);
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Needed for lifecycle of consumer")]
+    private static HttpClient SetupHttpClient(string baseUrl, EnclaveClientOptions options)
+    {
+        // A caller's handler goes beneath the problem details handler, so it takes the place of the network
+        // and problem+json responses it returns still become EnclaveApiException. The HttpClient is never
+        // disposed, so the caller's handler is never disposed here either; the caller owns it.
+        var problemDetailsHandler = options.HttpMessageHandler is null
+            ? new ProblemDetailsHttpMessageHandler()
+            : new ProblemDetailsHttpMessageHandler(options.HttpMessageHandler);
+
+        var httpClient = new HttpClient(problemDetailsHandler)
+        {
+            BaseAddress = new Uri(baseUrl),
         };
 
         if (!string.IsNullOrWhiteSpace(options.PersonalAccessToken))

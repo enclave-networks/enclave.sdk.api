@@ -17,11 +17,11 @@ public interface IPatchClient<TModel, TResponse>
     /// </summary>
     /// <typeparam name="TValue">The type of the value you're updating.</typeparam>
     /// <param name="propExpr">Expression tree witht he property you want to update.</param>
-    /// <param name="newValue">The new value.</param>
+    /// <param name="newValue">The new value. Null is sent as JSON null, which clears the field.</param>
     /// <returns>Builder for fluent building.</returns>
-    /// <exception cref="ArgumentNullException">Throws if either propExpr or newValue are null.</exception>
+    /// <exception cref="ArgumentNullException">Throws if propExpr is null.</exception>
     /// <exception cref="ArgumentException">If the selected propExpr body is null.</exception>
-    IPatchClient<TModel, TResponse> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue newValue);
+    IPatchClient<TModel, TResponse> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue? newValue);
 
     /// <summary>
     /// Send the request that has been setup prior.

@@ -80,7 +80,7 @@ internal class SystemsClient : ClientBase, ISystemsClient
     /// <inheritdoc/>
     public async Task<SystemModel> GetAsync(string systemId)
     {
-        var model = await HttpClient.GetFromJsonAsync<SystemModel>($"{_orgRoute}/systems/{systemId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<SystemModel>($"{_orgRoute}/systems/{PathSegment(systemId)}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -90,13 +90,13 @@ internal class SystemsClient : ClientBase, ISystemsClient
     /// <inheritdoc/>
     public IPatchClient<SystemPatchModel, SystemModel> Update(string systemId)
     {
-        return new PatchClient<SystemPatchModel, SystemModel>(HttpClient, $"{_orgRoute}/systems/{systemId}");
+        return new PatchClient<SystemPatchModel, SystemModel>(HttpClient, $"{_orgRoute}/systems/{PathSegment(systemId)}");
     }
 
     /// <inheritdoc/>
     public async Task<SystemModel> RevokeAsync(string systemId)
     {
-        var result = await HttpClient.DeleteAsync($"{_orgRoute}/systems/{systemId}");
+        var result = await HttpClient.DeleteAsync($"{_orgRoute}/systems/{PathSegment(systemId)}");
 
         result.EnsureSuccessStatusCode();
 
@@ -110,7 +110,9 @@ internal class SystemsClient : ClientBase, ISystemsClient
     /// <inheritdoc/>
     public async Task<SystemModel> EnableAsync(string systemId)
     {
-        var result = await HttpClient.PutAsync($"{_orgRoute}/systems/{systemId}/enable", null);
+        var result = await HttpClient.PutAsync($"{_orgRoute}/systems/{PathSegment(systemId)}/enable", null);
+
+        result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<SystemModel>(result.Content);
 
@@ -122,7 +124,9 @@ internal class SystemsClient : ClientBase, ISystemsClient
     /// <inheritdoc/>
     public async Task<SystemModel> DisableAsync(string systemId)
     {
-        var result = await HttpClient.PutAsync($"{_orgRoute}/systems/{systemId}/disable", null);
+        var result = await HttpClient.PutAsync($"{_orgRoute}/systems/{PathSegment(systemId)}/disable", null);
+
+        result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<SystemModel>(result.Content);
 
@@ -186,11 +190,21 @@ internal class SystemsClient : ClientBase, ISystemsClient
     {
         var requestModel = new AutoExpireModel(timeZonedId, expiryDateTime.ToString("o"), expiryAction);
 
-        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/systems/{systemId}/enable-until", requestModel, Constants.JsonSerializerOptions);
+        var result = await HttpClient.PutAsJsonAsync($"{_orgRoute}/systems/{PathSegment(systemId)}/enable-until", requestModel, Constants.JsonSerializerOptions);
 
         result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<SystemModel>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync()
+    {
+        var model = await HttpClient.GetFromJsonAsync<List<SearchKey>>($"{_orgRoute}/systems/meta/search-keys", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

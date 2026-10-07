@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
 using Enclave.Api.Modules.AccountManagement.PublicAccount.Models;
 using Enclave.Api.Modules.OrganisationManagement;
 using Enclave.Api.Modules.OrganisationManagement.Organisation.Models;
@@ -282,5 +283,57 @@ public class OrganisationClientTests
 
         // Assert
         _server.Should().HaveReceivedACall().AtUrl($"{_server.Urls[0]}{_orgRoute}/invites");
+    }
+
+    // An account ID is one segment of the URL path. .NET removes ".." segments when it combines a relative
+    // path with the base address (RFC 3986 section 5.2.4), so "../invites" left unescaped would send the
+    // DELETE to org/<id>/invites, the route that cancels invites. Escaped, the whole value stays one segment
+    // under users, where it names no account. The request is checked as it left the client, where the
+    // escaping is visible, and the server is checked for any request that reached the invites route.
+    [Test]
+    public async Task Should_send_an_account_id_as_one_escaped_path_segment_when_calling_RemoveUserAsync()
+    {
+        // Arrange
+        using var server = WireMockServer.Start();
+        server
+          .Given(Request.Create().WithPath("/*").UsingAnyMethod())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess());
+
+        var organisationId = OrganisationGuid.New();
+        var recorder = new RecordingHttpMessageHandler(new HttpClientHandler());
+        var client = new OrganisationScopedClient(new HttpClient(recorder) { BaseAddress = new Uri(server.Urls[0]) }, organisationId);
+
+        // Act
+        await client.RemoveUserAsync("../invites");
+
+        // Assert
+        var request = recorder.Requests.Should().ContainSingle().Subject;
+        request.Method.Should().Be(HttpMethod.Delete);
+        request.Uri.AbsolutePath.Should().Be($"/org/{organisationId}/users/..%2Finvites");
+        server.LogEntries.Should().ContainSingle()
+            .Which.RequestMessage.Path.Should().NotBe($"/org/{organisationId}/invites");
+    }
+
+    // Escaping leaves "." and ".." as they are, and .NET resolves them as dot-segments, so ".." would send
+    // the DELETE to org/<id>. An empty ID drops the segment. None of these names an account, so each is
+    // refused before a request is sent.
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase(".")]
+    [TestCase("..")]
+    public async Task Should_refuse_an_account_id_that_is_not_a_path_segment_without_sending_a_request(string accountId)
+    {
+        // Arrange
+        var recorder = new RecordingHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK));
+        var client = new OrganisationScopedClient(new HttpClient(recorder) { BaseAddress = new Uri("http://localhost/") }, OrganisationGuid.New());
+
+        // Act
+        var act = () => client.RemoveUserAsync(accountId);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>().WithParameterName("accountId");
+        recorder.Requests.Should().BeEmpty();
     }
 }

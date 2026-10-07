@@ -1,6 +1,10 @@
 ﻿using Enclave.Sdk.Api.Clients;
+using Enclave.Sdk.Api.Clients.Interfaces;
+using Enclave.Sdk.Api.Data;
+using Enclave.Configuration.Data.Enums;
 using FluentAssertions;
 using NUnit.Framework;
+using System.Net;
 using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -391,5 +395,143 @@ public class SystemClientTests
 
         // Assert
         result.Should().Be(2);
+    }
+
+    // GET systems/meta/search-keys answers with the keys the search term of GetSystemsAsync accepts
+    // (portal SystemsController.GetSearchKeyMetadata). The keys are two of the systems' search keys
+    // (portal SystemSearchKeyService.cs) as the API writes them, with enums as names.
+    [Test]
+    public async Task Should_return_the_search_keys_when_calling_GetSearchKeysAsync()
+    {
+        // Arrange
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems/meta/search-keys").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody("""
+                [
+                  {
+                    "name": "key",
+                    "modifiers": null,
+                    "dataType": "EnrolmentKey",
+                    "description": "Filter your search by one or more enrolment keys.",
+                    "hintText": "Filter by the name of the key used to enrol the system",
+                    "hintValues": null,
+                    "canHaveMultiple": false,
+                    "isDefault": false,
+                    "useExactMatch": false
+                  },
+                  {
+                    "name": "tags",
+                    "modifiers": [ "Or" ],
+                    "dataType": "Tags",
+                    "description": "Filter your search by one or more tags.",
+                    "hintText": "Filter to systems that have a set of tags assigned",
+                    "hintValues": null,
+                    "canHaveMultiple": true,
+                    "isDefault": false,
+                    "useExactMatch": true
+                  }
+                ]
+                """));
+
+        // Act
+        var result = await _enrolledSystemsClient.GetSearchKeysAsync();
+
+        // Assert
+        result.Should().BeEquivalentTo(
+            new[]
+            {
+                new SearchKey
+                {
+                    Name = "key",
+                    DataType = SearchKeyDataType.EnrolmentKey,
+                    Description = "Filter your search by one or more enrolment keys.",
+                    HintText = "Filter by the name of the key used to enrol the system",
+                },
+                new SearchKey
+                {
+                    Name = "tags",
+                    Modifiers = new() { SearchModifier.Or },
+                    DataType = SearchKeyDataType.Tags,
+                    Description = "Filter your search by one or more tags.",
+                    HintText = "Filter to systems that have a set of tags assigned",
+                    CanHaveMultiple = true,
+                    UseExactMatch = true,
+                },
+            },
+            options => options.WithStrictOrdering());
+    }
+
+    private static readonly (string Name, string Method, string Suffix, Func<ISystemsClient, string, Task> Call)[] SystemIdCalls =
+    {
+        ("GetAsync", "GET", "", (client, id) => client.GetAsync(id)),
+        ("Update", "PATCH", "", (client, id) => client.Update(id).Set(s => s.Description, "description").ApplyAsync()),
+        ("RevokeAsync", "DELETE", "", (client, id) => client.RevokeAsync(id)),
+        ("EnableAsync", "PUT", "/enable", (client, id) => client.EnableAsync(id)),
+        ("DisableAsync", "PUT", "/disable", (client, id) => client.DisableAsync(id)),
+        ("EnableUntilAsync", "PUT", "/enable-until", (client, id) => client.EnableUntilAsync(id, DateTimeOffset.UtcNow.AddHours(1), ExpiryAction.Disable)),
+    };
+
+    private static IEnumerable<TestCaseData> SystemIdEscapingCases() =>
+        SystemIdCalls.Select(c => new TestCaseData(c.Method, c.Suffix, c.Call).SetArgDisplayNames(c.Name));
+
+    private static IEnumerable<TestCaseData> RejectedSystemIdCases() =>
+        from c in SystemIdCalls
+        from id in new[] { null, "", ".", ".." }
+        select new TestCaseData(c.Call, id).SetArgDisplayNames(c.Name, id is null ? "null" : $"\"{id}\"");
+
+    // A system ID is one segment of the URL path. .NET removes ".." segments when it combines a relative
+    // path with the base address (RFC 3986 section 5.2.4), so "../policies/1" left unescaped would send
+    // DisableAsync's PUT to org/<id>/policies/1/disable, which disables policy 1. Escaped, the whole value
+    // stays one segment under systems, where it names no system. The request is checked as it left the
+    // client, where the escaping is visible, and the server is checked for any request that reached the
+    // policies route.
+    [TestCaseSource(nameof(SystemIdEscapingCases))]
+    public async Task Should_send_a_system_id_as_one_escaped_path_segment(string method, string suffix, Func<ISystemsClient, string, Task> call)
+    {
+        // Arrange
+        using var server = WireMockServer.Start();
+        server
+          .Given(Request.Create().WithPath("/*").UsingAnyMethod())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(await _systemResponse.ToJsonAsync(_serializerOptions)));
+
+        var organisationId = OrganisationGuid.New();
+        var recorder = new RecordingHttpMessageHandler(new HttpClientHandler());
+        var client = new SystemsClient(new HttpClient(recorder) { BaseAddress = new Uri(server.Urls[0]) }, $"org/{organisationId}");
+
+        // Act
+        await call(client, "../policies/1");
+
+        // Assert
+        var request = recorder.Requests.Should().ContainSingle().Subject;
+        request.Method.Method.Should().Be(method);
+        request.Uri.AbsolutePath.Should().Be($"/org/{organisationId}/systems/..%2Fpolicies%2F1{suffix}");
+        server.LogEntries.Should().ContainSingle()
+            .Which.RequestMessage.Path.Should().NotStartWith($"/org/{organisationId}/policies");
+    }
+
+    // Escaping leaves "." and ".." as they are, and .NET resolves them as dot-segments, so RevokeAsync("..")
+    // would DELETE org/<id>. An empty ID drops the segment and addresses the systems list, where DELETE is
+    // the bulk revoke. None of these names a system, so each is refused before a request is sent.
+    [TestCaseSource(nameof(RejectedSystemIdCases))]
+    public async Task Should_refuse_a_system_id_that_is_not_a_path_segment_without_sending_a_request(Func<ISystemsClient, string, Task> call, string systemId)
+    {
+        // Arrange
+        var recorder = new RecordingHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK));
+        var client = new SystemsClient(new HttpClient(recorder) { BaseAddress = new Uri("http://localhost/") }, $"org/{OrganisationGuid.New()}");
+
+        // Act
+        var act = () => call(client, systemId);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>().WithParameterName("systemId");
+        recorder.Requests.Should().BeEmpty();
     }
 }

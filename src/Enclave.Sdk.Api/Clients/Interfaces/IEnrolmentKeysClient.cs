@@ -87,6 +87,27 @@ public interface IEnrolmentKeysClient
     Task<int> BulkDisableAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys);
 
     /// <summary>
+    /// Delete an Enrolment Key.
+    /// </summary>
+    /// <param name="enrolmentKeyId">The Id of the Enrolment Key to delete.</param>
+    /// <returns>The deleted Enrolment Key.</returns>
+    Task<EnrolmentKeyModel> DeleteAsync(EnrolmentKeyId enrolmentKeyId);
+
+    /// <summary>
+    /// Bulk delete multiple Enrolment Keys.
+    /// </summary>
+    /// <param name="enrolmentKeys">An array of Enrolment Key Ids to delete.</param>
+    /// <returns>The number of keys deleted.</returns>
+    Task<int> BulkDeleteAsync(params EnrolmentKeyId[] enrolmentKeys);
+
+    /// <summary>
+    /// Bulk delete multiple Enrolment Keys.
+    /// </summary>
+    /// <param name="enrolmentKeys">An IEnumerable of Enrolment Key Ids to delete.</param>
+    /// <returns>The number of keys deleted.</returns>
+    Task<int> BulkDeleteAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys);
+
+    /// <summary>
     /// Enable this Enrolment Key for a specific period of time.
     /// </summary>
     /// <param name="enrolmentKeyId">The Id of the Enrolment Key to enable until.</param>
@@ -95,4 +116,10 @@ public interface IEnrolmentKeysClient
     /// <param name="timeZonedId">An IANA or Windows time zone ID. If this isn't null, expiryDateTime will be updated if the specified time zone's rules change.</param>
     /// <returns>A detailed Enrolment Key.</returns>
     Task<EnrolmentKeyModel> EnableUntilAsync(EnrolmentKeyId enrolmentKeyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
+
+    /// <summary>
+    /// Gets the search keys the search term of <see cref="GetEnrolmentKeysAsync"/> accepts.
+    /// </summary>
+    /// <returns>The search keys, in the order the API lists them.</returns>
+    Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync();
 }

@@ -90,6 +90,7 @@ public interface IOrganisationScopedClient
     /// Removes a user from the organisation.
     /// </summary>
     /// <param name="accountId">The id of the users you want to remove.</param>
+    /// <exception cref="ArgumentException">Throws if <paramref name="accountId"/> is null, empty, "." or "..".</exception>
     Task RemoveUserAsync(string accountId);
 
     /// <summary>

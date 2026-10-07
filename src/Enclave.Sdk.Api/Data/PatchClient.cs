@@ -14,7 +14,7 @@ internal class PatchClient<TModel, TResponse> : ClientBase, IPatchClient<TModel,
 {
     private readonly string _patchUrl;
 
-    private Dictionary<string, object> _patchDictionary = new Dictionary<string, object>();
+    private Dictionary<string, object?> _patchDictionary = new Dictionary<string, object?>();
 
     /// <summary>
     /// This client handles the patch requests for all models.
@@ -27,13 +27,11 @@ internal class PatchClient<TModel, TResponse> : ClientBase, IPatchClient<TModel,
         _patchUrl = patchUrl;
     }
 
-    public IPatchClient<TModel, TResponse> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue newValue)
+    public IPatchClient<TModel, TResponse> Set<TValue>(Expression<Func<TModel, TValue?>> propExpr, TValue? newValue)
     {
-        if (newValue is null)
-        {
-            throw new ArgumentNullException(nameof(newValue), "please specificy a valid new value.");
-        }
-
+        // A null value is kept and sent as JSON null. The API applies every field the body holds, a null one
+        // included (portal Enclave.Api.Scaffolding PatchModel.WasSet), so null clears the field, where a field
+        // left out of the body keeps its value.
         if (propExpr is null)
         {
             throw new ArgumentNullException(nameof(propExpr), "please specificy a valid property expression.");
@@ -75,7 +73,7 @@ internal class PatchClient<TModel, TResponse> : ClientBase, IPatchClient<TModel,
         }
         finally
         {
-            _patchDictionary = new Dictionary<string, object>();
+            _patchDictionary = new Dictionary<string, object?>();
         }
     }
 }

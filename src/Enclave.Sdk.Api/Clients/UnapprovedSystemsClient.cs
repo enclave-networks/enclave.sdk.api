@@ -76,7 +76,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     /// <inheritdoc/>
     public async Task<UnapprovedSystemModel> GetAsync(string systemId)
     {
-        var model = await HttpClient.GetFromJsonAsync<UnapprovedSystemModel>($"{_orgRoute}/unapproved-systems/{systemId}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<UnapprovedSystemModel>($"{_orgRoute}/unapproved-systems/{PathSegment(systemId)}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -86,13 +86,13 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     /// <inheritdoc/>
     public IPatchClient<UnapprovedSystemPatchModel, UnapprovedSystemModel> Update(string systemId)
     {
-        return new PatchClient<UnapprovedSystemPatchModel, UnapprovedSystemModel>(HttpClient, $"{_orgRoute}/unapproved-systems/{systemId}");
+        return new PatchClient<UnapprovedSystemPatchModel, UnapprovedSystemModel>(HttpClient, $"{_orgRoute}/unapproved-systems/{PathSegment(systemId)}");
     }
 
     /// <inheritdoc/>
     public async Task<UnapprovedSystemModel> DeclineAsync(string systemId)
     {
-        var result = await HttpClient.DeleteAsync($"{_orgRoute}/unapproved-systems/{systemId}");
+        var result = await HttpClient.DeleteAsync($"{_orgRoute}/unapproved-systems/{PathSegment(systemId)}");
 
         result.EnsureSuccessStatusCode();
 
@@ -106,7 +106,7 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     /// <inheritdoc/>
     public async Task ApproveAsync(string systemId)
     {
-        var result = await HttpClient.PutAsync($"{_orgRoute}/unapproved-systems/{systemId}/approve", null);
+        var result = await HttpClient.PutAsync($"{_orgRoute}/unapproved-systems/{PathSegment(systemId)}/approve", null);
 
         result.EnsureSuccessStatusCode();
     }
@@ -134,6 +134,16 @@ internal class UnapprovedSystemsClient : ClientBase, IUnapprovedSystemsClient
     public async Task<int> ApproveSystemsAsync(IEnumerable<string> systemIds)
     {
         return await ApproveSystemsAsync(systemIds.ToArray());
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync()
+    {
+        var model = await HttpClient.GetFromJsonAsync<List<SearchKey>>($"{_orgRoute}/unapproved-systems/meta/search-keys", Constants.JsonSerializerOptions);
+
+        EnsureNotNull(model);
+
+        return model;
     }
 
     private static string? BuildQueryString(

@@ -50,6 +50,8 @@ internal class TrustRequirementsClient : ClientBase, ITrustRequirementsClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/trust-requirements", createModel, Constants.JsonSerializerOptions);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<TrustRequirementModel>(result.Content);
 
         EnsureNotNull(model);

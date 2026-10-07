@@ -47,6 +47,7 @@ public interface ITagsClient
     /// </summary>
     /// <param name="tag">The tag name.</param>
     /// <returns>The <see cref="TagModel"/>.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="tag"/> is null, empty, "." or "..".</exception>
     Task<TagModel> GetAsync(string tag);
 
     /// <summary>
@@ -61,6 +62,7 @@ public interface ITagsClient
     /// </summary>
     /// <param name="tag">The tag name.</param>
     /// <returns>A PatchClient for fluent updating.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="tag"/> is null, empty, "." or "..".</exception>
     IPatchClient<TagPatchModel, TagModel> Update(string tag);
 
     /// <summary>
@@ -75,5 +77,12 @@ public interface ITagsClient
     /// </summary>
     /// <param name="tag">The name of the Tag to delete.</param>
     /// <returns>The deleted <see cref="TagModel"/>.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="tag"/> is null, empty, "." or "..".</exception>
     Task<TagModel> DeleteAsync(string tag);
+
+    /// <summary>
+    /// Gets the search keys the search term of <see cref="GetAsync(string, TagQuerySortOrder?, int?, int?)"/> accepts.
+    /// </summary>
+    /// <returns>The search keys, in the order the API lists them.</returns>
+    Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync();
 }

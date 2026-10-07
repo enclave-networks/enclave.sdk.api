@@ -121,4 +121,10 @@ public interface IPoliciesClient
     /// <param name="timeZonedId">An IANA or Windows time zone ID. If this isn't null, expiryDateTime will be updated if the specified time zone's rules change.</param>
     /// <returns>A detailed <see cref="PolicyModel"/>.</returns>
     Task<PolicyModel> EnableUntilAsync(PolicyId policyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
+
+    /// <summary>
+    /// Gets the search keys the search term of <see cref="GetPoliciesAsync"/> accepts.
+    /// </summary>
+    /// <returns>The search keys, in the order the API lists them.</returns>
+    Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync();
 }

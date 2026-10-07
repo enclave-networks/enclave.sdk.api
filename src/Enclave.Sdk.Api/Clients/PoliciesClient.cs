@@ -55,6 +55,8 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/policies", createModel, Constants.JsonSerializerOptions);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<PolicyModel>(result.Content);
 
         EnsureNotNull(model);
@@ -129,6 +131,8 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/policies/{policyId}/enable", null);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<PolicyModel>(result.Content);
 
         EnsureNotNull(model);
@@ -140,6 +144,8 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
     public async Task<PolicyModel> DisableAsync(PolicyId policyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/policies/{policyId}/disable", null);
+
+        result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<PolicyModel>(result.Content);
 
@@ -208,6 +214,16 @@ internal class PoliciesClient : ClientBase, IPoliciesClient
         result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<PolicyModel>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync()
+    {
+        var model = await HttpClient.GetFromJsonAsync<List<SearchKey>>($"{_orgRoute}/policies/meta/search-keys", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

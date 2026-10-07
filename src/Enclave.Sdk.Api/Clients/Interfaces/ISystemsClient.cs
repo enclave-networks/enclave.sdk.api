@@ -50,6 +50,7 @@ public interface ISystemsClient
     /// </summary>
     /// <param name="systemId">The SystemId to Get.</param>
     /// <returns>A Full System Model.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="systemId"/> is null, empty, "." or "..".</exception>
     Task<SystemModel> GetAsync(string systemId);
 
     /// <summary>
@@ -57,6 +58,7 @@ public interface ISystemsClient
     /// </summary>
     /// <param name="systemId">The SystemId to update.</param>
     /// <returns>A PatchClient for fluent updating.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="systemId"/> is null, empty, "." or "..".</exception>
     IPatchClient<SystemPatchModel, SystemModel> Update(string systemId);
 
     /// <summary>
@@ -64,6 +66,7 @@ public interface ISystemsClient
     /// </summary>
     /// <param name="systemId">The id of the Enrolled System to revoke.</param>
     /// <returns>The revoked Enrolled System.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="systemId"/> is null, empty, "." or "..".</exception>
     Task<SystemModel> RevokeAsync(string systemId);
 
     /// <summary>
@@ -71,6 +74,7 @@ public interface ISystemsClient
     /// </summary>
     /// <param name="systemId">The Id of the Enrolled System to enable.</param>
     /// <returns>A detailed Enrolled System.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="systemId"/> is null, empty, "." or "..".</exception>
     Task<SystemModel> EnableAsync(string systemId);
 
     /// <summary>
@@ -78,6 +82,7 @@ public interface ISystemsClient
     /// </summary>
     /// <param name="systemId">The Id of the Enrolled System to disable.</param>
     /// <returns>A detailed Enrolled System.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="systemId"/> is null, empty, "." or "..".</exception>
     Task<SystemModel> DisableAsync(string systemId);
 
     /// <summary>
@@ -116,5 +121,12 @@ public interface ISystemsClient
     /// <param name="expiryAction">What should happen when the expiry date elapses.</param>
     /// <param name="timeZonedId">An IANA or Windows time zone ID. If this isn't null, expiryDateTime will be updated if the specified time zone's rules change.</param>
     /// <returns>A detailed Enrolled System.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="systemId"/> is null, empty, "." or "..".</exception>
     Task<SystemModel> EnableUntilAsync(string systemId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null);
+
+    /// <summary>
+    /// Gets the search keys the search term of <see cref="GetSystemsAsync"/> accepts.
+    /// </summary>
+    /// <returns>The search keys, in the order the API lists them.</returns>
+    Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync();
 }

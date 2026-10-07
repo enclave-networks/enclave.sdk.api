@@ -27,6 +27,8 @@ internal class AuthorityClient : ClientBase, IAuthorityClient
 
         var result = await HttpClient.PostAsJsonAsync($"authority/enrol", requestModel, Constants.JsonSerializerOptions);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<EnrolResult>(result.Content);
 
         EnsureNotNull(model);

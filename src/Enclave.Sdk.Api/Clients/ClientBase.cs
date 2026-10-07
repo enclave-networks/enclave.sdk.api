@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
 using System.Net.Mime;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 
@@ -72,6 +73,35 @@ internal abstract class ClientBase
         {
             Throw();
         }
+    }
+
+    /// <summary>
+    /// Escapes a caller's value, such as a system ID or a tag name, for use as one segment of a URL path.
+    /// </summary>
+    /// <param name="value">The value to put in the path.</param>
+    /// <param name="paramName">The caller's parameter name, given to the exception.</param>
+    /// <returns>The escaped value.</returns>
+    /// <exception cref="ArgumentNullException">Throws if <paramref name="value"/> is null.</exception>
+    /// <exception cref="ArgumentException">Throws if <paramref name="value"/> is empty, "." or "..".</exception>
+    protected static string PathSegment(string value, [CallerArgumentExpression(nameof(value))] string? paramName = null)
+    {
+        // A value put into a path unescaped can move the request to another route: .NET removes ".."
+        // segments when it combines the path with the base address (RFC 3986 section 5.2.4), so declining
+        // the unapproved system "../systems/ABCDE" would revoke enrolled system ABCDE.
+        //
+        // Uri.EscapeDataString escapes every character except the unreserved ones (letters, digits, '-',
+        // '.', '_' and '~'; RFC 3986 section 2.3; https://learn.microsoft.com/dotnet/api/system.uri.escapedatastring),
+        // so '/', '\', '?', '#' and '%' cannot end the segment. It leaves "." and ".." as they are, and they
+        // are still dot-segments, and an empty value drops the segment. None of the three is an ID, so they
+        // are refused before a request is built.
+        ArgumentNullException.ThrowIfNull(value, paramName);
+
+        if (value is "" or "." or "..")
+        {
+            throw new ArgumentException($"\"{value}\" is not a valid ID. An empty value, \".\" and \"..\" cannot be sent as a segment of a URL path.", paramName);
+        }
+
+        return Uri.EscapeDataString(value);
     }
 
     /// <summary>
