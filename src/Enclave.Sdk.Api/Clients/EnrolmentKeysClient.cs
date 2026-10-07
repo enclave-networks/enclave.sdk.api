@@ -54,6 +54,8 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/enrolment-keys", createModel, Constants.JsonSerializerOptions);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
 
         EnsureNotNull(model);
@@ -82,6 +84,8 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/enable", null);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
 
         EnsureNotNull(model);
@@ -93,6 +97,8 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     public async Task<EnrolmentKeyModel> DisableAsync(EnrolmentKeyId enrolmentKeyId)
     {
         var result = await HttpClient.PutAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}/disable", null);
+
+        result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
 
@@ -152,6 +158,55 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
     }
 
     /// <inheritdoc/>
+    public async Task<EnrolmentKeyModel> DeleteAsync(EnrolmentKeyId enrolmentKeyId)
+    {
+        var result = await HttpClient.DeleteAsync($"{_orgRoute}/enrolment-keys/{enrolmentKeyId}");
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> BulkDeleteAsync(params EnrolmentKeyId[] enrolmentKeys)
+    {
+        // The API answers the bulk delete with BulkEnrolmentKeyDeleteResult (keysDeleted), not the
+        // BulkKeyActionResult (keysModified) of the bulk enable and disable (portal
+        // EnrolmentKeysController.DeleteBulkEnrolmentKeys).
+        using var content = CreateJsonContent(new
+        {
+            keyIds = enrolmentKeys,
+        });
+
+        using var request = new HttpRequestMessage
+        {
+            Content = content,
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri($"{HttpClient.BaseAddress}{_orgRoute}/enrolment-keys"),
+        };
+
+        var result = await HttpClient.SendAsync(request);
+
+        result.EnsureSuccessStatusCode();
+
+        var model = await DeserialiseAsync<BulkEnrolmentKeyDeleteResult>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model.KeysDeleted;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> BulkDeleteAsync(IEnumerable<EnrolmentKeyId> enrolmentKeys)
+    {
+        return await BulkDeleteAsync(enrolmentKeys.ToArray());
+    }
+
+    /// <inheritdoc/>
     public async Task<EnrolmentKeyModel> EnableUntilAsync(EnrolmentKeyId enrolmentKeyId, DateTimeOffset expiryDateTime, ExpiryAction expiryAction, string? timeZonedId = null)
     {
         var requestModel = new AutoExpireModel(timeZonedId, expiryDateTime.ToString("o"), expiryAction);
@@ -161,6 +216,16 @@ internal class EnrolmentKeysClient : ClientBase, IEnrolmentKeysClient
         result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<EnrolmentKeyModel>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync()
+    {
+        var model = await HttpClient.GetFromJsonAsync<List<SearchKey>>($"{_orgRoute}/enrolment-keys/meta/search-keys", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

@@ -93,6 +93,16 @@ var enrolledSystems = await organisationClient.EnrolledSystems.GetSystemsAsync()
 var enrolmentKey = await organisationClient.EnrolmentKeys.GetEnrolmentKeysAsync();
 ```
 
+IDs you pass as text, such as system IDs and tag names, are always sent as a single ID, whatever characters they contain. An empty ID, `.` or `..` throws an `ArgumentException` before anything is sent.
+
+## Errors
+A call that fails throws:
+
+| What went wrong | Exception |
+|---|---|
+| The API refused the request and said why | `EnclaveApiException`, with the API's explanation in `ProblemDetails` |
+| Any other failure, such as a proxy error or a missing route | `HttpRequestException`, with the status in `StatusCode` |
+
 ## Update Requests
 When updating an item, we make a call to the relevant `Update` method this then returns an instance of `IPatchClient` which has a fluent implementation. So for example;
 ```csharp
@@ -100,3 +110,84 @@ var dnsZoneId = DnsZoneId.FromInt(123);
 var result = await _dnsClient.UpdateZone(dnsZoneId).Set(d => d.Name, "New Name").ApplyAsync();
 ```
 This code will update the name of the specified DNS Zone. Once you've called `ApplyAsync` the request will be sent and the returning model will be an updated version of the relevant type in this case the DNS Zone.
+
+Only the fields you `Set` are sent, and the rest keep their values. Set a field to `null` to clear it:
+```csharp
+await organisationClient.Policies.Update(policyId).Set(p => p.ActiveHours, null).ApplyAsync();
+```
+
+## Search Keys
+The list calls for systems, unapproved systems, enrolment keys, policies and tags take a search term, which can use search keys such as `tags:server`. `GetSearchKeysAsync` lists the keys each one accepts, with a description and example values for each.
+```csharp
+var searchKeys = await organisationClient.EnrolledSystems.GetSearchKeysAsync();
+
+foreach (var key in searchKeys)
+{
+    Console.WriteLine($"{key.Name}: {key.Description}");
+}
+```
+
+## Gateway Priority
+For a gateway policy that uses its gateways in the order listed (the portal's "Ordered"), use `GatewayPriorityType.Prioritised`.
+
+If you write the models to JSON yourself, add `GatewayPriorityTypeJsonConverter` before any `JsonStringEnumConverter`, so that value is written as `Ordered`, the name the API uses:
+```csharp
+var options = new JsonSerializerOptions
+{
+    Converters = { new GatewayPriorityTypeJsonConverter(), new JsonStringEnumConverter() },
+};
+```
+
+## Logging or Capturing Requests
+To log the requests the clients send, or to capture them without sending them, for example for a dry run, give `EnclaveClientOptions` an `HttpMessageHandler`. Every client created from those options sends its requests through it.
+```csharp
+// LoggingHandler is your own DelegatingHandler that logs each request and passes it on
+var enclaveClient = new EnclaveClient(new EnclaveClientOptions
+{
+    PersonalAccessToken = "YOUR TOKEN",
+    HttpMessageHandler = new LoggingHandler { InnerHandler = new HttpClientHandler() },
+});
+```
+
+- A handler that answers a request itself sends nothing. One that passes requests on must be a `DelegatingHandler` with its `InnerHandler` set.
+- Each request carries your token in its `Authorization` header, so leave that header out of anything you log.
+- You own the handler: dispose it once you have finished with the clients.
+
+## Partner API
+A partner manages its customers through the Enclave Partner API. It uses production by default; to use staging, set both URLs:
+
+| | `BaseUrl` | `PartnerApiBaseUrl` |
+|---|---|---|
+| Production (default) | `https://api.enclave.io` | `https://partner-api.enclave.io` |
+| Staging | `https://staging-api.enclave.io` | `https://staging-partner-api.enclave.io` |
+
+A credentials file can set it too, as `partnerApiBaseUrl`.
+
+```csharp
+var enclaveClient = new EnclaveClient(new EnclaveClientOptions
+{
+    PersonalAccessToken = "YOUR TOKEN",
+});
+
+// The partner portal shows your partner ID
+if (!PartnerId.TryParse("YOUR PARTNER ID", out var partnerId))
+{
+    throw new InvalidOperationException("Not a valid partner ID.");
+}
+
+var partnerClient = enclaveClient.CreatePartnerClient(partnerId);
+
+var customers = await partnerClient.Customers.GetCustomersAsync(searchTerm: "Globex");
+```
+
+`Customers` lists, reads, creates, updates and converts customers, manages their admins and admin invites, and turns admin auto-sync on and off. Its models are in the `Enclave.Sdk.Api.Partner.Models` namespace.
+
+A customer is an Enclave organisation, and every customer call takes its organisation ID. To work with a customer's systems, policies and the rest, create an organisation client from the customer's ID, as long as you have access to it (`UserHasAccess`):
+```csharp
+await foreach (var customer in customers.Items)
+{
+    var systems = await enclaveClient.CreateOrganisationClient(customer.Id).EnrolledSystems.GetSystemsAsync();
+}
+```
+
+Your personal access token needs the `ReadCustomers` scope to read customers. Making changes, and listing invites, need `WriteCustomers` and the Owner or Admin role in the partner.

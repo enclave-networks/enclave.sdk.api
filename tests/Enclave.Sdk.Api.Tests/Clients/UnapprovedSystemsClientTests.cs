@@ -1,6 +1,9 @@
 ﻿using Enclave.Sdk.Api.Clients;
+using Enclave.Sdk.Api.Clients.Interfaces;
+using Enclave.Sdk.Api.Data;
 using FluentAssertions;
 using NUnit.Framework;
+using System.Net;
 using System.Text.Json;
 using WireMock.Server;
 using WireMock.FluentAssertions;
@@ -309,5 +312,142 @@ public class UnapprovedSystemsClientTests
 
         // Assert
         result.Should().Be(2);
+    }
+
+    // GET unapproved-systems/meta/search-keys answers with the keys the search term of GetSystemsAsync
+    // accepts (portal UnapprovedSystemsController.GetSearchKeyMetadata). Unapproved systems are searched
+    // with the systems' search keys (portal SystemSearchKeyService.cs), and these are two of them as the
+    // API writes them, with enums as names.
+    [Test]
+    public async Task Should_return_the_search_keys_when_calling_GetSearchKeysAsync()
+    {
+        // Arrange
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/unapproved-systems/meta/search-keys").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody("""
+                [
+                  {
+                    "name": "description",
+                    "modifiers": null,
+                    "dataType": "None",
+                    "description": "Filter your search by description.",
+                    "hintText": "Search by description or hostname",
+                    "hintValues": null,
+                    "canHaveMultiple": false,
+                    "isDefault": true,
+                    "useExactMatch": false
+                  },
+                  {
+                    "name": "os",
+                    "modifiers": null,
+                    "dataType": "None",
+                    "description": "Filter your search by one or more operating systems.",
+                    "hintText": "Filter by system platform (e.g. windows, linux, macos)",
+                    "hintValues": [ "Windows", "Linux", "Mac" ],
+                    "canHaveMultiple": false,
+                    "isDefault": false,
+                    "useExactMatch": true
+                  }
+                ]
+                """));
+
+        // Act
+        var result = await _unapprovedSystemsClient.GetSearchKeysAsync();
+
+        // Assert
+        result.Should().BeEquivalentTo(
+            new[]
+            {
+                new SearchKey
+                {
+                    Name = "description",
+                    DataType = SearchKeyDataType.None,
+                    Description = "Filter your search by description.",
+                    HintText = "Search by description or hostname",
+                    IsDefault = true,
+                },
+                new SearchKey
+                {
+                    Name = "os",
+                    DataType = SearchKeyDataType.None,
+                    Description = "Filter your search by one or more operating systems.",
+                    HintText = "Filter by system platform (e.g. windows, linux, macos)",
+                    HintValues = new() { "Windows", "Linux", "Mac" },
+                    UseExactMatch = true,
+                },
+            },
+            options => options.WithStrictOrdering());
+    }
+
+    private static readonly (string Name, string Method, string Suffix, Func<IUnapprovedSystemsClient, string, Task> Call)[] SystemIdCalls =
+    {
+        ("GetAsync", "GET", "", (client, id) => client.GetAsync(id)),
+        ("Update", "PATCH", "", (client, id) => client.Update(id).Set(u => u.Description, "description").ApplyAsync()),
+        ("DeclineAsync", "DELETE", "", (client, id) => client.DeclineAsync(id)),
+        ("ApproveAsync", "PUT", "/approve", (client, id) => client.ApproveAsync(id)),
+    };
+
+    private static IEnumerable<TestCaseData> SystemIdEscapingCases() =>
+        SystemIdCalls.Select(c => new TestCaseData(c.Method, c.Suffix, c.Call).SetArgDisplayNames(c.Name));
+
+    private static IEnumerable<TestCaseData> RejectedSystemIdCases() =>
+        from c in SystemIdCalls
+        from id in new[] { null, "", ".", ".." }
+        select new TestCaseData(c.Call, id).SetArgDisplayNames(c.Name, id is null ? "null" : $"\"{id}\"");
+
+    // A system ID is one segment of the URL path. .NET removes ".." segments when it combines a relative
+    // path with the base address (RFC 3986 section 5.2.4), so "../systems/ABCDE" left unescaped would send
+    // DeclineAsync's DELETE to org/<id>/systems/ABCDE, which revokes enrolled system ABCDE. Escaped, the
+    // whole value stays one segment under unapproved-systems, where it names no system. The request is
+    // checked as it left the client, where the escaping is visible, and the server is checked for any
+    // request that reached the enrolled systems route.
+    [TestCaseSource(nameof(SystemIdEscapingCases))]
+    public async Task Should_send_a_system_id_as_one_escaped_path_segment(string method, string suffix, Func<IUnapprovedSystemsClient, string, Task> call)
+    {
+        // Arrange
+        using var server = WireMockServer.Start();
+        server
+          .Given(Request.Create().WithPath("/*").UsingAnyMethod())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(await _unapprovedSystemResponse.ToJsonAsync(_serializerOptions)));
+
+        var organisationId = OrganisationGuid.New();
+        var recorder = new RecordingHttpMessageHandler(new HttpClientHandler());
+        var client = new UnapprovedSystemsClient(new HttpClient(recorder) { BaseAddress = new Uri(server.Urls[0]) }, $"org/{organisationId}");
+
+        // Act
+        await call(client, "../systems/ABCDE");
+
+        // Assert
+        var request = recorder.Requests.Should().ContainSingle().Subject;
+        request.Method.Method.Should().Be(method);
+        request.Uri.AbsolutePath.Should().Be($"/org/{organisationId}/unapproved-systems/..%2Fsystems%2FABCDE{suffix}");
+        server.LogEntries.Should().ContainSingle()
+            .Which.RequestMessage.Path.Should().NotStartWith($"/org/{organisationId}/systems");
+    }
+
+    // Escaping leaves "." and ".." as they are, and .NET resolves them as dot-segments, so ApproveAsync("..")
+    // would PUT org/<id>/approve. An empty ID drops the segment and addresses the unapproved systems list.
+    // None of these names a system, so each is refused before a request is sent.
+    [TestCaseSource(nameof(RejectedSystemIdCases))]
+    public async Task Should_refuse_a_system_id_that_is_not_a_path_segment_without_sending_a_request(Func<IUnapprovedSystemsClient, string, Task> call, string systemId)
+    {
+        // Arrange
+        var recorder = new RecordingHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK));
+        var client = new UnapprovedSystemsClient(new HttpClient(recorder) { BaseAddress = new Uri("http://localhost/") }, $"org/{OrganisationGuid.New()}");
+
+        // Act
+        var act = () => call(client, systemId);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>().WithParameterName("systemId");
+        recorder.Requests.Should().BeEmpty();
     }
 }

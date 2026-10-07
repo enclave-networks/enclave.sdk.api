@@ -90,7 +90,9 @@ internal class OrganisationScopedClient : ClientBase, IOrganisationScopedClient
     /// <inheritdoc/>
     public async Task RemoveUserAsync(string accountId)
     {
-        await HttpClient.DeleteAsync($"{_orgRoute}/users/{accountId}");
+        var result = await HttpClient.DeleteAsync($"{_orgRoute}/users/{PathSegment(accountId)}");
+
+        result.EnsureSuccessStatusCode();
     }
 
     /// <inheritdoc/>
@@ -112,6 +114,8 @@ internal class OrganisationScopedClient : ClientBase, IOrganisationScopedClient
         });
 
         var result = await HttpClient.PostAsync($"{_orgRoute}/invites", encoded);
+
+        result.EnsureSuccessStatusCode();
     }
 
     /// <inheritdoc/>
@@ -129,6 +133,8 @@ internal class OrganisationScopedClient : ClientBase, IOrganisationScopedClient
             RequestUri = new Uri($"{HttpClient.BaseAddress}{_orgRoute}/invites"),
         };
 
-        await HttpClient.SendAsync(request);
+        var result = await HttpClient.SendAsync(request);
+
+        result.EnsureSuccessStatusCode();
     }
 }

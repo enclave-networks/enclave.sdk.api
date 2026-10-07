@@ -56,6 +56,8 @@ internal class DnsClient : ClientBase, IDnsClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/dns/zones", createModel, Constants.JsonSerializerOptions);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<DnsZoneModel>(result.Content);
 
         EnsureNotNull(model);
@@ -118,6 +120,8 @@ internal class DnsClient : ClientBase, IDnsClient
         }
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/dns/records", createModel, Constants.JsonSerializerOptions);
+
+        result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<DnsRecordModel>(result.Content);
 

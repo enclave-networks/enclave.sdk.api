@@ -97,6 +97,30 @@ public class EnclaveClientCredentialsFileTests
         act.Should().Throw<InvalidOperationException>().WithMessage($"*{CredentialsPath}*");
     }
 
+    // A handler is an object in the running process, not a setting, so it is neither read from nor
+    // written to a credentials file. A file with an httpMessageHandler entry still gives its token, and
+    // options written out for a credentials file hold no handler.
+    [Test]
+    public void Should_leave_the_http_message_handler_out_of_the_credentials_file()
+    {
+        // Arrange
+        WriteCredentials("{\"personalAccessToken\": \"TOKEN\", \"httpMessageHandler\": {}}");
+        var options = new EnclaveClientOptions
+        {
+            PersonalAccessToken = "TOKEN",
+            HttpMessageHandler = new HttpClientHandler(),
+        };
+
+        // Act
+        var read = EnclaveClient.ReadCredentialsFile(CredentialsPath);
+        var written = JsonDocument.Parse(JsonSerializer.Serialize(options));
+
+        // Assert
+        read.PersonalAccessToken.Should().Be("TOKEN");
+        read.HttpMessageHandler.Should().BeNull();
+        written.RootElement.EnumerateObject().Select(p => p.Name).Should().BeEquivalentTo("PersonalAccessToken", "BaseUrl", "PartnerApiBaseUrl");
+    }
+
     private void WriteCredentials(string json)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(CredentialsPath));

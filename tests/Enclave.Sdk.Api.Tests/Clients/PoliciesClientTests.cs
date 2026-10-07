@@ -1,7 +1,9 @@
 ﻿using Enclave.Sdk.Api.Clients;
+using Enclave.Sdk.Api.Data;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -15,6 +17,7 @@ using Enclave.Api.Scaffolding.Pagination.Models;
 using Enclave.Configuration.Data.Modules.Policies.Models;
 using Enclave.Configuration.Data.Modules.Policies.Enums;
 using Enclave.Api.Modules.SystemManagement.TrustRequirements.Models;
+using Enclave.Sdk.Network.NetworkPolicy;
 
 namespace Enclave.Sdk.Api.Tests.Clients;
 
@@ -398,5 +401,175 @@ public class PoliciesClientTests
 
         // Assert
         result.Should().Be(3);
+    }
+
+    // A patch sends only the fields it sets. The API applies every field the body holds, a null one
+    // included (portal PatchModel.WasSet, PolicyModifyHandler), so a field set to null is sent as JSON
+    // null, and that is how a policy's active hours are cleared. The field set to a value checks the null
+    // sits beside other fields rather than replacing the body.
+    [Test]
+    public async Task Should_send_a_field_set_to_null_as_json_null_when_calling_UpdateAsync()
+    {
+        // Arrange
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/{_policyResponse.Id}").UsingPatch())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(await _policyResponse.ToJsonAsync(_serializerOptions)));
+
+        // Act
+        await _policiesClient.Update(PolicyId.FromInt(12))
+            .Set(p => p.Description, "policy")
+            .Set(p => p.ActiveHours, null)
+            .ApplyAsync();
+
+        // Assert
+        using var body = JsonDocument.Parse(_server.LogEntries.Should().ContainSingle().Subject.RequestMessage.Body);
+        body.RootElement.EnumerateObject().Select(p => (p.Name, p.Value.ValueKind))
+            .Should().Equal(("Description", JsonValueKind.String), ("ActiveHours", JsonValueKind.Null));
+    }
+
+    // The API names the gateway priority that follows the gateway list's order "Ordered" (sdk
+    // Enclave.Sdk.Network/NetworkPolicy/GatewayPriorityType.cs, which the API uses; portal-spa
+    // src/types/api.ts), and Enclave.Sdk.Api.Data names the same member Prioritised (portal
+    // Enclave.Sdk.Api.Data/Duplicated/GatewayPriorityType.cs). The API does not accept "Prioritised", so
+    // a create sends "Ordered".
+    [Test]
+    public async Task Should_send_the_ordered_gateway_priority_as_Ordered_when_calling_CreateAsync()
+    {
+        // Arrange
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies").UsingPost())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(await _policyResponse.ToJsonAsync(_serializerOptions)));
+
+        // Act
+        await _policiesClient.CreateAsync(new PolicyCreateModel
+        {
+            Description = "test",
+            GatewayPriority = GatewayPriorityType.Prioritised,
+        });
+
+        // Assert
+        using var body = JsonDocument.Parse(_server.LogEntries.Should().ContainSingle().Subject.RequestMessage.Body);
+        body.RootElement.GetProperty("gatewayPriority").GetString().Should().Be("Ordered");
+    }
+
+    // A patch sends the API's name too, for the same reason as a create.
+    [Test]
+    public async Task Should_send_the_ordered_gateway_priority_as_Ordered_when_calling_UpdateAsync()
+    {
+        // Arrange
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/{_policyResponse.Id}").UsingPatch())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(await _policyResponse.ToJsonAsync(_serializerOptions)));
+
+        // Act
+        await _policiesClient.Update(PolicyId.FromInt(12)).Set(p => p.GatewayPriority, GatewayPriorityType.Prioritised).ApplyAsync();
+
+        // Assert
+        using var body = JsonDocument.Parse(_server.LogEntries.Should().ContainSingle().Subject.RequestMessage.Body);
+        body.RootElement.GetProperty("GatewayPriority").GetString().Should().Be("Ordered");
+    }
+
+    // A policy the API returns with "gatewayPriority": "Ordered" reads as the Enclave.Sdk.Api.Data member
+    // for that priority, Prioritised.
+    [Test]
+    public async Task Should_read_the_Ordered_gateway_priority_when_calling_GetAsync()
+    {
+        // Arrange
+        var policy = JsonNode.Parse(await _policyResponse.ToJsonAsync(_serializerOptions));
+        policy["gatewayPriority"] = "Ordered";
+
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/{_policyResponse.Id}").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(policy.ToJsonString()));
+
+        // Act
+        var result = await _policiesClient.GetAsync(PolicyId.FromInt(12));
+
+        // Assert
+        result.GatewayPriority.Should().Be(GatewayPriorityType.Prioritised);
+    }
+
+    // GET policies/meta/search-keys answers with the keys the search term of GetPoliciesAsync accepts
+    // (portal PoliciesController.GetSearchKeyMetadata). The keys are two of the policies' search keys
+    // (portal PolicySearchKeyService.cs) as the API writes them, with enums as names.
+    [Test]
+    public async Task Should_return_the_search_keys_when_calling_GetSearchKeysAsync()
+    {
+        // Arrange
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/policies/meta/search-keys").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody("""
+                [
+                  {
+                    "name": "state",
+                    "modifiers": null,
+                    "dataType": "None",
+                    "description": "Filter your search by state, either enabled or disabled.",
+                    "hintText": "Search for policies that are enabled or disabled",
+                    "hintValues": [ "Enabled", "Disabled" ],
+                    "canHaveMultiple": false,
+                    "isDefault": false,
+                    "useExactMatch": false
+                  },
+                  {
+                    "name": "tags",
+                    "modifiers": [ "Or" ],
+                    "dataType": "Tags",
+                    "description": "Filter your search by one or more tags.",
+                    "hintText": "Filter by the tags assigned to the policy",
+                    "hintValues": null,
+                    "canHaveMultiple": true,
+                    "isDefault": false,
+                    "useExactMatch": false
+                  }
+                ]
+                """));
+
+        // Act
+        var result = await _policiesClient.GetSearchKeysAsync();
+
+        // Assert
+        result.Should().BeEquivalentTo(
+            new[]
+            {
+                new SearchKey
+                {
+                    Name = "state",
+                    DataType = SearchKeyDataType.None,
+                    Description = "Filter your search by state, either enabled or disabled.",
+                    HintText = "Search for policies that are enabled or disabled",
+                    HintValues = new() { "Enabled", "Disabled" },
+                },
+                new SearchKey
+                {
+                    Name = "tags",
+                    Modifiers = new() { SearchModifier.Or },
+                    DataType = SearchKeyDataType.Tags,
+                    Description = "Filter your search by one or more tags.",
+                    HintText = "Filter by the tags assigned to the policy",
+                    CanHaveMultiple = true,
+                },
+            },
+            options => options.WithStrictOrdering());
     }
 }

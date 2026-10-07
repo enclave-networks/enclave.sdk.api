@@ -47,6 +47,8 @@ internal class TagsClient : ClientBase, ITagsClient
 
         var result = await HttpClient.PostAsJsonAsync($"{_orgRoute}/tags", createModel, Constants.JsonSerializerOptions);
 
+        result.EnsureSuccessStatusCode();
+
         var model = await DeserialiseAsync<TagModel>(result.Content);
 
         EnsureNotNull(model);
@@ -89,7 +91,7 @@ internal class TagsClient : ClientBase, ITagsClient
     /// <inheritdoc/>
     public async Task<TagModel> GetAsync(string tag)
     {
-        var model = await HttpClient.GetFromJsonAsync<TagModel>($"{_orgRoute}/tags/{tag}", Constants.JsonSerializerOptions);
+        var model = await HttpClient.GetFromJsonAsync<TagModel>($"{_orgRoute}/tags/{PathSegment(tag)}", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 
@@ -105,7 +107,7 @@ internal class TagsClient : ClientBase, ITagsClient
     /// <inheritdoc/>
     public IPatchClient<TagPatchModel, TagModel> Update(string tag)
     {
-        return new PatchClient<TagPatchModel, TagModel>(HttpClient, $"{_orgRoute}/tags/{tag}");
+        return new PatchClient<TagPatchModel, TagModel>(HttpClient, $"{_orgRoute}/tags/{PathSegment(tag)}");
     }
 
     /// <inheritdoc/>
@@ -117,11 +119,21 @@ internal class TagsClient : ClientBase, ITagsClient
     /// <inheritdoc/>
     public async Task<TagModel> DeleteAsync(string tag)
     {
-        var result = await HttpClient.DeleteAsync($"{_orgRoute}/tags/{tag}");
+        var result = await HttpClient.DeleteAsync($"{_orgRoute}/tags/{PathSegment(tag)}");
 
         result.EnsureSuccessStatusCode();
 
         var model = await DeserialiseAsync<TagModel>(result.Content);
+
+        EnsureNotNull(model);
+
+        return model;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<SearchKey>> GetSearchKeysAsync()
+    {
+        var model = await HttpClient.GetFromJsonAsync<List<SearchKey>>($"{_orgRoute}/tags/meta/search-keys", Constants.JsonSerializerOptions);
 
         EnsureNotNull(model);
 

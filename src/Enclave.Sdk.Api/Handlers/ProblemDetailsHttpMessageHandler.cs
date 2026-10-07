@@ -12,6 +12,15 @@ internal sealed class ProblemDetailsHttpMessageHandler : DelegatingHandler
     }
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
+    /// <summary>
+    /// Sends requests through a handler the caller gives, in place of the default <see cref="HttpClientHandler"/>.
+    /// </summary>
+    /// <param name="innerHandler">The handler that sends each request.</param>
+    public ProblemDetailsHttpMessageHandler(HttpMessageHandler innerHandler)
+        : base(innerHandler)
+    {
+    }
+
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
     {
         var response = await base.SendAsync(request, ct);
