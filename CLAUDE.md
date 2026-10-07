@@ -26,7 +26,7 @@ This is a .NET 10 SDK for consuming the Enclave Management APIs. The SDK is publ
 ### Client Hierarchy
 
 - **EnclaveClient** (`src/Enclave.Sdk.Api/EnclaveClient.cs`) - Main entry point. Authenticates via Personal Access Token and creates organization clients.
-- **OrganisationClient** - Created via `EnclaveClient.CreateOrganisationClient()`. Provides access to all organization-scoped API operations through sub-clients:
+- **OrganisationClient** - Created via `EnclaveClient.CreateOrganisationClient(AccountOrganisationModel)`, returning `IOrganisationClient`. `CreateOrganisationClient(OrganisationGuid)` returns `IOrganisationScopedClient` (implemented by `OrganisationScopedClient`), which has every call and an `OrgId` but no `Organisation`; `IOrganisationClient` extends it. Provides access to all organization-scoped API operations through sub-clients:
   - `Dns` - DNS zones and records
   - `EnrolmentKeys` - System enrolment keys
   - `EnrolledSystems` - Enrolled systems management

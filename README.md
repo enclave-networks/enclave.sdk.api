@@ -19,6 +19,8 @@ You then create a new `EnclaveClient` as below
 var enclaveClient = new EnclaveClient();
 ```
 
+If the file doesn't exist, this throws a `FileNotFoundException` that names the file and the ways to supply a token. A file that isn't valid JSON, or holds no credentials, throws an `InvalidOperationException` naming the file.
+
 Alternatively you can pass the `EnclaveClient` the personal access token directly, which overrides any value in your credentials file.
 
 ```csharp
@@ -37,7 +39,10 @@ var enclaveClient = new EnclaveClient(new EnclaveClientOptions
 
 
 ## Selecting Your Organisation
-Once you're authenticated you can then retrieve a list of orgs by calling the below block of code
+Once you're authenticated, you create a client for the organisation you want to work in. There are two ways to do this.
+
+### From your list of organisations
+Retrieve the organisations your token can see, pick one, and create a client for it.
 ```csharp
 // Retrieve all orgs associated to the authenticated User
 var organisations = await enclaveClient.GetOrganisationsAsync();
@@ -49,15 +54,39 @@ var organisation = organisations.FirstOrDefault();
 var organisationClient = enclaveClient.CreateOrganisationClient(organisation);
 ```
 
+### From an organisation ID
+If you already know the organisation's ID (an `OrganisationGuid`, for example the `OrgId` of an organisation you saved earlier), create the client from the ID alone. This skips the call that retrieves your organisations.
+```csharp
+// Parse an organisation ID you have as text, for example from configuration
+if (!OrganisationGuid.TryParse("YOUR ORGANISATION ID", out var organisationId))
+{
+    throw new InvalidOperationException("Not a valid organisation ID.");
+}
+
+var organisationClient = enclaveClient.CreateOrganisationClient(organisationId);
+```
+
+The two clients make the same API calls. They differ in what they know about the organisation:
+
+| | From your list of organisations | From an organisation ID |
+|---|---|---|
+| Returns | `IOrganisationClient` | `IOrganisationScopedClient` |
+| API calls to create it | 1 (`GetOrganisationsAsync`) | none |
+| Every API call below | yes | yes |
+| `OrgId` | yes | yes |
+| `Organisation` (the organisation's name and your role in it) | yes | no |
+
+`IOrganisationClient` extends `IOrganisationScopedClient`, so code written against `IOrganisationScopedClient` works with either client.
+
 ## Making an API Call
-Making a call is really easy from the `IOrganisationClient` here you have access to all the API calls listed on the [Enclave API Docs](https://api.enclave.io/)
+Making a call is really easy from the organisation client; here you have access to all the API calls listed on the [Enclave API Docs](https://api.enclave.io/)
 
 To make an organisation call
 ```csharp
 var currentOrganisation = await organisationClient.GetAsync();
 ```
 
-All other areas are properties on `IOrganisationClient` so for example
+All other areas are properties on the organisation client, so for example
 ```csharp
 var enrolledSystems = await organisationClient.EnrolledSystems.GetSystemsAsync();
 
