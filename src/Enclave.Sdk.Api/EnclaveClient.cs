@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Reflection;
 using System.Text.Json;
 using Enclave.Api.Modules.AccountManagement.PublicAccount.Models;
+using Enclave.Configuration.Data.Identifiers;
 using Enclave.Sdk.Api.Clients;
 using Enclave.Sdk.Api.Clients.Interfaces;
 using Enclave.Sdk.Api.Handlers;
@@ -83,6 +84,16 @@ public class EnclaveClient
     public IOrganisationClient CreateOrganisationClient(AccountOrganisationModel organisation)
     {
         return new OrganisationClient(_httpClient, organisation);
+    }
+
+    /// <summary>
+    /// Create a client for one organisation from its ID, without fetching the organisation list first.
+    /// </summary>
+    /// <param name="orgId">The ID of the organisation, for example one saved from an earlier <see cref="GetOrganisationsAsync"/> call.</param>
+    /// <returns>A client that sends every organisation call to that organisation. It has no <see cref="IOrganisationClient.Organisation"/>, since an ID alone does not give the organisation's name or the user's role.</returns>
+    public IOrganisationScopedClient CreateOrganisationClient(OrganisationGuid orgId)
+    {
+        return new OrganisationScopedClient(_httpClient, orgId);
     }
 
     /// <summary>

@@ -70,6 +70,15 @@ public class OrganisationClientTests
         });
     }
 
+    // A client made from a full organisation model also answers OrgId, so code written against the
+    // ID-only client works with either.
+    [Test]
+    public void Should_expose_the_id_of_the_organisation_it_was_created_from()
+    {
+        // Assert
+        _organisationClient.OrgId.Should().Be(_organisationClient.Organisation.OrgId);
+    }
+
     [Test]
     public async Task Should_return_a_detailed_organisation_model_when_calling_GetAsync()
     {
