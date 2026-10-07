@@ -57,6 +57,12 @@ var organisationClient = enclaveClient.CreateOrganisationClient(organisation);
 ### From an organisation ID
 If you already know the organisation's ID (an `OrganisationGuid`, for example the `OrgId` of an organisation you saved earlier), create the client from the ID alone. This skips the call that retrieves your organisations.
 ```csharp
+// Parse an organisation ID you have as text, for example from configuration
+if (!OrganisationGuid.TryParse("YOUR ORGANISATION ID", out var organisationId))
+{
+    throw new InvalidOperationException("Not a valid organisation ID.");
+}
+
 var organisationClient = enclaveClient.CreateOrganisationClient(organisationId);
 ```
 
