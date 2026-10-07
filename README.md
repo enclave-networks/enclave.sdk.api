@@ -19,6 +19,8 @@ You then create a new `EnclaveClient` as below
 var enclaveClient = new EnclaveClient();
 ```
 
+If the file doesn't exist, this throws a `FileNotFoundException` that names the file and the ways to supply a token. A file that isn't valid JSON, or holds no credentials, throws an `InvalidOperationException` naming the file.
+
 Alternatively you can pass the `EnclaveClient` the personal access token directly, which overrides any value in your credentials file.
 
 ```csharp

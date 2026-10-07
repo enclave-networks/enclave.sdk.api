@@ -15,22 +15,21 @@ namespace Enclave.Sdk.Api;
 /// </summary>
 public class EnclaveClient
 {
+    private static readonly JsonSerializerOptions CredentialsFileJsonOptions = new() { PropertyNameCaseInsensitive = true };
+
     private readonly HttpClient _httpClient;
 
     /// <summary>
     /// Create an <see cref="EnclaveClient"/> using settings found in the .enclave/credentials.json file in your user directory.
     /// </summary>
-    /// <exception cref="ArgumentNullException">Throws if options in file are null.</exception>
+    /// <exception cref="FileNotFoundException">Throws if there is no credentials file.</exception>
+    /// <exception cref="InvalidOperationException">Throws if the credentials file is not valid JSON or holds no credentials.</exception>
     public EnclaveClient()
     {
-        var options = GetSettingsFile();
+        var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var location = Path.Combine(userProfile, ".enclave", "credentials.json");
 
-        if (options is null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
-        _httpClient = SetupHttpClient(options);
+        _httpClient = SetupHttpClient(ReadCredentialsFile(location));
     }
 
     /// <summary>
@@ -81,8 +80,11 @@ public class EnclaveClient
     /// </summary>
     /// <param name="organisation">the <see cref="AccountOrganisationModel"/> from <see cref="GetOrganisationsAsync"/>.</param>
     /// <returns>OrganisationClient that can be used for all following Api Calls related to an organisation.</returns>
+    /// <exception cref="ArgumentNullException">Throws if <paramref name="organisation"/> is null.</exception>
     public IOrganisationClient CreateOrganisationClient(AccountOrganisationModel organisation)
     {
+        ArgumentNullException.ThrowIfNull(organisation);
+
         return new OrganisationClient(_httpClient, organisation);
     }
 
@@ -91,8 +93,14 @@ public class EnclaveClient
     /// </summary>
     /// <param name="orgId">The ID of the organisation, for example one saved from an earlier <see cref="GetOrganisationsAsync"/> call.</param>
     /// <returns>A client that sends every organisation call to that organisation. It has no <see cref="IOrganisationClient.Organisation"/>, since an ID alone does not give the organisation's name or the user's role.</returns>
+    /// <exception cref="ArgumentException">Throws if <paramref name="orgId"/> is empty.</exception>
     public IOrganisationScopedClient CreateOrganisationClient(OrganisationGuid orgId)
     {
+        if (orgId.Equals(default(OrganisationGuid)))
+        {
+            throw new ArgumentException("The organisation ID is empty.", nameof(orgId));
+        }
+
         return new OrganisationScopedClient(_httpClient, orgId);
     }
 
@@ -105,23 +113,41 @@ public class EnclaveClient
         return new AuthorityClient(_httpClient);
     }
 
-    private static EnclaveClientOptions? GetSettingsFile()
+    /// <summary>
+    /// Reads the options in a credentials file, with errors that name the file and say how to supply a token.
+    /// </summary>
+    /// <param name="location">The path of the credentials file.</param>
+    /// <returns>The options the file holds.</returns>
+    internal static EnclaveClientOptions ReadCredentialsFile(string location)
     {
-        var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        const string expectedContent = "{ \"personalAccessToken\": \"<your token>\" }";
 
-        var location = Path.Combine(userProfile, ".enclave", "credentials.json");
+        string json;
 
         try
         {
-            var json = File.ReadAllText(location);
-            var settings = JsonSerializer.Deserialize<EnclaveClientOptions>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            return settings;
+            json = File.ReadAllText(location);
         }
-        catch (IOException)
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
         {
-            return null;
+            throw new FileNotFoundException(
+                $"No Enclave credentials file at {location}. Create it containing {expectedContent}, or pass a token to the EnclaveClient(string) or EnclaveClient(EnclaveClientOptions) constructor. Personal access tokens are created on the account page of the Enclave portal.",
+                location,
+                ex);
         }
+
+        EnclaveClientOptions? options;
+
+        try
+        {
+            options = JsonSerializer.Deserialize<EnclaveClientOptions>(json, CredentialsFileJsonOptions);
+        }
+        catch (JsonException ex)
+        {
+            throw new InvalidOperationException($"The Enclave credentials file at {location} is not valid JSON. It should contain {expectedContent}.", ex);
+        }
+
+        return options ?? throw new InvalidOperationException($"The Enclave credentials file at {location} holds no credentials. It should contain {expectedContent}.");
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Needed for lifecycle of consumer")]

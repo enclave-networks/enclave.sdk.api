@@ -100,6 +100,31 @@ public class EnclaveClientTests
         _server.Should().HaveReceived(0).Calls().AtUrl($"{_server.Urls[0]}/account/orgs");
     }
 
+    // A null organisation model names no organisation, so it is refused where the mistake is made,
+    // with the parameter named, rather than failing inside the client.
+    [Test]
+    public void Should_throw_an_argument_null_exception_when_created_from_a_null_organisation()
+    {
+        // Act
+        var act = () => _client.CreateOrganisationClient((AccountOrganisationModel)null);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>().WithParameterName("organisation");
+    }
+
+    // The default OrganisationGuid is no organisation, so a client made from it would send every call to
+    // an organisation that does not exist; it is refused where the mistake is made.
+    [Test]
+    public void Should_throw_an_argument_exception_when_created_from_an_empty_organisation_id()
+    {
+        // Act
+        var act = () => _client.CreateOrganisationClient(default(OrganisationGuid));
+
+        // Assert
+        act.Should().Throw<ArgumentException>().WithParameterName("orgId");
+        _server.LogEntries.Should().BeEmpty();
+    }
+
     // The sub-clients take their route from the organisation client, so a client made from an ID
     // sends their calls to the same organisation.
     [Test]
