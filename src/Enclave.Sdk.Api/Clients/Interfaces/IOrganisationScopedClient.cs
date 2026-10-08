@@ -75,23 +75,36 @@ public interface IOrganisationScopedClient
     Task<IReadOnlyList<OrganisationInviteModel>> GetPendingInvitesAsync();
 
     /// <summary>
-    /// Invite a user provided they haven't already been invited.
+    /// Invites a user to the organisation, by email. Inviting an address that already has a pending invite sends the
+    /// invite again.
     /// </summary>
     /// <param name="emailAddress">Email address of the user you want to invite.</param>
-    Task InviteUserAsync(string emailAddress);
+    /// <returns>
+    /// The invite. Its email address is the one the invite was first sent to, which can differ in case from
+    /// <paramref name="emailAddress"/>.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">Throws if the API's successful response has no invite in its body.</exception>
+    Task<OrganisationInviteModel> InviteUserAsync(string emailAddress);
 
     /// <summary>
-    /// Cancel and invite before it's accepted.
+    /// Cancels an invite before it's accepted.
     /// </summary>
-    /// <param name="emailAddress">Email address of the user who's invite you want to revoke.</param>
-    Task CancelInviteAync(string emailAddress);
+    /// <param name="emailAddress">Email address of the user whose invite you want to revoke.</param>
+    /// <returns>
+    /// The cancelled invite. Its email address is the one the invite was sent to, which can differ in case from
+    /// <paramref name="emailAddress"/>.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">Throws if the API's successful response has no invite in its body.</exception>
+    Task<OrganisationInviteModel> CancelInviteAync(string emailAddress);
 
     /// <summary>
     /// Removes a user from the organisation.
     /// </summary>
-    /// <param name="accountId">The id of the users you want to remove.</param>
+    /// <param name="accountId">The account ID of the user you want to remove.</param>
+    /// <returns>The removed user, with the role they held and the date they joined.</returns>
     /// <exception cref="ArgumentException">Throws if <paramref name="accountId"/> is null, empty, "." or "..".</exception>
-    Task RemoveUserAsync(string accountId);
+    /// <exception cref="InvalidOperationException">Throws if the API's successful response has no user in its body.</exception>
+    Task<OrganisationUser> RemoveUserAsync(string accountId);
 
     /// <summary>
     /// Starts an update patch request.
