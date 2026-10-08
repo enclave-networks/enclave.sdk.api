@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using Enclave.Api.Modules.OrganisationManagement;
 using Enclave.Api.Modules.OrganisationManagement.Organisation.Models;
 using Enclave.Configuration.Data.Identifiers;
@@ -88,11 +89,13 @@ internal class OrganisationScopedClient : ClientBase, IOrganisationScopedClient
     }
 
     /// <inheritdoc/>
-    public async Task RemoveUserAsync(string accountId)
+    public async Task<OrganisationUser> RemoveUserAsync(string accountId)
     {
-        var result = await HttpClient.DeleteAsync($"{_orgRoute}/users/{PathSegment(accountId)}");
+        var route = $"{_orgRoute}/users/{PathSegment(accountId)}";
 
-        result.EnsureSuccessStatusCode();
+        using var response = await HttpClient.DeleteAsync(route);
+
+        return await ReadModelAsync<OrganisationUser>(response, HttpMethod.Delete, route);
     }
 
     /// <inheritdoc/>
@@ -106,21 +109,25 @@ internal class OrganisationScopedClient : ClientBase, IOrganisationScopedClient
     }
 
     /// <inheritdoc/>
-    public async Task InviteUserAsync(string emailAddress)
+    public async Task<OrganisationInviteModel> InviteUserAsync(string emailAddress)
     {
+        var route = $"{_orgRoute}/invites";
+
         using var encoded = CreateJsonContent(new OrganisationInviteModel
         {
             EmailAddress = emailAddress,
         });
 
-        var result = await HttpClient.PostAsync($"{_orgRoute}/invites", encoded);
+        using var response = await HttpClient.PostAsync(route, encoded);
 
-        result.EnsureSuccessStatusCode();
+        return await ReadModelAsync<OrganisationInviteModel>(response, HttpMethod.Post, route);
     }
 
     /// <inheritdoc/>
-    public async Task CancelInviteAync(string emailAddress)
+    public async Task<OrganisationInviteModel> CancelInviteAync(string emailAddress)
     {
+        var route = $"{_orgRoute}/invites";
+
         using var encoded = CreateJsonContent(new OrganisationInviteModel
         {
             EmailAddress = emailAddress,
@@ -130,11 +137,41 @@ internal class OrganisationScopedClient : ClientBase, IOrganisationScopedClient
         {
             Content = encoded,
             Method = HttpMethod.Delete,
-            RequestUri = new Uri($"{HttpClient.BaseAddress}{_orgRoute}/invites"),
+            RequestUri = new Uri($"{HttpClient.BaseAddress}{route}"),
         };
 
-        var result = await HttpClient.SendAsync(request);
+        using var response = await HttpClient.SendAsync(request);
 
-        result.EnsureSuccessStatusCode();
+        return await ReadModelAsync<OrganisationInviteModel>(response, request.Method, route);
+    }
+
+    // The API answers RemoveUser, CreateInvite and DeleteInvite with a model (portal OrganisationController.cs), so
+    // these calls return it. The status is checked before the body is read, so a failure throws HttpRequestException
+    // with its status whatever body it has.
+    //
+    // A success with no body has no model to return. ASP.NET Core sends a null result as 204 No Content
+    // (https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting#special-case-formatters), and something
+    // between the client and the API can answer 200 with no body. System.Text.Json throws JsonException for input
+    // with no JSON tokens, which names neither the call nor the status, so the body is read as text and an empty one
+    // throws InvalidOperationException here, as does a body of JSON null. The bodies are single small models, so
+    // reading them as text first costs little.
+    private static async Task<TModel> ReadModelAsync<TModel>(HttpResponseMessage response, HttpMethod method, string route)
+        where TModel : class
+    {
+        response.EnsureSuccessStatusCode();
+
+        var body = await response.Content.ReadAsStringAsync();
+
+        var model = string.IsNullOrWhiteSpace(body)
+            ? null
+            : JsonSerializer.Deserialize<TModel>(body, Constants.JsonSerializerOptions);
+
+        if (model is null)
+        {
+            throw new InvalidOperationException(
+                $"The API answered {method} {route} with {(int)response.StatusCode} ({response.StatusCode}) and no {typeof(TModel).Name} in the body.");
+        }
+
+        return model;
     }
 }
