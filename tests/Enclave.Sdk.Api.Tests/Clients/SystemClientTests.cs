@@ -191,6 +191,33 @@ public class SystemClientTests
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/systems?sort={sortOrder}");
     }
 
+    // Every sort mode the API takes (portal Enclave.Configuration.Data/Modules/Systems/Enums/SystemQuerySortMode.cs).
+    [TestCase(SystemQuerySortMode.RecentlyEnrolled, "RecentlyEnrolled")]
+    [TestCase(SystemQuerySortMode.RecentlyConnected, "RecentlyConnected")]
+    [TestCase(SystemQuerySortMode.Description, "Description")]
+    [TestCase(SystemQuerySortMode.DescriptionOrHostname, "DescriptionOrHostname")]
+    [TestCase(SystemQuerySortMode.EnrolmentKeyUsed, "EnrolmentKeyUsed")]
+    [TestCase(SystemQuerySortMode.LastConnected, "LastConnected")]
+    [TestCase(SystemQuerySortMode.State, "State")]
+    [TestCase(SystemQuerySortMode.Version, "Version")]
+    public async Task Should_send_the_sort_mode_name_when_calling_GetSystemsAsync(SystemQuerySortMode sortOrder, string expected)
+    {
+        // Arrange
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/systems").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
+
+        // Act
+        await _enrolledSystemsClient.GetSystemsAsync(sortOrder: sortOrder);
+
+        // Assert
+        _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/systems?sort={expected}");
+    }
+
     [Test]
     public async Task Should_make_a_call_to_api_with_dns_quertString_when_calling_GetSystemsAsync()
     {

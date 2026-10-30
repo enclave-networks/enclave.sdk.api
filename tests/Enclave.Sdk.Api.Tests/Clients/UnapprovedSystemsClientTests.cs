@@ -156,6 +156,29 @@ public class UnapprovedSystemsClientTests
         _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/unapproved-systems?sort={sortOrder}");
     }
 
+    // Every sort mode the API takes (portal Enclave.Api/Modules/SystemManagement/UnapprovedSystems/Models/UnapprovedSystemQuerySortMode.cs).
+    [TestCase(UnapprovedSystemQuerySortMode.RecentlyEnrolled, "RecentlyEnrolled")]
+    [TestCase(UnapprovedSystemQuerySortMode.Description, "Description")]
+    [TestCase(UnapprovedSystemQuerySortMode.EnrolmentKeyUsed, "EnrolmentKeyUsed")]
+    [TestCase(UnapprovedSystemQuerySortMode.DescriptionOrHostname, "DescriptionOrHostname")]
+    public async Task Should_send_the_sort_mode_name_when_calling_GetSystemsAsync(UnapprovedSystemQuerySortMode sortOrder, string expected)
+    {
+        // Arrange
+        _server
+          .Given(Request.Create().WithPath($"{_orgRoute}/unapproved-systems").UsingGet())
+          .RespondWith(
+            Response.Create()
+              .WithSuccess()
+              .WithHeader("Content-Type", "application/json")
+              .WithBody(await _paginatedResponse.ToJsonAsync(_serializerOptions)));
+
+        // Act
+        await _unapprovedSystemsClient.GetSystemsAsync(sortOrder: sortOrder);
+
+        // Assert
+        _server.Should().HaveReceivedACall().AtAbsoluteUrl($"{_server.Urls[0]}{_orgRoute}/unapproved-systems?sort={expected}");
+    }
+
     [Test]
     public async Task Should_make_a_call_to_api_with_page_quertString_when_calling_GetSystemsAsync()
     {
