@@ -176,7 +176,14 @@ public class EnclaveClient
             throw new InvalidOperationException($"The Enclave credentials file at {location} is not valid JSON. It should contain {expectedContent}.", ex);
         }
 
-        return options ?? throw new InvalidOperationException($"The Enclave credentials file at {location} holds no credentials. It should contain {expectedContent}.");
+        // A file with no token, or with the token under a misspelt key, reads as options without one. The client
+        // would then send no Authorization header, and the first call would fail with 401 instead of this error.
+        if (options is null || string.IsNullOrWhiteSpace(options.PersonalAccessToken))
+        {
+            throw new InvalidOperationException($"The Enclave credentials file at {location} holds no credentials. It should contain {expectedContent}.");
+        }
+
+        return options;
     }
 
     private static HttpClient? SetupPartnerHttpClient(EnclaveClientOptions options)

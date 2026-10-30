@@ -97,6 +97,27 @@ public class EnclaveClientCredentialsFileTests
         act.Should().Throw<InvalidOperationException>().WithMessage($"*{CredentialsPath}*");
     }
 
+    // A file with no token, or with the token under a misspelt key, would otherwise give a client that
+    // sends no Authorization header, and the first call would fail with 401.
+    [TestCase("{}")]
+    [TestCase("{\"personalAccessToken\": null}")]
+    [TestCase("{\"personalAccessToken\": \"\"}")]
+    [TestCase("{\"personalAccessToken\": \"   \"}")]
+    [TestCase("{\"personalAccesToken\": \"TOKEN\"}")]
+    public void Should_throw_an_invalid_operation_exception_naming_the_file_when_it_holds_no_token(string json)
+    {
+        // Arrange
+        WriteCredentials(json);
+
+        // Act
+        var act = () => EnclaveClient.ReadCredentialsFile(CredentialsPath);
+
+        // Assert
+        var exception = act.Should().Throw<InvalidOperationException>().Which;
+        exception.Message.Should().Contain(CredentialsPath)
+            .And.Contain("personalAccessToken");
+    }
+
     // A handler is an object in the running process, not a setting, so it is neither read from nor
     // written to a credentials file. A file with an httpMessageHandler entry still gives its token, and
     // options written out for a credentials file hold no handler.

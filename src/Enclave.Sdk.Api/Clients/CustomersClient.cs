@@ -147,7 +147,7 @@ internal sealed class CustomersClient : ClientBase, ICustomersClient
 
         // The API's response carries the email address and leaves the ID unset, which it writes as null (portal
         // .../Customers/Handlers/DeleteCustomerPendingAdminInviteHandler.cs). A default OrganisationInviteId
-        // throws NullReferenceException from Equals, == and GetHashCode (Enclave.Sdk.Api.Data 304.48.0, whose
+        // throws NullReferenceException from Equals, == and GetHashCode (Enclave.Sdk.Api.Data 304.57.0, whose
         // string-backed TypedIds compare the null value), so a model holding one breaks a caller's comparison or
         // dictionary. The API deletes the invite whose ID is the one in the route (portal Enclave.Configuration.Data
         // OrganisationRepository.DeleteOrganisationInviteAsync), so that ID is the cancelled invite's. Its

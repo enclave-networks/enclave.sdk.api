@@ -15,7 +15,7 @@ namespace Enclave.Sdk.Api.Data;
 /// </summary>
 public sealed class GatewayPriorityTypeJsonConverter : JsonConverter<GatewayPriorityType>
 {
-    // Enclave.Sdk.Api.Data 304.48.0 compiles its own copy of the enum with the member Prioritised (portal
+    // Enclave.Sdk.Api.Data 304.57.0 compiles its own copy of the enum with the member Prioritised (portal
     // Enclave.Sdk.Api.Data/Duplicated/GatewayPriorityType.cs). The API uses the sdk repository's enum, which
     // has Ordered at the same position (sdk Enclave.Sdk.Network/NetworkPolicy/GatewayPriorityType.cs; portal-spa
     // src/types/api.ts). JsonStringEnumConverter writes and reads by member name, so on its own it sends
