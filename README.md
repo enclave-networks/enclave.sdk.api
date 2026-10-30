@@ -19,9 +19,9 @@ You then create a new `EnclaveClient` as below
 var enclaveClient = new EnclaveClient();
 ```
 
-If the file doesn't exist, this throws a `FileNotFoundException` that names the file and the ways to supply a token. A file that isn't valid JSON, or holds no credentials, throws an `InvalidOperationException` naming the file.
+If the file doesn't exist, this throws a `FileNotFoundException` that names the file and the ways to supply a token. A file that isn't valid JSON, or has no `personalAccessToken`, throws an `InvalidOperationException` naming the file.
 
-Alternatively you can pass the `EnclaveClient` the personal access token directly, which overrides any value in your credentials file.
+Alternatively you can pass the `EnclaveClient` the personal access token directly.
 
 ```csharp
 var token = "YOUR TOKEN";
@@ -36,6 +36,8 @@ var enclaveClient = new EnclaveClient(new EnclaveClientOptions
     PersonalAccessToken = "YOUR TOKEN",
 });
 ```
+
+Neither of these two reads your credentials file, so a `baseUrl` or `partnerApiBaseUrl` set there doesn't apply.
 
 
 ## Selecting Your Organisation
@@ -161,7 +163,7 @@ A partner manages its customers through the Enclave Partner API. It uses product
 | Production (default) | `https://api.enclave.io` | `https://partner-api.enclave.io` |
 | Staging | `https://staging-api.enclave.io` | `https://staging-partner-api.enclave.io` |
 
-A credentials file can set it too, as `partnerApiBaseUrl`.
+A credentials file can set both, as `baseUrl` and `partnerApiBaseUrl`.
 
 ```csharp
 var enclaveClient = new EnclaveClient(new EnclaveClientOptions
